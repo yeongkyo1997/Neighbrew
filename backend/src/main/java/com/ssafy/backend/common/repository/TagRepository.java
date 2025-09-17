@@ -1,7 +1,8 @@
-package com.ssafy.backend.repository;
+package com.ssafy.backend.common.repository;
 
-import com.ssafy.backend.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ssafy.backend.common.entity.Tag;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
 }

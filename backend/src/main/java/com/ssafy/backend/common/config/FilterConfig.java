@@ -1,9 +1,10 @@
-package com.ssafy.backend.config;
+package com.ssafy.backend.common.config;
 
-import com.ssafy.backend.filter.TokenFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.ssafy.backend.common.filter.TokenFilter;
 
 @Configuration
 public class FilterConfig {

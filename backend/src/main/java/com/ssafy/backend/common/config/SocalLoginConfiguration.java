@@ -1,4 +1,6 @@
-package com.ssafy.backend.config;
+package com.ssafy.backend.common.config;
+
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -7,8 +9,6 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class SocalLoginConfiguration {
@@ -21,7 +21,8 @@ public class SocalLoginConfiguration {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
-                .requestFactory(() -> new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
+                .requestFactory(
+                        () -> new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()))
                 .additionalMessageConverters(new StringHttpMessageConverter(StandardCharsets.UTF_8))
                 .build();
     }

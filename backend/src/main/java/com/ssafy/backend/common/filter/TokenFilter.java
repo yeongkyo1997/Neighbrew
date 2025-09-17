@@ -1,13 +1,20 @@
-package com.ssafy.backend.filter;
+package com.ssafy.backend.common.filter;
 
-import com.ssafy.backend.util.JwtUtil;
-import io.jsonwebtoken.Claims;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import com.ssafy.backend.common.util.JwtUtil;
+
+import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TokenFilter implements Filter {
@@ -17,7 +24,8 @@ public class TokenFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+                         FilterChain filterChain)
             throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;

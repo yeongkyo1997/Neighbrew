@@ -1,11 +1,13 @@
-package com.ssafy.backend.service;
-
-import com.ssafy.backend.util.JwtUtil;
-import io.jsonwebtoken.Claims;
-import org.springframework.stereotype.Service;
+package com.ssafy.backend.common.service;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import com.ssafy.backend.common.util.JwtUtil;
+
+import io.jsonwebtoken.Claims;
 
 @Service
 public class JwtService {

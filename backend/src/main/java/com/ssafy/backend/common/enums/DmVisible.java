@@ -1,4 +1,4 @@
-package com.ssafy.backend.Enum;
+package com.ssafy.backend.common.enums;
 
 public enum DmVisible {
     //둘 다 볼 수 있다.

@@ -1,4 +1,4 @@
-package com.ssafy.backend.Enum;
+package com.ssafy.backend.common.enums;
 
 public enum PushType {
     LOSTDATA,
