@@ -1,21 +1,32 @@
-package com.ssafy.backend.controller;
-
-import com.ssafy.backend.dto.meet.MeetRequestDto;
-import com.ssafy.backend.dto.meet.MeetResponseDto;
-import com.ssafy.backend.entity.Meet;
-import com.ssafy.backend.service.MeetService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+package com.ssafy.backend.domain.meet.controller;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ssafy.backend.domain.meet.dto.MeetRequestDto;
+import com.ssafy.backend.domain.meet.dto.MeetResponseDto;
+import com.ssafy.backend.domain.meet.entity.Meet;
+import com.ssafy.backend.domain.meet.service.meet.MeetService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 //모임 생성, 수정, 삭제를 관장하는 컨트롤러
 @RestController
@@ -27,7 +38,8 @@ public class MeetController {
 
     //태그별로 데이터 조회
     @GetMapping()
-    public ResponseEntity<Page<MeetResponseDto>> getTagMeet(@RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId, Pageable pageable) {
+    public ResponseEntity<Page<MeetResponseDto>> getTagMeet(
+            @RequestParam(name = "tagId", required = false, defaultValue = "0") Long tagId, Pageable pageable) {
         return ResponseEntity.ok(meetService.findMeetsByTagId(tagId, pageable));
     }
 
@@ -48,7 +60,9 @@ public class MeetController {
     public ResponseEntity<?> saveMeet(Long userId,
                                       MeetRequestDto meetRequestDto,
                                       Long drinkId,
-                                      @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IllegalArgumentException, IOException {
+                                      @RequestPart(value = "image", required = false)
+                                      Optional<MultipartFile> multipartFile)
+            throws IllegalArgumentException, IOException {
 
         checkCapacityFile(multipartFile);
         Meet createdMeet = meetService.saveMeet(meetRequestDto, userId, drinkId, multipartFile.orElse(null));
@@ -61,7 +75,8 @@ public class MeetController {
                                         @PathVariable("meetId") Long meetId,
                                         MeetRequestDto meetRequestDto,
                                         Long drinkId,
-                                        @RequestPart(value = "image", required = false) Optional<MultipartFile> multipartFile) throws IOException {
+                                        @RequestPart(value = "image", required = false)
+                                        Optional<MultipartFile> multipartFile) throws IOException {
         checkCapacityFile(multipartFile);
 
         meetService.updateMeet(meetRequestDto, userId, meetId, drinkId, multipartFile.orElse(null));
@@ -70,8 +85,9 @@ public class MeetController {
 
     private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
         if (multipartFile.isPresent()) {
-            if (multipartFile.get().getSize() > 1024 * 1024 * 20)
+            if (multipartFile.get().getSize() > 1024 * 1024 * 20) {
                 throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
+            }
         }
     }
 

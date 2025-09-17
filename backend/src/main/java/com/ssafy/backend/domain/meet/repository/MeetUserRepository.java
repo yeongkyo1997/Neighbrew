@@ -1,14 +1,15 @@
-package com.ssafy.backend.repository;
+package com.ssafy.backend.domain.meet.repository;
 
-import com.ssafy.backend.Enum.Status;
-import com.ssafy.backend.entity.MeetUser;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.ssafy.backend.common.enums.Status;
+import com.ssafy.backend.domain.meet.entity.MeetUser;
 
 @Repository
 public interface MeetUserRepository extends JpaRepository<MeetUser, Long> {

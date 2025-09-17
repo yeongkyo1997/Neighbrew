@@ -1,7 +1,7 @@
-package com.ssafy.backend.repository;
+package com.ssafy.backend.domain.meet.repository;
 
-import com.ssafy.backend.Enum.MeetStatus;
-import com.ssafy.backend.entity.Meet;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.ssafy.backend.common.enums.MeetStatus;
+import com.ssafy.backend.domain.meet.entity.Meet;
 
 @Repository
 public interface MeetRepository extends JpaRepository<Meet, Long> {
@@ -18,7 +19,8 @@ public interface MeetRepository extends JpaRepository<Meet, Long> {
 
     Page<Meet> findByMeetStatusNotOrderByCreatedAtDesc(MeetStatus meetStatus, Pageable pageable);
 
-    Page<Meet> findByTagTagIdAndMeetStatusNotOrderByCreatedAtDesc(Long tagId, MeetStatus meetStatus, Pageable pageable);
+    Page<Meet> findByTagTagIdAndMeetStatusNotOrderByCreatedAtDesc(Long tagId, MeetStatus meetStatus,
+                                                                  Pageable pageable);
 
     // 현재시간보다 모임시간이 빠른경우
     @Query("SELECT m FROM Meet m WHERE m.meetDate < CURRENT_TIMESTAMP")
