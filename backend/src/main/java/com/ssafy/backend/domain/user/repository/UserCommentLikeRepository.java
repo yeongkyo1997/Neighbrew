@@ -1,10 +1,11 @@
-package com.ssafy.backend.repository;
+package com.ssafy.backend.domain.user.repository;
 
-import com.ssafy.backend.entity.UserCommentLike;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.ssafy.backend.domain.user.entity.UserCommentLike;
 
 @Repository
 public interface UserCommentLikeRepository extends JpaRepository<UserCommentLike, Long> {

@@ -1,23 +1,37 @@
-package com.ssafy.backend.entity;
+package com.ssafy.backend.domain.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-import com.ssafy.backend.dto.user.UserUpdateDto;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.PrePersist;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+import com.ssafy.backend.domain.user.dto.UserUpdateDto;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@AllArgsConstructor
+@Builder
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,18 +66,6 @@ public class User {
 
     @Column(nullable = false, columnDefinition = "varchar(255) default 'no image'")
     private String profile;
-
-    @Builder
-    public User(String email, String nickname, String name, Float liverPoint, OAuthProvider oAuthProvider, LocalDate birth, String intro, String profile) {
-        this.email = email;
-        this.nickname = nickname;
-        this.liverPoint = liverPoint;
-        this.name = name;
-        this.oAuthProvider = oAuthProvider;
-        this.birth = birth;
-        this.intro = intro;
-        this.profile = profile;
-    }
 
     @PrePersist
     public void prePersist() {

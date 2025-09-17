@@ -1,25 +1,35 @@
-package com.ssafy.backend.controller;
-
-import com.ssafy.backend.Enum.UploadType;
-import com.ssafy.backend.authentication.application.LoginResponse;
-import com.ssafy.backend.dto.user.UserResponseDto;
-import com.ssafy.backend.dto.user.UserUpdateDto;
-import com.ssafy.backend.service.JwtService;
-import com.ssafy.backend.service.S3Service;
-import com.ssafy.backend.service.UserService;
-import com.ssafy.backend.util.JwtUtil;
-import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+package com.ssafy.backend.domain.user.controller;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ssafy.backend.authentication.application.LoginResponse;
+import com.ssafy.backend.common.enums.UploadType;
+import com.ssafy.backend.common.service.JwtService;
+import com.ssafy.backend.common.util.JwtUtil;
+import com.ssafy.backend.domain.storage.service.s3.S3Service;
+import com.ssafy.backend.domain.user.dto.UserResponseDto;
+import com.ssafy.backend.domain.user.dto.UserUpdateDto;
+import com.ssafy.backend.domain.user.service.UserService;
+
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -66,7 +76,9 @@ public class UserController {
     @PutMapping("/img/{userId}")
     public ResponseEntity<String> updateUserImg(@RequestParam("profile") Optional<MultipartFile> profile,
                                                 @PathVariable Long userId) throws IOException {
-        String url = profile.isPresent() ? Objects.equals(profile.get().getOriginalFilename(), "") ? "no image" : s3Service.upload(UploadType.USERPROFILE, profile.get()) : "no image";
+        String url = profile.isPresent() ? Objects.equals(profile.get().getOriginalFilename(), "") ?
+                                           "no image" : s3Service.upload(UploadType.USERPROFILE,
+                                                                         profile.get()) : "no image";
 
         userService.updateUserImg(userId, url);
         return ResponseEntity.ok(url);
