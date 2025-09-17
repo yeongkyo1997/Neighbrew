@@ -1,17 +1,36 @@
-package com.ssafy.backend.entity;
+package com.ssafy.backend.domain.evaluation.entity;
 
-import com.ssafy.backend.Enum.EvaluationType;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.ssafy.backend.common.enums.EvaluationType;
+import com.ssafy.backend.domain.meet.entity.Meet;
+import com.ssafy.backend.domain.user.entity.User;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.Date;
-
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Evaluation {
 
     @Id
@@ -39,17 +58,6 @@ public class Evaluation {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date createdAt;
-
-    @Builder
-    public Evaluation(Long evaluationId, User ratedUser, User reviewer, Meet meet, EvaluationType evaluationType, String description, Date createdAt) {
-        this.evaluationId = evaluationId;
-        this.ratedUser = ratedUser;
-        this.reviewer = reviewer;
-        this.meet = meet;
-        this.evaluationType = evaluationType;
-        this.description = description;
-        this.createdAt = createdAt;
-    }
 
     @PrePersist
     public void createdAt() {
