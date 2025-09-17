@@ -1,18 +1,20 @@
-package com.ssafy.backend.controller;
+package com.ssafy.backend.domain.chat.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.service.ChatDmService;
-import com.ssafy.backend.service.ChatRoomService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.backend.domain.chat.service.ChatDmService;
+import com.ssafy.backend.domain.chat.service.room.ChatRoomService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -25,14 +27,16 @@ public class ChatController {
 
     //단체 메세지를 보낸다.
     @MessageMapping("/chat/{roomId}/sendMessage")
-    public void sendChatRoomMessage(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
+    public void sendChatRoomMessage(@DestinationVariable Long roomId, @Payload String data)
+            throws JsonProcessingException {
         String res = chatRoomService.sendChatRoomMessage(roomId, data);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
 
     // 채팅방 퇴장
     @MessageMapping("/room/{roomId}/leave")
-    public void leaveChatRoom(@DestinationVariable Long roomId, @Payload String data) throws JsonProcessingException {
+    public void leaveChatRoom(@DestinationVariable Long roomId, @Payload String data)
+            throws JsonProcessingException {
         String res = chatRoomService.leaveChatRoom(roomId, data);
         messagingTemplate.convertAndSend("/pub/room/" + roomId, res);
     }
@@ -51,9 +55,10 @@ public class ChatController {
                                  @DestinationVariable("user2Id") Long user2Id,
                                  @Payload String payload) throws JsonProcessingException {
         Map<String, Object> sendData = user1Id.compareTo(user2Id) < 0
-                ? chatDmService.createChatOrSend(user1Id, user2Id, payload)
-                : chatDmService.createChatOrSend(user2Id, user1Id, payload);
-        messagingTemplate.convertAndSend("/pub/dm/" + user1Id + "/" + user2Id, mapper.writeValueAsString(sendData));
+                                       ? chatDmService.createChatOrSend(user1Id, user2Id, payload)
+                                       : chatDmService.createChatOrSend(user2Id, user1Id, payload);
+        messagingTemplate.convertAndSend("/pub/dm/" + user1Id + "/" + user2Id,
+                                         mapper.writeValueAsString(sendData));
     }
 
     //dm떠나기
@@ -62,8 +67,8 @@ public class ChatController {
                         @DestinationVariable("user2Id") Long user2Id,
                         @Payload String payload) throws JsonProcessingException {
         String sendData = user1Id.compareTo(user2Id) < 0
-                ? chatDmService.leaveDm(user1Id, user2Id, payload)
-                : chatDmService.leaveDm(user2Id, user1Id, payload);
+                          ? chatDmService.leaveDm(user1Id, user2Id, payload)
+                          : chatDmService.leaveDm(user2Id, user1Id, payload);
         messagingTemplate.convertAndSend("/pub/dm/" + user1Id + "/" + user2Id, sendData);
     }
 }

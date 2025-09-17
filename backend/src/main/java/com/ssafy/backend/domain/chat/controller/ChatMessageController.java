@@ -1,0 +1,34 @@
+package com.ssafy.backend.domain.chat.controller;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ssafy.backend.common.util.JwtUtil;
+import com.ssafy.backend.domain.chat.entity.ChatMessageMongo;
+import com.ssafy.backend.domain.chat.service.ChatMessageService;
+
+import lombok.AllArgsConstructor;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping("/api/chatMessage")
+public class ChatMessageController {
+    private final ChatMessageService chatMessageService;
+
+    //단체 채팅방 메세지 가져온다.
+    @GetMapping("{chatRoomId}/{userId}/messages")
+    public ResponseEntity<List<ChatMessageMongo>> getChatMessages(@PathVariable Long chatRoomId,
+                                                                  @PathVariable Long userId,
+                                                                  @RequestHeader("Authorization")
+                                                                  String token) {
+        JwtUtil.validateToken(token, userId);
+        List<ChatMessageMongo> messages = chatMessageService.getChatMessages(chatRoomId);
+        return ResponseEntity.ok(messages);
+    }
+}

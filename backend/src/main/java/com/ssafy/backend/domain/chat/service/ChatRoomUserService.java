@@ -1,9 +1,11 @@
-package com.ssafy.backend.service;
+package com.ssafy.backend.domain.chat.service;
 
-import com.ssafy.backend.entity.ChatRoomUser;
-import com.ssafy.backend.repository.ChatRoomUserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import com.ssafy.backend.domain.chat.entity.ChatRoomUser;
+import com.ssafy.backend.domain.chat.repository.ChatRoomUserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

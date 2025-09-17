@@ -1,15 +1,16 @@
-package com.ssafy.backend.repository;
+package com.ssafy.backend.domain.chat.repository;
 
-import com.ssafy.backend.entity.ChatDmRoom;
-import com.ssafy.backend.entity.User;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.ssafy.backend.domain.chat.entity.ChatDmRoom;
+import com.ssafy.backend.domain.user.entity.User;
 
 @Repository
 public interface ChatDmRoomRepository extends JpaRepository<ChatDmRoom, Long> {

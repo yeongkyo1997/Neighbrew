@@ -1,13 +1,31 @@
-package com.ssafy.backend.entity;
+package com.ssafy.backend.domain.chat.entity;
 
-import lombok.*;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+
+import com.ssafy.backend.domain.user.entity.User;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class ChatDmMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +46,6 @@ public class ChatDmMessage {
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @Setter
     private LocalDateTime createdAt;
-
-    @Builder
-    public ChatDmMessage(ChatDmRoom chatDmRoom, User user, String message, LocalDateTime createdAt) {
-        this.chatDmRoom = chatDmRoom;
-        this.user = user;
-        this.message = message;
-        this.createdAt = createdAt;
-    }
 
     @PrePersist
     public void createdAt() {

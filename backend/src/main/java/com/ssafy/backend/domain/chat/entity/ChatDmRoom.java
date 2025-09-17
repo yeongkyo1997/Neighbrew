@@ -1,14 +1,32 @@
-package com.ssafy.backend.entity;
+package com.ssafy.backend.domain.chat.entity;
 
-import lombok.*;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.OneToOne;
+
+import com.ssafy.backend.domain.user.entity.User;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class ChatDmRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,13 +55,4 @@ public class ChatDmRoom {
     @Column(columnDefinition = "TIMESTAMP")
     @Setter
     private LocalDateTime lastMessageTime;
-
-    @Builder
-    public ChatDmRoom(User user1, User user2) {
-        this.chatDmRoomName = user1.getName() + "&" + user2.getName();
-        this.user1 = user1;
-        this.user2 = user2;
-        this.user1AttendTime = LocalDateTime.now();
-        this.user2AttendTime = LocalDateTime.now();
-    }
 }
