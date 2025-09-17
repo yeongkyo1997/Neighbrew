@@ -1,13 +1,20 @@
-package com.ssafy.backend.controller;
-
-import com.ssafy.backend.dto.follow.FollowResponseDto;
-import com.ssafy.backend.service.FollowService;
-import com.ssafy.backend.util.JwtUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+package com.ssafy.backend.domain.follow.controller;
 
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ssafy.backend.common.util.JwtUtil;
+import com.ssafy.backend.domain.follow.dto.FollowResponseDto;
+import com.ssafy.backend.domain.follow.service.follow.FollowService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
