@@ -1,6 +1,7 @@
 package com.ssafy.backend.authentication.infra.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

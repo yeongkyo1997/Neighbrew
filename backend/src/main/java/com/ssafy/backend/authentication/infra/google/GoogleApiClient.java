@@ -1,20 +1,26 @@
 package com.ssafy.backend.authentication.infra.google;
 
-import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
-import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
-import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
-import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-import lombok.RequiredArgsConstructor;
+import static com.ssafy.backend.authentication.infra.google.RefactoredGoogleApiClient.getoAuthInfoResponse;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
+import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
+import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
+import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -74,23 +80,13 @@ public class GoogleApiClient implements OAuthApiClient {
 
         HttpEntity request = new HttpEntity(headers);
 
-        ResponseEntity<GoogleInfoResponse.Response> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                request,
-                GoogleInfoResponse.Response.class
-        );
-        GoogleInfoResponse.Response responseBody = response.getBody();
-        if (responseBody != null) {
-            return new GoogleInfoResponse(responseBody);
-        }
-
-        return null;
+        return getoAuthInfoResponse(url, request, restTemplate);
     }
 
     @Override
     public String authApiUrl(OAuthLoginParams params) {
         String responseType = "code";
-        return authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType + "&scope=email profile";
+        return authUrl + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type="
+               + responseType + "&scope=email profile";
     }
 }

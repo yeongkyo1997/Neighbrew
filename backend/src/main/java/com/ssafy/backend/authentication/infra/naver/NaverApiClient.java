@@ -1,11 +1,5 @@
 package com.ssafy.backend.authentication.infra.naver;
 
-import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
-import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
-import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
-import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -15,6 +9,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
+import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
+import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
+import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -77,6 +79,7 @@ public class NaverApiClient implements OAuthApiClient {
     public String authApiUrl(OAuthLoginParams params) {
         String responseType = "code";
         String redirectUri = "http://localhost:5173/naver/callback";
-        return authUrl + "/oauth2.0/authorize" + "?response_type=" + responseType + "&client_id=" + clientId + "&state=" + clientSecret + "&redirect_uri=" + redirectUri;
+        return authUrl + "/oauth2.0/authorize" + "?response_type=" + responseType + "&client_id=" + clientId
+               + "&state=" + clientSecret + "&redirect_uri=" + redirectUri;
     }
 }

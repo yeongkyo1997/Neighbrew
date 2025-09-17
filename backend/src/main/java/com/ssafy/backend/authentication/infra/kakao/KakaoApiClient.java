@@ -1,11 +1,5 @@
 package com.ssafy.backend.authentication.infra.kakao;
 
-import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
-import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
-import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
-import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -15,6 +9,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
+import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
+import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
+import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -75,6 +77,7 @@ public class KakaoApiClient implements OAuthApiClient {
     @Override
     public String authApiUrl(OAuthLoginParams params) {
         String responseType = "code";
-        return authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=" + responseType;
+        return authUrl + "/oauth/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri
+               + "&response_type=" + responseType;
     }
 }

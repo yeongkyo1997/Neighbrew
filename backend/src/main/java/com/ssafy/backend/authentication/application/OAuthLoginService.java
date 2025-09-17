@@ -1,18 +1,20 @@
 package com.ssafy.backend.authentication.application;
 
+import java.io.UnsupportedEncodingException;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
-import com.ssafy.backend.entity.User;
-import com.ssafy.backend.repository.UserRepository;
-import com.ssafy.backend.util.JwtUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.ssafy.backend.common.util.JwtUtil;
+import com.ssafy.backend.domain.user.entity.User;
+import com.ssafy.backend.domain.user.repository.UserRepository;
 
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,8 @@ public class OAuthLoginService {
     private final UserRepository userRepository;
     private final RequestOAuthInfoService requestOAuthInfoService;
 
-    public LoginResponse login(OAuthLoginParams params) throws JsonProcessingException, UnsupportedEncodingException {
+    public LoginResponse login(OAuthLoginParams params)
+            throws JsonProcessingException, UnsupportedEncodingException {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
 
         // 받아온 정보를 기반으로  userId를 추출
@@ -46,29 +49,22 @@ public class OAuthLoginService {
 
     // 해당 이메일로 user의 id를 반환
     private Long findOrCreateUser(OAuthInfoResponse oAuthInfoResponse) {
-        return userRepository.findByEmail(oAuthInfoResponse.getEmail())
-                .map(User::getUserId)
-                .orElseGet(() -> newUser(oAuthInfoResponse));
+        return userRepository.findByEmail(oAuthInfoResponse.getEmail()).map(User::getUserId).orElseGet(
+                () -> newUser(oAuthInfoResponse));
     }
 
     private Long newUser(OAuthInfoResponse oAuthInfoResponse) {
         if (oAuthInfoResponse.getEmail() == null) {
             String uuid = String.valueOf(UUID.randomUUID()).substring(0, 7);
 
-            User user = User.builder()
-                    .email(oAuthInfoResponse.getName())
-                    .name(oAuthInfoResponse.getName())
-                    .nickname(oAuthInfoResponse.getName() + uuid)
-                    .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
-                    .build();
+            User user = User.builder().email(oAuthInfoResponse.getName()).name(oAuthInfoResponse.getName())
+                            .nickname(oAuthInfoResponse.getName() + uuid).oAuthProvider(
+                            oAuthInfoResponse.getOAuthProvider()).build();
             return userRepository.save(user).getUserId();
         } else {
-            User user = User.builder()
-                    .email(oAuthInfoResponse.getEmail())
-                    .name(oAuthInfoResponse.getName())
-                    .nickname(oAuthInfoResponse.getNickname())
-                    .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
-                    .build();
+            User user = User.builder().email(oAuthInfoResponse.getEmail()).name(oAuthInfoResponse.getName())
+                            .nickname(oAuthInfoResponse.getNickname()).oAuthProvider(
+                            oAuthInfoResponse.getOAuthProvider()).build();
             return userRepository.save(user).getUserId();
 
         }

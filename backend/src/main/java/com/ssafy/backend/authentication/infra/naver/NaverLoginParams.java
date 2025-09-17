@@ -1,12 +1,16 @@
 package com.ssafy.backend.authentication.infra.naver;
 
-import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
-import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
+import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Setter
 @Getter
 @NoArgsConstructor
 public class NaverLoginParams implements OAuthLoginParams {

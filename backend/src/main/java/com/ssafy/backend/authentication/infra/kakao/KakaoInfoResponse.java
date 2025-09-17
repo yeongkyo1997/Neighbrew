@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+
 import lombok.Getter;
 
 @Getter
@@ -41,11 +42,8 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
         private final String name;
 
         @JsonCreator
-        public KakaoAccount(
-                @JsonProperty("profile") KakaoProfile profile,
-                @JsonProperty("email") String email,
-                @JsonProperty("name") String name
-        ) {
+        public KakaoAccount(@JsonProperty("profile") KakaoProfile profile, @JsonProperty("email") String email,
+                            @JsonProperty("name") String name) {
             this.profile = profile;
             this.email = email;
             this.name = name;

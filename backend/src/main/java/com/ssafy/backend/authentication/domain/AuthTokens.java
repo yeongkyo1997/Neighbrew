@@ -1,6 +1,7 @@
 package com.ssafy.backend.authentication.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,10 +10,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AuthTokens {
     private String accessToken;
     private String refreshToken;
-    private String grantType;
-    private Long expiresIn;
+    @Builder.Default
+    private String grantType = "Bearer";
+    @Builder.Default
+    private Long expiresIn = 3600L;
 }
 
