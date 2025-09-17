@@ -1,8 +1,8 @@
-package com.ssafy.backend.repository;
-
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+package com.ssafy.backend.domain.push.repository;
 
 import java.util.Map;
+
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * sseEmitter를 이용해 알림을 실제 보내게 되는데, 어떤 회원에게 어떤 emitter가 연결 되어 있는지 저장해야함

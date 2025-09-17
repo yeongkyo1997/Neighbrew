@@ -1,12 +1,13 @@
-package com.ssafy.backend.repository;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+package com.ssafy.backend.domain.push.repository;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
@@ -34,18 +35,18 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     @Override
     public Map<String, SseEmitter> findAllEmitterStartWithByUserId(String userId) {
         return emitters.entrySet().stream()
-                //sseEmitte의 key들은 userId_currentTime 형태여서 suffix가 userId인것만 찾게 한다.
-                .filter(entry -> entry.getKey().split("_")[0].equals(userId))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                       //sseEmitte의 key들은 userId_currentTime 형태여서 suffix가 userId인것만 찾게 한다.
+                       .filter(entry -> entry.getKey().split("_")[0].equals(userId))
+                       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     //회원과 관련된 Event 모두 찾음
     @Override
     public Map<String, Object> findAllEventCacheStartWithByUserId(String userId) {
         return eventCache.entrySet().stream()
-                //sseEmitte의 key들은 userId_currentTime 형태여서 suffix가 userId인것만 찾게 한다.
-                .filter(entry -> entry.getKey().split("_")[0].equals(userId))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                         //sseEmitte의 key들은 userId_currentTime 형태여서 suffix가 userId인것만 찾게 한다.
+                         .filter(entry -> entry.getKey().split("_")[0].equals(userId))
+                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     //주어진 ID 와 Emitter를 제거

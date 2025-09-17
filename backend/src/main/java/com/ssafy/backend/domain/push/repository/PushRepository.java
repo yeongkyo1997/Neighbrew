@@ -1,14 +1,15 @@
-package com.ssafy.backend.repository;
+package com.ssafy.backend.domain.push.repository;
 
-import com.ssafy.backend.Enum.PushType;
-import com.ssafy.backend.entity.Push;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.ssafy.backend.common.enums.PushType;
+import com.ssafy.backend.domain.push.entity.Push;
 
 // DB에 저장하기 위한 Repository
 @Repository
