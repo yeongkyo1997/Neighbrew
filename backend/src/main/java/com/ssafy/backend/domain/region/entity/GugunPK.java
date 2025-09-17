@@ -1,8 +1,8 @@
-package com.ssafy.backend.entity;
-
-import lombok.Data;
+package com.ssafy.backend.domain.region.entity;
 
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class GugunPK implements Serializable {

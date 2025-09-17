@@ -1,14 +1,16 @@
-package com.ssafy.backend.controller;
+package com.ssafy.backend.domain.region.controller;
 
-import com.ssafy.backend.dto.code.GugunResponseDto;
-import com.ssafy.backend.service.GugunService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.ssafy.backend.domain.region.dto.GugunResponseDto;
+import com.ssafy.backend.domain.region.service.GugunService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor

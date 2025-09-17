@@ -1,11 +1,13 @@
-package com.ssafy.backend.service;
-
-import com.ssafy.backend.entity.Sido;
-import com.ssafy.backend.repository.SidoRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+package com.ssafy.backend.domain.region.service;
 
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.ssafy.backend.domain.region.entity.Sido;
+import com.ssafy.backend.domain.region.repository.SidoRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

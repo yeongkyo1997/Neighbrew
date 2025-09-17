@@ -1,15 +1,17 @@
-package com.ssafy.backend.controller;
+package com.ssafy.backend.domain.region.controller;
 
-import com.ssafy.backend.entity.Sido;
-import com.ssafy.backend.service.SidoService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.ssafy.backend.domain.region.entity.Sido;
+import com.ssafy.backend.domain.region.service.SidoService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
