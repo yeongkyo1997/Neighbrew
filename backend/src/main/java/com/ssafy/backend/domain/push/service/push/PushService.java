@@ -51,7 +51,7 @@ public class PushService {
         return dataManager.getUserPushLog(userId);
     }
 
-    public void deletePushById(Long pushId) {
-        dataManager.deletePushById(pushId);
+    public void deletePushById(Long pushId, Long userId) {
+        dataManager.deletePushById(pushId, userId);
     }
 }

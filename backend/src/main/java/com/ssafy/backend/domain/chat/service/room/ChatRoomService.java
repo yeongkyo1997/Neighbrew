@@ -90,7 +90,8 @@ public class ChatRoomService {
         return mapper.writeValueAsString(leaveMessage);
     }
 
-    public List<User> getUsersInChatRoom(Long chatRoomId) {
+    public List<User> getUsersInChatRoom(Long chatRoomId, Long userId) {
+        userManager.requireRoomMember(chatRoomId, userId);
         return userManager.getUsersInChatRoom(chatRoomId);
     }
 

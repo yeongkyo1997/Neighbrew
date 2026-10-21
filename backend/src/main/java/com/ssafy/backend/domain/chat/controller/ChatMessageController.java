@@ -27,7 +27,7 @@ public class ChatMessageController {
                                                                   @PathVariable Long userId,
                                                                   @LoginUser Long loginUserId) {
         LoginUserGuard.requireSame(userId, loginUserId);
-        List<ChatMessageMongo> messages = chatMessageService.getChatMessages(chatRoomId);
+        List<ChatMessageMongo> messages = chatMessageService.getChatMessages(chatRoomId, loginUserId);
         return ResponseEntity.ok(messages);
     }
 }

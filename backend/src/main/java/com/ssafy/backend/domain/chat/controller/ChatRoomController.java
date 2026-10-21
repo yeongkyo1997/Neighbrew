@@ -48,7 +48,7 @@ public class ChatRoomController {
                                               @PathVariable Long userId,
                                               @LoginUser Long loginUserId) {
         LoginUserGuard.requireSame(userId, loginUserId);
-        return ResponseEntity.ok(chatRoomService.getUsersInChatRoom(chatRoomId));
+        return ResponseEntity.ok(chatRoomService.getUsersInChatRoom(chatRoomId, loginUserId));
     }
 
     @GetMapping("{chatRoomId}/detail")

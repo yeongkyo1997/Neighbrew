@@ -33,9 +33,10 @@ public class MeetImageManager {
             }
             meetRequestDto.setImgSrc(s3Service.upload(UploadType.MEET, multipartFile));
         } else {
-            if (meetRequestDto.getImgSrc() == null) {
-                meetRequestDto.setImgSrc(prevMeetImgSrc);
-            }
+            // 클라이언트가 보낸 URL을 그대로 저장하면 이후 삭제 시 다른 사람의 S3 객체가 지워질 수 있으므로
+            // 기본 이미지로 변경하는 경우만 허용하고, 그 외에는 기존 이미지를 유지한다.
+            meetRequestDto.setImgSrc(
+                    DEFAULT_IMAGE.equals(meetRequestDto.getImgSrc()) ? DEFAULT_IMAGE : prevMeetImgSrc);
         }
     }
 
