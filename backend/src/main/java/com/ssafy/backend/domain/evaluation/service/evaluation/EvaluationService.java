@@ -20,20 +20,26 @@ public class EvaluationService {
     private final EvaluationScoreManager scoreManager;
     private final EvaluationManager evaluationManager;
 
+    // 요청 본문의 reviewer 필드는 평가 대상의 ID다 (프론트 호환을 위해 필드명 유지)
     @Transactional
     public String calculateScoreByMeetId(EvaluationRequestDto evaluationRequestDto, Long userId) {
+        Long targetId = evaluationRequestDto.getReviewer();
+        Long meetId = evaluationRequestDto.getMeetId();
+
         validator.validateSelfEvaluation(evaluationRequestDto, userId);
+        validator.validateParticipants(meetId, userId, targetId);
 
-        User ratedUser = validator.validateAndGetRatedUser(userId);
-        User reviewer = validator.validateAndGetReviewer(evaluationRequestDto.getReviewer());
-        Meet meet = validator.validateAndGetMeet(evaluationRequestDto.getMeetId());
+        User evaluator = validator.validateAndGetEvaluator(userId);
+        User target = validator.validateAndGetTarget(targetId);
+        Meet meet = validator.validateAndGetMeet(meetId);
 
-        validator.validateNotAlreadyEvaluated(ratedUser, reviewer, meet);
+        validator.validateMeetEnded(meet);
+        validator.validateNotAlreadyEvaluated(evaluator, target, meet);
 
-        Long totalUsers = validator.validateAndGetTotalUsers(evaluationRequestDto.getMeetId());
+        Long totalUsers = validator.validateAndGetTotalUsers(meetId);
 
-        scoreManager.updateReviewerScore(reviewer, evaluationRequestDto.getEvaluationType(), totalUsers);
-        evaluationManager.saveEvaluation(evaluationRequestDto, reviewer, ratedUser, meet);
+        scoreManager.updateTargetScore(target, evaluationRequestDto.getEvaluationType(), totalUsers);
+        evaluationManager.saveEvaluation(evaluationRequestDto, target, evaluator, meet);
 
         return "성공적으로 반영되었습니다.";
     }
