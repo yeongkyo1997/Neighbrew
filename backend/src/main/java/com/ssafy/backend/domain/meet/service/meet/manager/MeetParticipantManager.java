@@ -6,6 +6,7 @@ import com.ssafy.backend.common.enums.Status;
 import com.ssafy.backend.domain.meet.dto.MeetUserDto;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.service.MeetUserService;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class MeetParticipantManager {
             throw new IllegalArgumentException("해당 모임에 참여 인원이 가득 찼습니다.");
         }
 
-        for (User user : meetUserDto.getUsers()) {
+        for (PublicUserResponseDto user : meetUserDto.getUsers()) {
             if (userId.equals(user.getUserId())) {
                 throw new IllegalArgumentException("이미 참여하신 모임 입니다.");
             }

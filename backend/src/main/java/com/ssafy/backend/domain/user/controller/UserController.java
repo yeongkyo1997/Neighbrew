@@ -23,6 +23,7 @@ import com.ssafy.backend.authentication.application.LoginResponse;
 import com.ssafy.backend.common.enums.UploadType;
 import com.ssafy.backend.common.service.JwtService;
 import com.ssafy.backend.domain.storage.service.s3.S3Service;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.dto.UserResponseDto;
 import com.ssafy.backend.domain.user.dto.UserUpdateDto;
 import com.ssafy.backend.domain.user.service.UserService;
@@ -42,18 +43,18 @@ public class UserController {
 
     //전체 유저 검색
     @GetMapping()
-    public ResponseEntity<List<UserResponseDto>> findAll() {
+    public ResponseEntity<List<PublicUserResponseDto>> findAll() {
         return ResponseEntity.ok().body(userService.findAll());
     }
 
     @GetMapping("/myinfo")
     public ResponseEntity<UserResponseDto> getMyInfo(@LoginUser Long userId) {
-        return ResponseEntity.ok().body(userService.findByUserId(userId));
+        return ResponseEntity.ok().body(userService.findMyInfo(userId));
     }
 
     // userId로 유저 검색
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> findByUserId(@PathVariable Long userId) {
+    public ResponseEntity<PublicUserResponseDto> findByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok().body(userService.findByUserId(userId));
     }
 
@@ -89,7 +90,7 @@ public class UserController {
 
 
     @GetMapping("/search/{nickname}")
-    public ResponseEntity<List<UserResponseDto>> searchUsers(@PathVariable String nickname) {
+    public ResponseEntity<List<PublicUserResponseDto>> searchUsers(@PathVariable String nickname) {
         return ResponseEntity.ok(userService.searchUsers(nickname));
     }
 }

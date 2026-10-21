@@ -23,11 +23,6 @@ public class GoogleInfoResponse implements OAuthInfoResponse {
     }
 
     @Override
-    public String getNickname() {
-        return response.email;
-    }
-
-    @Override
     public String getName() {
         return response.name;
     }

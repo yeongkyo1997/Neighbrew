@@ -3,7 +3,7 @@ package com.ssafy.backend.domain.meet.dto;
 import java.util.List;
 
 import com.ssafy.backend.common.enums.Status;
-import com.ssafy.backend.domain.user.entity.User;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.Setter;
 public class MeetUserDto {
     private MeetRequestDto meetRequestDto;
 
-    private List<User> users;
+    private List<PublicUserResponseDto> users;
 
     // 유저가 생성, 참여, 신처
     private List<Status> statuses;

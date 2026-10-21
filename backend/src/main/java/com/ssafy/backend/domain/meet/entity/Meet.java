@@ -27,7 +27,7 @@ import com.ssafy.backend.domain.region.dto.GugunResponseDto;
 import com.ssafy.backend.domain.region.dto.SidoResponseDto;
 import com.ssafy.backend.domain.region.entity.Gugun;
 import com.ssafy.backend.domain.region.entity.Sido;
-import com.ssafy.backend.domain.user.dto.UserResponseDto;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.entity.User;
 
 import lombok.AccessLevel;
@@ -138,7 +138,7 @@ public class Meet {
 
     public MeetResponseDto toMeetResponseDto(Sido sido, Gugun gugun) {
         return MeetResponseDto.builder().meetId(meetId).meetName(meetName).description(description).host(
-                                      UserResponseDto.fromEntity(host)).nowParticipants(nowParticipants).maxParticipants(
+                                      PublicUserResponseDto.fromEntity(host)).nowParticipants(nowParticipants).maxParticipants(
                                       maxParticipants).meetDate(meetDate).tagId(tag.getTagId()).sido(SidoResponseDto.fromEntity(sido))
                               .gugun(GugunResponseDto.fromEntity(gugun)).minAge(minAge).maxAge(maxAge)
                               .minLiverPoint(minLiverPoint).drink(DrinkResponseDto.fromEntity(drink)).imgSrc(

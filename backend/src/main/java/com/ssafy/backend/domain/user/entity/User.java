@@ -17,7 +17,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.dto.UserUpdateDto;
 
 import lombok.AccessLevel;
@@ -74,6 +76,12 @@ public class User {
         this.birth = LocalDate.parse("2005-01-01");
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // 엔티티가 응답에 그대로 실려도(Push, ChatDmRoom 등) 공개 프로필만 직렬화되도록 한다.
+    @JsonValue
+    public PublicUserResponseDto toPublicResponse() {
+        return PublicUserResponseDto.fromEntity(this);
     }
 
     public void updateFromDto(UserUpdateDto updateDto) {
