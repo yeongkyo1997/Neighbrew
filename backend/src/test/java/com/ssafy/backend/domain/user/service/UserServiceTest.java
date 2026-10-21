@@ -53,12 +53,19 @@ class UserServiceTest {
     }
 
     @Test
-    void 전체_목록과_닉네임_검색은_공개_프로필만_반환한다() {
+    void 전체_목록은_공개_프로필만_반환한다() {
         given(userRepository.findAll()).willReturn(List.of(emailNicknameUser(7L)));
-        given(userRepository.findByNicknameContaining("@")).willReturn(List.of(emailNicknameUser(8L)));
 
         assertPublicUser(toJson(userService.findAll()).get(0), 7L, "user_7");
-        assertPublicUser(toJson(userService.searchUsers("@")).get(0), 8L, "user_8");
+    }
+
+    @Test
+    void 닉네임_검색은_이메일_닉네임을_매칭하지_않고_공개_프로필만_반환한다() {
+        // 가려진 이메일 닉네임까지 매칭하면 검색어를 한 글자씩 늘려 이메일을 알아낼 수 있다.
+        given(userRepository.findByNicknameContainingAndNicknameNotContaining("술", "@")).willReturn(
+                List.of(user(8L, "술꾼")));
+
+        assertPublicUser(toJson(userService.searchUsers("술")).get(0), 8L, "술꾼");
     }
 
     @Test
@@ -79,6 +86,15 @@ class UserServiceTest {
 
         assertThatThrownBy(() -> userService.updateUser(7L, updateDto("new@example.com", "안녕하세요")))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("@");
+        then(userRepository).should(never()).save(any());
+    }
+
+    @Test
+    void 가려진_공개_이름과_같은_형식의_닉네임으로_바꿀_수_없다() {
+        given(userRepository.findById(9L)).willReturn(Optional.of(user(9L, "술꾼")));
+
+        assertThatThrownBy(() -> userService.updateUser(9L, updateDto("user_7", "안녕하세요")))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("user_");
         then(userRepository).should(never()).save(any());
     }
 

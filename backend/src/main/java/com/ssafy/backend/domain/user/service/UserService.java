@@ -41,9 +41,9 @@ public class UserService {
     public UserResponseDto updateUser(Long userId, UserUpdateDto updateDto) {
         User user = findUser(userId);
 
-        // 이메일을 닉네임으로 쓰지 못하게 한다. (이메일 닉네임인 기존 사용자가 다른 항목만 고치는 경우는 허용)
-        if (!updateDto.getNickname().equals(user.getNickname()) && updateDto.getNickname().contains("@")) {
-            throw new IllegalArgumentException("닉네임에 '@'는 사용할 수 없습니다.");
+        // 이메일 닉네임인 기존 사용자가 닉네임은 두고 다른 항목만 고치는 경우는 허용한다.
+        if (!updateDto.getNickname().equals(user.getNickname())) {
+            validateNewNickname(updateDto.getNickname());
         }
 
         boolean nicknameExists = userRepository.existsByNickname(updateDto.getNickname());
@@ -60,6 +60,16 @@ public class UserService {
 
         user.updateFromDto(updateDto);
         return UserResponseDto.fromEntity(userRepository.save(user));
+    }
+
+    // 이메일은 닉네임으로 쓸 수 없고, 이메일 닉네임 사용자를 가린 공개 이름(user_{id})은 남이 가져갈 수 없다.
+    private void validateNewNickname(String nickname) {
+        if (nickname.contains("@")) {
+            throw new IllegalArgumentException("닉네임에 '@'는 사용할 수 없습니다.");
+        }
+        if (nickname.matches("user_\\d+")) {
+            throw new IllegalArgumentException("user_숫자 형식의 닉네임은 사용할 수 없습니다.");
+        }
     }
 
     @Transactional
@@ -79,7 +89,7 @@ public class UserService {
     }
 
     public List<PublicUserResponseDto> searchUsers(String nickName) {
-        return userRepository.findByNicknameContaining(nickName).stream().map(PublicUserResponseDto::fromEntity)
-                             .collect(Collectors.toList());
+        return userRepository.findByNicknameContainingAndNicknameNotContaining(nickName, "@").stream()
+                             .map(PublicUserResponseDto::fromEntity).collect(Collectors.toList());
     }
 }
