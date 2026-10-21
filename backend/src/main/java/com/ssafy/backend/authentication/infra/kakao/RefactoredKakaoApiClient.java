@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +13,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import com.ssafy.backend.authentication.domain.template.AbstractOAuthApiClient;
 
-@Component
+// 기존 클라이언트와 같은 OAuthProvider를 반환하므로 빈으로 등록하지 않음(등록 시 Duplicate key로 기동 실패)
 public class RefactoredKakaoApiClient extends AbstractOAuthApiClient {
 
     private static final String GRANT_TYPE = "authorization_code";

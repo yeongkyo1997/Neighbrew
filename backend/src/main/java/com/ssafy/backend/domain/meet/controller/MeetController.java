@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,7 +58,7 @@ public class MeetController {
 
     //모임 생성
     @PostMapping("/create")
-    public ResponseEntity<?> saveMeet(Long userId,
+    public ResponseEntity<?> saveMeet(@RequestAttribute("userId") String tokenUserId,
                                       MeetRequestDto meetRequestDto,
                                       Long drinkId,
                                       @RequestPart(value = "image", required = false)
@@ -65,13 +66,14 @@ public class MeetController {
             throws IllegalArgumentException, IOException {
 
         checkCapacityFile(multipartFile);
+        Long userId = Long.valueOf(tokenUserId);
         Meet createdMeet = meetService.saveMeet(meetRequestDto, userId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(createdMeet);
     }
 
     //모임 수정
     @PutMapping("/modify/{userId}/{meetId}")
-    public ResponseEntity<?> updateMeet(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> updateMeet(@RequestAttribute("userId") String tokenUserId,
                                         @PathVariable("meetId") Long meetId,
                                         MeetRequestDto meetRequestDto,
                                         Long drinkId,
@@ -79,7 +81,7 @@ public class MeetController {
                                         Optional<MultipartFile> multipartFile) throws IOException {
         checkCapacityFile(multipartFile);
 
-        meetService.updateMeet(meetRequestDto, userId, meetId, drinkId, multipartFile.orElse(null));
+        meetService.updateMeet(meetRequestDto, Long.valueOf(tokenUserId), meetId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
     }
 
@@ -94,8 +96,8 @@ public class MeetController {
     //모임 삭제하기
     @DeleteMapping("/delete/{meetId}")
     public ResponseEntity<?> deleteMeet(@PathVariable Long meetId,
-                                        @RequestBody Map<String, Long> requestBody) {
-        Long hostId = requestBody.get("userId");
+                                        @RequestAttribute("userId") String tokenUserId) {
+        Long hostId = Long.valueOf(tokenUserId);
         meetService.deleteMeet(hostId, meetId);
 
         return ResponseEntity.ok(meetId + " 모임이 삭제 되었습니다.");
@@ -103,8 +105,9 @@ public class MeetController {
 
     // 참가자 : 모임 신청
     @PostMapping("/apply")
-    public ResponseEntity<?> applyMeet(@RequestBody Map<String, Long> requestBody) {
-        Long userId = requestBody.get("userId");
+    public ResponseEntity<?> applyMeet(@RequestAttribute("userId") String tokenUserId,
+                                       @RequestBody Map<String, Long> requestBody) {
+        Long userId = Long.valueOf(tokenUserId);
         Long meetId = requestBody.get("meetId");
 
         meetService.applyMeet(userId, meetId);
@@ -113,8 +116,9 @@ public class MeetController {
 
     // 유저 : 모임 신청 취소
     @PutMapping("/apply-cancel")
-    public ResponseEntity<?> applyCancelMeet(@RequestBody Map<String, Long> requestBody) {
-        Long userId = requestBody.get("userId");
+    public ResponseEntity<?> applyCancelMeet(@RequestAttribute("userId") String tokenUserId,
+                                             @RequestBody Map<String, Long> requestBody) {
+        Long userId = Long.valueOf(tokenUserId);
         Long meetId = requestBody.get("meetId");
 
         meetService.applyCancelMeet(userId, meetId);
@@ -123,8 +127,9 @@ public class MeetController {
 
     // 유저 : 모임 나가기
     @DeleteMapping("/exit")
-    public ResponseEntity<?> exitMeet(@RequestBody Map<String, Long> requestBody) {
-        Long userId = requestBody.get("userId");
+    public ResponseEntity<?> exitMeet(@RequestAttribute("userId") String tokenUserId,
+                                      @RequestBody Map<String, Long> requestBody) {
+        Long userId = Long.valueOf(tokenUserId);
         Long meetId = requestBody.get("meetId");
 
         meetService.exitMeet(userId, meetId);
@@ -134,12 +139,13 @@ public class MeetController {
 
     // 방장 : 모임 신청 관리
     @PostMapping("/manage-user")
-    public ResponseEntity<?> manageMeetApply(@RequestBody Map<String, Object> requestBody) {
+    public ResponseEntity<?> manageMeetApply(@RequestAttribute("userId") String tokenUserId,
+                                             @RequestBody Map<String, Object> requestBody) {
         Long userId = ((Number) requestBody.get("userId")).longValue();
         Long meetId = ((Number) requestBody.get("meetId")).longValue();
         boolean applyResult = (boolean) requestBody.get("applyResult");
 
-        return ResponseEntity.ok(meetService.manageMeet(userId, meetId, applyResult));
+        return ResponseEntity.ok(meetService.manageMeet(Long.valueOf(tokenUserId), userId, meetId, applyResult));
     }
 
     // 1시간마다

@@ -57,8 +57,10 @@ public class SubReviewController {
     // 댓글을 수정하는 API
     @PutMapping("/update")
     public ResponseEntity<SubReviewResponseDto> updateSubReview(
-            @RequestBody SubReviewRequestDto subReviewRequestDto) {
+            @RequestBody SubReviewRequestDto subReviewRequestDto,
+            @RequestHeader("Authorization") String token) {
+        Long userId = JwtUtil.parseUserIdFromToken(token);
         return ResponseEntity.ok().body(SubReviewResponseDto.fromEntity(
-                subReviewService.updateSubReview(subReviewRequestDto, subReviewRequestDto.getUserId())));
+                subReviewService.updateSubReview(subReviewRequestDto, userId)));
     }
 }

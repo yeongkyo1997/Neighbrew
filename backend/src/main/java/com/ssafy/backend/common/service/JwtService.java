@@ -22,6 +22,6 @@ public class JwtService {
     }
 
     public Claims getClaimsFromToken(String token) {
-        return JwtUtil.getClaims(token);
+        return JwtUtil.getRefreshClaims(token);
     }
 }

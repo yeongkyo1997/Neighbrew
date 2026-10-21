@@ -39,8 +39,7 @@ public class TokenService {
     }
 
     public String extractUserId(String token) {
-        Long userId = JwtUtil.parseUserIdFromToken(token);
-        return String.valueOf(userId);
+        return JwtUtil.getRefreshClaims(token).getSubject();
     }
 
     public AuthTokens refreshTokens(String refreshToken) {

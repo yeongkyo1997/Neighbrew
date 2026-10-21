@@ -38,7 +38,7 @@ public class ChatDmController {
         Long userId = JwtUtil.parseUserIdFromToken(token);
 
         return userId.equals(user1Id) || userId.equals(user2Id) ? ResponseEntity.ok(
-                chatDmService.findDmMessagesByRoomId(user1Id, user2Id)) : ResponseEntity.status(
+                chatDmService.findDmMessagesByRoomId(user1Id, user2Id, userId)) : ResponseEntity.status(
                 HttpStatus.UNAUTHORIZED).body("유저 정보가 올바르지 않습니다.");
     }
 }

@@ -37,7 +37,9 @@ public class DrinkReviewImageManager {
             deleteImageIfNotDefault(drinkReview.getImg());
             return s3Service.upload(UploadType.DRINKREVIEW, multipartFile);
         } else {
-            return request.getImgSrc() != null ? request.getImgSrc() : drinkReview.getImg();
+            // 클라이언트가 보낸 URL을 그대로 저장하면 이후 삭제 시 다른 사람의 S3 객체가 지워질 수 있으므로
+            // 기본 이미지로 변경하는 경우만 허용하고, 그 외에는 기존 이미지를 유지한다.
+            return DEFAULT_IMAGE.equals(request.getImgSrc()) ? DEFAULT_IMAGE : drinkReview.getImg();
         }
     }
 

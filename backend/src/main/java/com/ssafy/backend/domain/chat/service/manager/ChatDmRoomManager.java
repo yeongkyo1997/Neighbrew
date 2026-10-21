@@ -49,8 +49,10 @@ public class ChatDmRoomManager {
         }
     }
 
-    public LocalDateTime getAttendTimeForUser(ChatDmRoom dmRoom, Long user1Id, Long user2Id) {
-        return user2Id.equals(user1Id) ? dmRoom.getUser1AttendTime() : dmRoom.getUser2AttendTime();
+    // 요청한 유저가 방의 user1인지 user2인지에 따라 해당 유저의 입장 시각을 반환
+    public LocalDateTime getAttendTimeForUser(ChatDmRoom dmRoom, Long requestUserId) {
+        return requestUserId.equals(dmRoom.getUser1().getUserId()) ? dmRoom.getUser1AttendTime()
+                                                                   : dmRoom.getUser2AttendTime();
     }
 
     public void saveChatRoom(ChatDmRoom chatRoom) {

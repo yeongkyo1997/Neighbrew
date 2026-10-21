@@ -1,5 +1,7 @@
 package com.ssafy.backend.authentication.infra.naver;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -33,6 +35,9 @@ public class NaverApiClient implements OAuthApiClient {
     private String clientId;
     @Value("${oauth.naver.secret}")
     private String clientSecret;
+    // 설정이 없으면 기존 로컬 주소를 기본값으로 사용
+    @Value("${oauth.naver.url.redirect:http://localhost:5173/naver/callback}")
+    private String redirectUri;
 
     @Override
     public OAuthProvider oAuthProvider() {
@@ -78,8 +83,9 @@ public class NaverApiClient implements OAuthApiClient {
     @Override
     public String authApiUrl(OAuthLoginParams params) {
         String responseType = "code";
-        String redirectUri = "http://localhost:5173/naver/callback";
+        // state에 client secret을 넣으면 브라우저에 노출되므로 매 요청마다 임의 값을 사용
+        String state = UUID.randomUUID().toString();
         return authUrl + "/oauth2.0/authorize" + "?response_type=" + responseType + "&client_id=" + clientId
-               + "&state=" + clientSecret + "&redirect_uri=" + redirectUri;
+               + "&state=" + state + "&redirect_uri=" + redirectUri;
     }
 }

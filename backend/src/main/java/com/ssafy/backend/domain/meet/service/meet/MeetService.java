@@ -79,6 +79,7 @@ public class MeetService {
     public void updateMeet(MeetRequestDto meetRequestDto, Long userId, Long meetId, Long drinkId,
                            MultipartFile multipartFile) throws IOException {
         validator.validateMeet(meetRequestDto, drinkId);
+        validator.validateHostPermission(validator.validateAndGetMeet(meetId), userId);
 
         String prevMeetImgSrc = meetManager.getPreviousImagePath(meetId);
         User host = validator.validateAndGetUser(userId);
@@ -136,12 +137,21 @@ public class MeetService {
         chatManager.removeUserFromChatRoom(nowMeet.getChatRoom(), userId);
     }
 
-    public String manageMeet(Long userId, Long meetId, boolean applyResult) {
+    @Transactional
+    public String manageMeet(Long hostId, Long userId, Long meetId, boolean applyResult) {
         Meet managementMeet = validator.validateAndGetMeet(meetId);
+        validator.validateHostPermission(managementMeet, hostId);
         User host = managementMeet.getHost();
         User manageUser = validator.validateAndGetUser(userId);
 
+        if (meetUserService.findUserStatus(userId, meetId) != Status.APPLY) {
+            throw new IllegalArgumentException("가입신청중인 유저만 승인/거절할 수 있습니다.");
+        }
+
         if (applyResult) {
+            if (managementMeet.getNowParticipants() >= managementMeet.getMaxParticipants()) {
+                throw new IllegalArgumentException("해당 모임에 참여 인원이 가득 찼습니다.");
+            }
             meetManager.updateParticipants(meetId);
             chatManager.addUserToChatRoom(managementMeet.getChatRoom(), manageUser, host,
                                           manageUser.getNickname());
