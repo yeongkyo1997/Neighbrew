@@ -22,7 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private static final Pattern MASKED_NICKNAME = Pattern.compile("user_\\d+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MASKED_NICKNAME = Pattern.compile("user_\\d+", Pattern.CASE_INSENSITIVE
+                                                                                | Pattern.UNICODE_CHARACTER_CLASS);
     // 공백·제로폭 문자 등 화면에 보이지 않는 문자
     private static final Pattern INVISIBLE_CHARS = Pattern.compile("[\\s\\p{Z}\\p{Cc}\\p{Cf}]");
 
