@@ -1,13 +1,12 @@
 package com.ssafy.backend.common.util;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,33 +19,33 @@ public class JwtUtil {
     private static final String BEARER_PREFIX = "Bearer ";
 
     // 재시작/다중 인스턴스에서도 토큰이 유지되도록 환경변수 JWT_SECRET(32바이트 이상)으로 서명 키를 고정한다.
-    private static final Key secretKey = createKey();
+    private static final SecretKey secretKey = createKey();
 
-    private static Key createKey() {
+    private static SecretKey createKey() {
         String secret = System.getenv("JWT_SECRET");
         if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < 32) {
             log.warn("JWT_SECRET 환경변수가 없거나 32바이트 미만입니다. 임시 키를 사용하므로 재시작 시 모든 토큰이 무효화됩니다.");
-            return Keys.secretKeyFor(SignatureAlgorithm.HS256);
+            return Jwts.SIG.HS256.key().build();
         }
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String generateToken(String subject) {
         return Jwts.builder()
-                   .setSubject(subject)
+                   .subject(subject)
                    .claim(TOKEN_TYPE, ACCESS)
-                   .setIssuedAt(new Date(System.currentTimeMillis()))
-                   .setExpiration(new Date(System.currentTimeMillis() + 60L * 1000 * 60 * 24)) // 24 hours
+                   .issuedAt(new Date(System.currentTimeMillis()))
+                   .expiration(new Date(System.currentTimeMillis() + 60L * 1000 * 60 * 24)) // 24 hours
                    .signWith(secretKey)
                    .compact();
     }
 
     public static String generateRefreshToken(String subject) {
         return Jwts.builder()
-                   .setSubject(subject)
+                   .subject(subject)
                    .claim(TOKEN_TYPE, REFRESH)
-                   .setIssuedAt(new Date(System.currentTimeMillis()))
-                   .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 7)) // 7 days
+                   .issuedAt(new Date(System.currentTimeMillis()))
+                   .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 7)) // 7 days
                    .signWith(secretKey)
                    .compact();
     }
@@ -63,9 +62,10 @@ public class JwtUtil {
 
     private static Claims getClaimsOfType(String token, String type) {
         Claims claims = Jwts.parser()
-                            .setSigningKey(secretKey)
-                            .parseClaimsJws(token)
-                            .getBody();
+                            .verifyWith(secretKey)
+                            .build()
+                            .parseSignedClaims(token)
+                            .getPayload();
         if (!type.equals(claims.get(TOKEN_TYPE, String.class))) {
             throw new JwtException("토큰 종류가 올바르지 않습니다.");
         }

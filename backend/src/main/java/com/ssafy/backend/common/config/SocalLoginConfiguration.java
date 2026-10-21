@@ -13,11 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class SocalLoginConfiguration {
     // RestTemplate을 사용하기 위해 Spring Bean 컴포넌트 등록
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
+    // (Spring 6부터 같은 이름의 @Bean 오버로드가 금지되어, 기존에 실제로 선택되던 builder 버전만 남김)
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder

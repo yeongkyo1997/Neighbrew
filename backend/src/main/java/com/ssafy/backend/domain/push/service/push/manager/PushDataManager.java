@@ -2,7 +2,7 @@ package com.ssafy.backend.domain.push.service.push.manager;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Component;
 

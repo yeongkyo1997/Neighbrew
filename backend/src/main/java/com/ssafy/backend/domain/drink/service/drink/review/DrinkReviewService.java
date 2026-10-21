@@ -3,7 +3,7 @@ package com.ssafy.backend.domain.drink.service.drink.review;
 import java.io.IOException;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

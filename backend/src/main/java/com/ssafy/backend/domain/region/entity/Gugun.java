@@ -1,9 +1,9 @@
 package com.ssafy.backend.domain.region.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

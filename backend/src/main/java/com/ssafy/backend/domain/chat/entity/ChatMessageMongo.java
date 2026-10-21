@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.chat.entity;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 

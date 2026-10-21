@@ -2,7 +2,7 @@ package com.ssafy.backend.domain.user.service.commentlike;
 
 import java.util.Optional;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
