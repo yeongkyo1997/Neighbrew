@@ -12,7 +12,7 @@ import com.ssafy.backend.domain.follow.entity.Follow;
 public interface FollowRepository extends JpaRepository<Follow, Long> {
     Optional<Follow> findByFollowerUserIdAndFollowingUserId(Long followerId, Long followingId);
 
-    Optional<List<Follow>> findByFollowingUserId(Long userId);
+    List<Follow> findByFollowingUserId(Long userId);
 
-    Optional<List<Follow>> findByFollowerUserId(Long userId);
+    List<Follow> findByFollowerUserId(Long userId);
 }

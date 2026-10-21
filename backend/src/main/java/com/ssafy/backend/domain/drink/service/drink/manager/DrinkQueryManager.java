@@ -40,11 +40,11 @@ public class DrinkQueryManager {
         if (name == null && tagId == 0) {
             drinks = drinkRepository.findAll(pageable);
         } else if (name == null) {
-            drinks = drinkRepository.findByTagId(tagId, pageable).orElse(Page.empty());
+            drinks = drinkRepository.findByTagId(tagId, pageable);
         } else if (tagId == 0) {
-            drinks = drinkRepository.findByNameContains(name, pageable).orElse(Page.empty());
+            drinks = drinkRepository.findByNameContains(name, pageable);
         } else {
-            drinks = drinkRepository.findByNameContainsAndTagId(name, tagId, pageable).orElse(Page.empty());
+            drinks = drinkRepository.findByNameContainsAndTagId(name, tagId, pageable);
         }
 
         return drinks.map(DrinkResponseDto::fromEntity);

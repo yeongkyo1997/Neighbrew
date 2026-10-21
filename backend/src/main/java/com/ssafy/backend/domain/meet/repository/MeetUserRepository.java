@@ -17,7 +17,7 @@ public interface MeetUserRepository extends JpaRepository<MeetUser, Long> {
 
     void deleteByMeetMeetId(Long meetId);
 
-    Optional<List<MeetUser>> findByMeetMeetIdOrderByStatusDesc(Long meetId);
+    List<MeetUser> findByMeetMeetIdOrderByStatusDesc(Long meetId);
 
     Optional<MeetUser> findByUserUserIdAndMeetMeetId(Long userId, Long meetId);
 

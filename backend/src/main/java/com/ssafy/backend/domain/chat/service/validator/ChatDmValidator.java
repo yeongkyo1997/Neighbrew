@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class ChatDmValidator {
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     public ChatMessageRequest parseMessageRequest(String payload) throws JsonProcessingException {
         JsonNode jsonNode = mapper.readTree(payload);

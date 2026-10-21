@@ -38,7 +38,7 @@ public class ChatRoomService {
     private final ChatRoomMessageManager messageManager;
     private final PushService pushService;
     private final MeetUserRepository meetUserRepository;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     @Value("${neighbrew.full.url}")
     private String neighbrewUrl;
