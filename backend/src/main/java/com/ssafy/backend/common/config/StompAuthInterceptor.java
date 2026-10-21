@@ -1,6 +1,8 @@
 package com.ssafy.backend.common.config;
 
 import java.security.Principal;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,10 +15,8 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
-import com.ssafy.backend.common.enums.Status;
 import com.ssafy.backend.common.util.JwtUtil;
-import com.ssafy.backend.domain.chat.repository.ChatRoomUserRepository;
-import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
+import com.ssafy.backend.domain.chat.service.room.manager.ChatRoomUserManager;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,13 +25,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StompAuthInterceptor implements ChannelInterceptor {
     private static final String BEARER_PREFIX = "Bearer ";
+    // 클라이언트가 보낼 수 있는 명령만 허용한다.
+    // 서버 전용 프레임(MESSAGE 등)을 클라이언트가 보내면 SimpleBroker가 명령을 보지 않고 구독자에게 그대로 전달하므로 거부한다.
+    private static final Set<StompCommand> CLIENT_COMMANDS = EnumSet.of(
+            StompCommand.CONNECT, StompCommand.STOMP, StompCommand.SUBSCRIBE, StompCommand.UNSUBSCRIBE,
+            StompCommand.SEND, StompCommand.ACK, StompCommand.NACK, StompCommand.BEGIN, StompCommand.COMMIT,
+            StompCommand.ABORT, StompCommand.DISCONNECT);
     // SimpleBroker는 구독 목적지를 패턴(*, **)으로 해석하므로, 숫자 ID만 있는 정확한 형태만 허용한다.
     private static final Pattern DM_TOPIC = Pattern.compile("^/pub/dm/([0-9]+)/([0-9]+)$");
     private static final Pattern ROOM_TOPIC = Pattern.compile("^/pub/room/([0-9]+)$");
     private static final String APP_PREFIX = "/sub/";
 
-    private final ChatRoomUserRepository chatRoomUserRepository;
-    private final MeetUserRepository meetUserRepository;
+    private final ChatRoomUserManager chatRoomUserManager;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -41,7 +46,12 @@ public class StompAuthInterceptor implements ChannelInterceptor {
         }
 
         StompCommand command = accessor.getCommand();
-        if (StompCommand.CONNECT.equals(command)) {
+        if (!CLIENT_COMMANDS.contains(command)) {
+            throw new MessagingException("허용되지 않은 명령입니다");
+        }
+
+        // STOMP는 CONNECT의 별칭이므로 똑같이 토큰을 검증한다.
+        if (StompCommand.CONNECT.equals(command) || StompCommand.STOMP.equals(command)) {
             String header = accessor.getFirstNativeHeader("Authorization");
             if (header == null || !header.startsWith(BEARER_PREFIX)) {
                 throw new MessagingException("토큰 형식이 잘못됐습니다");
@@ -93,22 +103,12 @@ public class StompAuthInterceptor implements ChannelInterceptor {
         Matcher room = ROOM_TOPIC.matcher(destination);
         if (room.matches()) {
             Long roomId = Long.valueOf(room.group(1));
-            if (!isRoomMember(userId, roomId)) {
+            if (!chatRoomUserManager.isRoomMember(roomId, userId)) {
                 throw new MessagingException("참여중인 채팅방만 구독할 수 있습니다");
             }
             return;
         }
 
         throw new MessagingException("허용되지 않은 구독 목적지입니다");
-    }
-
-    // 채팅방 참여자이거나, 채팅방이 속한 모임의 방장/참여자면 허용한다.
-    // (모임 멤버는 재입장(/sub/join) 처리 전에 구독해도 끊기지 않도록)
-    private boolean isRoomMember(Long userId, Long roomId) {
-        if (chatRoomUserRepository.existsByChatRoomChatRoomIdAndUserUserId(roomId, userId)) {
-            return true;
-        }
-        Status meetStatus = meetUserRepository.findStatusByUserIdAndChatRoomId(userId, roomId);
-        return meetStatus == Status.HOST || meetStatus == Status.GUEST;
     }
 }

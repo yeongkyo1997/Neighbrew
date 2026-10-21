@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.backend.common.auth.LoginUser;
+import com.ssafy.backend.common.auth.LoginUserGuard;
 import com.ssafy.backend.common.util.SseTicketStore;
 import com.ssafy.backend.domain.push.entity.Push;
 import com.ssafy.backend.domain.push.service.push.PushService;
@@ -47,14 +48,15 @@ public class PushController {
 
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Push> getUserPushLog(@PathVariable Long userId) {
+    public List<Push> getUserPushLog(@PathVariable Long userId, @LoginUser Long loginUserId) {
+        LoginUserGuard.requireSame(userId, loginUserId);
         return pushService.getUserPushLog(userId);
     }
 
     @DeleteMapping("/{pushId}")
     @ResponseStatus(HttpStatus.OK)
-    public String deletePushLog(@PathVariable Long pushId) {
-        pushService.deletePushById(pushId);
+    public String deletePushLog(@PathVariable Long pushId, @LoginUser Long loginUserId) {
+        pushService.deletePushById(pushId, loginUserId);
         return "알림이 삭제되었습니다.";
     }
 }
