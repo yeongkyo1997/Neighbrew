@@ -16,9 +16,10 @@ public class EvaluationManager {
     private final UserRepository userRepository;
     private final EvaluationRepository evaluationRepository;
 
-    public void saveEvaluation(EvaluationRequestDto evaluationRequestDto, User reviewer, User ratedUser,
+    // Evaluation 엔티티는 ratedUser 컬럼에 평가자, reviewer 컬럼에 평가 대상을 저장한다
+    public void saveEvaluation(EvaluationRequestDto evaluationRequestDto, User target, User evaluator,
                                Meet meet) {
-        userRepository.save(reviewer);
-        evaluationRepository.save(evaluationRequestDto.toEntity(reviewer, ratedUser, meet));
+        userRepository.save(target);
+        evaluationRepository.save(evaluationRequestDto.toEntity(target, evaluator, meet));
     }
 }
