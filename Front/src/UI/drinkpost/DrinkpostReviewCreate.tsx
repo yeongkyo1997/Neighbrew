@@ -75,7 +75,6 @@ const DrinkpostReviewCreate = () => {
 
   const reviewSubmit = () => {
     if (isClick) return; //클릭했음(api 중복호출방지)
-    setIsClick(true); //클릭했음(api 중복호출방지)
 
     const file = imgFile;
     const formData = new FormData();
@@ -90,12 +89,11 @@ const DrinkpostReviewCreate = () => {
         return;
       }
     }
+    setIsClick(true); //검증 통과 후 클릭 처리(api 중복호출방지)
     formData.append("drinkId", drinkId);
     formData.append("content", review);
-    formData.append("image", file);
 
     if (file === null) {
-      formData.append("image", file);
       createApi(formData);
     } else {
       setLoadingModalOn(true);
@@ -130,6 +128,11 @@ const DrinkpostReviewCreate = () => {
         navigate(`/drinkpost/${drinkId}/${res.data.drinkReviewId}`, {
           replace: true,
         });
+      })
+      .catch(() => {
+        alert("후기 등록에 실패했습니다.");
+        setLoadingModalOn(false);
+        setIsClick(false);
       });
   };
 

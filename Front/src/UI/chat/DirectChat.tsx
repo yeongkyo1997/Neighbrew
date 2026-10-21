@@ -253,7 +253,7 @@ const DirectChat = () => {
       return ws;
     });
 
-    client.current.connect({}, () => {
+    client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {
       // 웹소켓 이벤트 핸들러 설정
       client.current!.subscribe(`/pub/dm/${user1}/${user2}`, res => {
         const receivedMessage = JSON.parse(res.body);
@@ -280,7 +280,10 @@ const DirectChat = () => {
 
   useEffect(() => {
     connectToWebSocket();
-  }, []);
+    return () => {
+      client.current?.disconnect();
+    };
+  }, [user1, user2]);
   // 엔터 누르면 메세지 전송
   const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     client.current.send(
