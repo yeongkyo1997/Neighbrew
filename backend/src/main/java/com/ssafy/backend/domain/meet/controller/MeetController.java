@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.backend.common.auth.LoginUser;
+import com.ssafy.backend.common.util.UploadSizeGuard;
 import com.ssafy.backend.domain.meet.dto.MeetRequestDto;
 import com.ssafy.backend.domain.meet.dto.MeetResponseDto;
 import com.ssafy.backend.domain.meet.entity.Meet;
@@ -65,7 +66,7 @@ public class MeetController {
                                       Optional<MultipartFile> multipartFile)
             throws IllegalArgumentException, IOException {
 
-        checkCapacityFile(multipartFile);
+        UploadSizeGuard.check(multipartFile);
         Meet createdMeet = meetService.saveMeet(meetRequestDto, userId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(createdMeet);
     }
@@ -78,18 +79,10 @@ public class MeetController {
                                         Long drinkId,
                                         @RequestPart(value = "image", required = false)
                                         Optional<MultipartFile> multipartFile) throws IOException {
-        checkCapacityFile(multipartFile);
+        UploadSizeGuard.check(multipartFile);
 
         meetService.updateMeet(meetRequestDto, loginUserId, meetId, drinkId, multipartFile.orElse(null));
         return ResponseEntity.ok(meetId + "모임이 수정 되었습니다.");
-    }
-
-    private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
-        if (multipartFile.isPresent()) {
-            if (multipartFile.get().getSize() > 1024 * 1024 * 20) {
-                throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-            }
-        }
     }
 
     //모임 삭제하기

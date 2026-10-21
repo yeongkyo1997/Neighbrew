@@ -28,12 +28,11 @@ public class PushService {
         SseEmitter sseEmitter = connection.getEmitter();
         String emitterId = connection.getEmitterId();
 
-        eventManager.sendInitialEvent(sseEmitter, userId, emitterId, connectionManager.getEmitterRepository());
+        eventManager.sendInitialEvent(sseEmitter, userId, emitterId);
 
         if (!lastEventId.isEmpty()) {
-            eventManager.sendLostData(lastEventId, userId, emitterId, sseEmitter,
-                                      connectionManager.getEmitterRepository());
-            connectionManager.getEmitterRepository().deleteAllEventCacheStartWithId(String.valueOf(userId));
+            eventManager.sendLostData(lastEventId, userId, emitterId, sseEmitter);
+            eventManager.clearLostData(userId);
         }
 
         return sseEmitter;
@@ -41,8 +40,7 @@ public class PushService {
 
     public void send(User sender, User receiver, PushType pushType, String content, String url) {
         Push push = dataManager.createAndSavePush(sender, receiver, pushType, content, url);
-        eventManager.broadcastToUser(receiver.getUserId(), push.toDto(),
-                                     connectionManager.getEmitterRepository());
+        eventManager.broadcastToUser(receiver.getUserId(), push.toDto());
     }
 
     public void deletePushLog(PushType pushType, Long senderId, Long receiverId) {

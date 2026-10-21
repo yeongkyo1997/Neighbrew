@@ -131,8 +131,7 @@ public class ChatDmService {
         return mapper.writeValueAsString(result);
     }
 
-    @Transactional
-    public Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, User receiver,
+    private Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, User receiver,
                                                   String message) {
         LocalDateTime currentTime = LocalDateTime.now();
 

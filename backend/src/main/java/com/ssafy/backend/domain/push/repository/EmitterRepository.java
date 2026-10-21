@@ -25,9 +25,6 @@ public interface EmitterRepository {
     //Emitter를 지움
     void deleteById(String emitterId);
 
-    //회원과 관련된 모든 Emitter 제거
-    void deleteAllEmitterStartWithId(String userId);
-
     //회원과 관련된 모든 이벤트 제거
     void deleteAllEventCacheStartWithId(String userId);
 

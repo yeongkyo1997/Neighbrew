@@ -42,13 +42,7 @@ public class UserCommentLikeService {
     }
 
     public boolean getIsLike(Long userId, Long reviewId) {
-        User user = validator.getUserOrNull(userId);
-        DrinkReview drinkReview = validator.getDrinkReviewOrNull(reviewId);
-
-        if (user == null || drinkReview == null) {
-            return false;
-        }
-
+        // 좋아요 행은 사용자와 리뷰가 모두 있어야 존재하므로, 존재 여부 조회 한 번으로 충분하다.
         return queryManager.isLiked(userId, reviewId);
     }
 }

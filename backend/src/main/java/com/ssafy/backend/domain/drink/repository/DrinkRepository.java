@@ -1,11 +1,9 @@
 package com.ssafy.backend.domain.drink.repository;
 
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.backend.domain.drink.entity.Drink;
@@ -21,7 +19,5 @@ public interface DrinkRepository extends JpaRepository<Drink, Long> {
     // 술 이름으로 조회
     Page<Drink> findByNameContains(String name, Pageable pageable);
 
-    @Query(value = "SELECT * FROM drink ORDER BY RAND() LIMIT :numToPick", nativeQuery = true)
-    List<Drink> findRandomDrinks(int numToPick);
 }
 

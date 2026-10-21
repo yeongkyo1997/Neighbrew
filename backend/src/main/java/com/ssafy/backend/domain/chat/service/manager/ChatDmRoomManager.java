@@ -27,12 +27,10 @@ public class ChatDmRoomManager {
     }
 
     public void updateChatRoomAttendTimes(ChatDmRoom chatRoom, User sender, LocalDateTime currentTime) {
-        if (isSenderUser1(chatRoom, sender)) {
+        // 보낸 사람이 방의 참여자면, 나갔던 상대방을 포함해 두 사람 모두 다시 입장 처리한다.
+        if (isSenderUser1(chatRoom, sender) || isSenderUser2(chatRoom, sender)) {
             ensureUser1Attendance(chatRoom, currentTime);
             ensureUser2Attendance(chatRoom, currentTime);
-        } else if (isSenderUser2(chatRoom, sender)) {
-            ensureUser2Attendance(chatRoom, currentTime);
-            ensureUser1Attendance(chatRoom, currentTime);
         }
     }
 

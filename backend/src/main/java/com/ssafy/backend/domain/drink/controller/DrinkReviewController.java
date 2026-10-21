@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.backend.common.auth.LoginUser;
 import com.ssafy.backend.common.auth.LoginUserGuard;
+import com.ssafy.backend.common.util.UploadSizeGuard;
 import com.ssafy.backend.domain.drink.dto.DrinkReviewRequestDto;
 import com.ssafy.backend.domain.drink.dto.DrinkReviewResponseDto;
 import com.ssafy.backend.domain.drink.dto.DrinkReviewUpdateDto;
@@ -88,18 +89,10 @@ public class DrinkReviewController {
                                                                     @PathVariable Long userId,
                                                                     @LoginUser Long loginUserId) throws IOException {
         LoginUserGuard.requireSame(userId, loginUserId);
-        checkCapacityFile(multipartFile);
+        UploadSizeGuard.check(multipartFile);
         return ResponseEntity.ok().body(
                 drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto,
                                                      multipartFile.orElse(null), userId));
-    }
-
-    private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
-        if (multipartFile.isPresent()) {
-            if (multipartFile.get().getSize() > 1024 * 1024 * 20) {
-                throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-            }
-        }
     }
 
     @DeleteMapping("/{drinkReviewId}")

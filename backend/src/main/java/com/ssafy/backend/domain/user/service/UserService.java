@@ -32,12 +32,13 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId));
 
-        if (userRepository.existsByNickname(updateDto.getNickname()) && !updateDto.getNickname().equals(
+        boolean nicknameExists = userRepository.existsByNickname(updateDto.getNickname());
+        if (nicknameExists && !updateDto.getNickname().equals(
                 user.getNickname())) {
             throw new IllegalArgumentException("닉네임 중복");
         }
 
-        if (!userRepository.existsByNickname(updateDto.getNickname()) && updateDto.getNickname().equals(
+        if (!nicknameExists && updateDto.getNickname().equals(
                 user.getNickname()) && updateDto.getBirth().equals(user.getBirth()) && updateDto.getIntro()
                                                                                                 .equals(user.getIntro())) {
             throw new IllegalArgumentException("변경사항이 없습니다.");

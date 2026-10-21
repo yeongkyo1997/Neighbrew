@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.backend.common.entity.Tag;
+import com.ssafy.backend.common.enums.MeetStatus;
+import com.ssafy.backend.common.enums.PushType;
 import com.ssafy.backend.common.enums.Status;
 import com.ssafy.backend.domain.chat.entity.ChatRoom;
 import com.ssafy.backend.domain.drink.entity.Drink;
@@ -125,7 +127,7 @@ public class MeetService {
     public void applyCancelMeet(Long userId, Long meetId) {
         Meet meet = validator.validateAndGetMeet(meetId);
         participantManager.applyCancelMeet(userId, meetId);
-        pushManager.deletePushLog(com.ssafy.backend.common.enums.PushType.MEETACCESS, userId,
+        pushManager.deletePushLog(PushType.MEETACCESS, userId,
                                   meet.getHost().getUserId());
     }
 
@@ -167,7 +169,7 @@ public class MeetService {
     public void checkMeetStatus() {
         List<Meet> expiredMeets = meetManager.findExpiredMeets();
         for (Meet meet : expiredMeets) {
-            if (meet.getMeetStatus() != com.ssafy.backend.common.enums.MeetStatus.END) {
+            if (meet.getMeetStatus() != MeetStatus.END) {
                 List<MeetUser> findUsers = meetManager.findMeetUsersByMeetId(meet.getMeetId());
                 pushManager.notifyMeetEvaluation(meet, findUsers);
             }
