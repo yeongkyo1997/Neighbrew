@@ -6,11 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.backend.common.util.JwtUtil;
+import com.ssafy.backend.common.auth.LoginUser;
 import com.ssafy.backend.domain.follow.dto.FollowResponseDto;
 import com.ssafy.backend.domain.follow.service.follow.FollowService;
 
@@ -33,9 +32,8 @@ public class FollowController {
     }
 
     @PostMapping("/{followingId}")
-    public ResponseEntity<String> followUser(@RequestHeader("Authorization") String token,
+    public ResponseEntity<String> followUser(@LoginUser Long userId,
                                              @PathVariable Long followingId) {
-        Long userId = JwtUtil.parseUserIdFromToken(token);
         return ResponseEntity.ok(followService.toggleFollow(userId, followingId));
     }
 }

@@ -4,11 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.backend.common.util.JwtUtil;
+import com.ssafy.backend.common.auth.LoginUser;
+import com.ssafy.backend.common.auth.LoginUserGuard;
 import com.ssafy.backend.domain.chat.service.ChatDmService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class ChatDmController {
     // 유저 아이디로 DM목록 조회
     @GetMapping("/list/{userId}")
     public ResponseEntity<?> getUserDmRooms(@PathVariable Long userId,
-                                            @RequestHeader("Authorization") String token) {
-        JwtUtil.validateToken(token, userId);
+                                            @LoginUser Long loginUserId) {
+        LoginUserGuard.requireSame(userId, loginUserId);
         return ResponseEntity.ok(chatDmService.findMyDmList(userId));
     }
 
@@ -34,8 +34,7 @@ public class ChatDmController {
     public ResponseEntity<?> getDmMessages(
             @PathVariable Long user1Id,
             @PathVariable Long user2Id,
-            @RequestHeader("Authorization") String token) {
-        Long userId = JwtUtil.parseUserIdFromToken(token);
+            @LoginUser Long userId) {
 
         return userId.equals(user1Id) || userId.equals(user2Id) ? ResponseEntity.ok(
                 chatDmService.findDmMessagesByRoomId(user1Id, user2Id, userId)) : ResponseEntity.status(
