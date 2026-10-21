@@ -11,8 +11,16 @@ import lombok.Getter;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true) // 필요한 데이터만 가져옴
 public class KakaoInfoResponse implements OAuthInfoResponse {
+    @JsonProperty("id")
+    private Long id;
+
     @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
+
+    @Override
+    public String getOAuthId() {
+        return id == null ? null : String.valueOf(id);
+    }
 
     @Override
     public String getEmail() {

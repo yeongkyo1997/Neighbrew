@@ -18,6 +18,11 @@ public class GoogleInfoResponse implements OAuthInfoResponse {
     }
 
     @Override
+    public String getOAuthId() {
+        return response.id;
+    }
+
+    @Override
     public String getEmail() {
         return response.email;
     }
