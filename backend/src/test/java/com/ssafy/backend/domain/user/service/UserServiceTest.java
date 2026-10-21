@@ -92,8 +92,8 @@ class UserServiceTest {
     }
 
     @ParameterizedTest
-    // 대소문자, 앞뒤 공백, 전각 숫자, 제로폭 공백으로 우회해도 화면에는 user_7로 보인다.
-    @ValueSource(strings = { "user_7", "USER_7", " user_7 ", "user_７", "user_​7" })
+    // 대소문자, 앞뒤 공백, 전각 숫자, 제로폭 공백, 다른 문자 체계의 숫자로 우회해도 막는다.
+    @ValueSource(strings = { "user_7", "USER_7", " user_7 ", "user_７", "user_​7", "user_٧" })
     void 가려진_공개_이름과_같은_형식의_닉네임으로_바꿀_수_없다(String nickname) {
         given(userRepository.findById(9L)).willReturn(Optional.of(user(9L, "술꾼")));
 
