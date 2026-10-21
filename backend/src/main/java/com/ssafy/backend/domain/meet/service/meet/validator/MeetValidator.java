@@ -37,12 +37,6 @@ public class MeetValidator {
         if (meetRequestDto.getMeetDate() == null) {
             throw new IllegalArgumentException("모임 날짜 정보가 누락되었습니다.");
         }
-        if (meetRequestDto.getMeetDate().toLocalDate() == null) {
-            throw new IllegalArgumentException("모임 날짜가 입력되지 않았습니다.");
-        }
-        if (meetRequestDto.getMeetDate().toLocalTime() == null) {
-            throw new IllegalArgumentException("모임 시간이 입력되지 않았습니다.");
-        }
         if (meetRequestDto.getMaxParticipants() == null) {
             throw new IllegalArgumentException("모임 최대 인원 수용 정보가 입력되지 않았습니다.");
         }

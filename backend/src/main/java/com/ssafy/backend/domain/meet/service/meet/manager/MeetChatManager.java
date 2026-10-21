@@ -7,10 +7,9 @@ import org.springframework.stereotype.Component;
 
 import com.ssafy.backend.domain.chat.entity.ChatMessageMongo;
 import com.ssafy.backend.domain.chat.entity.ChatRoom;
-import com.ssafy.backend.domain.chat.entity.ChatRoomUser;
 import com.ssafy.backend.domain.chat.repository.ChatRoomRepository;
-import com.ssafy.backend.domain.chat.service.ChatRoomUserService;
 import com.ssafy.backend.domain.chat.service.room.ChatRoomService;
+import com.ssafy.backend.domain.chat.service.room.manager.ChatRoomUserManager;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.user.entity.User;
 
@@ -20,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MeetChatManager {
     private final ChatRoomRepository chatRoomRepository;
-    private final ChatRoomUserService chatRoomUserService;
+    private final ChatRoomUserManager chatRoomUserManager;
     private final ChatRoomService chatRoomService;
     private final MongoTemplate mongoTemplate;
 
@@ -29,13 +28,11 @@ public class MeetChatManager {
     }
 
     public void setupChatRoomUser(ChatRoom chatRoom, User hostUser) {
-        settingChatRoomUser(ChatRoomUser.builder().chatRoom(chatRoom).user(hostUser).build(), chatRoom,
-                            hostUser, "채팅방이 생성되었습니다.");
+        settingChatRoomUser(chatRoom, hostUser, hostUser, "채팅방이 생성되었습니다.");
     }
 
     public void addUserToChatRoom(ChatRoom chatRoom, User user, User host, String nickname) {
-        settingChatRoomUser(ChatRoomUser.builder().user(user).chatRoom(chatRoom).build(), chatRoom, host,
-                            nickname + "님이 모임에 참여하셨습니다.");
+        settingChatRoomUser(chatRoom, user, host, nickname + "님이 모임에 참여하셨습니다.");
     }
 
     public void removeUserFromChatRoom(ChatRoom chatRoom, Long userId) {
@@ -48,12 +45,12 @@ public class MeetChatManager {
         }
     }
 
-    private void settingChatRoomUser(ChatRoomUser createChatRoom, ChatRoom chatRoom, User user,
-                                     String message) {
-        chatRoomUserService.save(createChatRoom);
+    // member를 채팅방에 추가하고, messageUser 명의의 시스템 메시지를 남긴다.
+    private void settingChatRoomUser(ChatRoom chatRoom, User member, User messageUser, String message) {
+        chatRoomUserManager.addUserToRoom(chatRoom, member);
 
         mongoTemplate.insert(ChatMessageMongo.builder().chatRoomId(chatRoom.getChatRoomId()).message(message)
                                              .createdAt(String.valueOf(LocalDateTime.now()))
-                                             .userId(user.getUserId()).build(), "chat");
+                                             .userId(messageUser.getUserId()).build(), "chat");
     }
 }

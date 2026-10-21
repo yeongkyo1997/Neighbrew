@@ -130,8 +130,7 @@ public class MeetQueryManager {
     }
 
     private List<MeetUser> findMeetUsersByMeetId(Long meetId) {
-        return meetUserRepository.findByMeetMeetIdOrderByStatusDesc(meetId).orElseThrow(
-                () -> new IllegalArgumentException("해당 모임 정보가 없습니다."));
+        return meetUserRepository.findByMeetMeetIdOrderByStatusDesc(meetId);
     }
 
     private Sido findSidoById(Integer sidoCode) {

@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
@@ -33,9 +32,6 @@ public class OAuthLoginService {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
 
         // 받아온 정보를 기반으로  userId를 추출
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValueAsString(oAuthInfoResponse);
-
         Long userId = findOrCreateUser(oAuthInfoResponse);
         // 그 아이디를 기반으로 token 생성
 

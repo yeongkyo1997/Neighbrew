@@ -3,9 +3,8 @@ package com.ssafy.backend.domain.chat.service.room;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,7 +21,6 @@ import com.ssafy.backend.domain.chat.service.room.manager.ChatRoomMessageManager
 import com.ssafy.backend.domain.chat.service.room.manager.ChatRoomUserManager;
 import com.ssafy.backend.domain.chat.service.room.validator.ChatRoomValidator;
 import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
-import com.ssafy.backend.domain.push.service.push.PushService;
 import com.ssafy.backend.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -36,12 +34,9 @@ public class ChatRoomService {
     private final ChatRoomManager roomManager;
     private final ChatRoomUserManager userManager;
     private final ChatRoomMessageManager messageManager;
-    private final PushService pushService;
     private final MeetUserRepository meetUserRepository;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
-    @Value("${neighbrew.full.url}")
-    private String neighbrewUrl;
 
     public List<ChatRoom> findUserChatRooms(Long userId) {
         return roomManager.findUserChatRooms(userId);

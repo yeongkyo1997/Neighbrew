@@ -1,7 +1,5 @@
 package com.ssafy.backend.authentication.infra.google;
 
-import static com.ssafy.backend.authentication.infra.google.RefactoredGoogleApiClient.getoAuthInfoResponse;
-
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
@@ -9,7 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -19,6 +19,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
+import com.ssafy.backend.authentication.infra.google.GoogleInfoResponse.Response;
 
 import lombok.RequiredArgsConstructor;
 
@@ -60,7 +61,6 @@ public class GoogleApiClient implements OAuthApiClient {
         body.add("client_secret", clientSecret);
         body.add("redirect_uri", redirectUri);
         body.add("grant_type", "authorization_code");
-        System.out.println("body.toString() = " + body);
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
@@ -73,14 +73,20 @@ public class GoogleApiClient implements OAuthApiClient {
 
     @Override
     public OAuthInfoResponse requestOauthInfo(String accessToken) {
-        System.out.println("requestOauthInfo");
         String url = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + accessToken;
 
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity request = new HttpEntity(headers);
 
-        return getoAuthInfoResponse(url, request, restTemplate);
+        ResponseEntity<Response> response = restTemplate.exchange(url, HttpMethod.GET, request, Response.class);
+
+        Response responseBody = response.getBody();
+        if (responseBody != null) {
+            return new GoogleInfoResponse(responseBody);
+        }
+
+        return null;
     }
 
     @Override

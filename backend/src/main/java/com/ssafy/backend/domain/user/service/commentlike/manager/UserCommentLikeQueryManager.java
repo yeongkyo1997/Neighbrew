@@ -19,7 +19,6 @@ public class UserCommentLikeQueryManager {
     }
 
     public boolean isLiked(Long userId, Long reviewId) {
-        return userCommentLikeRepository.findByUserUserIdAndDrinkReviewDrinkReviewId(userId, reviewId)
-                                        .isPresent();
+        return userCommentLikeRepository.existsByUserUserIdAndDrinkReviewDrinkReviewId(userId, reviewId);
     }
 }

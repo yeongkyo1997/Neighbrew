@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.backend.common.util.JwtUtil;
+import com.ssafy.backend.common.auth.LoginUser;
+import com.ssafy.backend.common.auth.LoginUserGuard;
+import com.ssafy.backend.common.util.UploadSizeGuard;
 import com.ssafy.backend.domain.drink.dto.DrinkReviewRequestDto;
 import com.ssafy.backend.domain.drink.dto.DrinkReviewResponseDto;
 import com.ssafy.backend.domain.drink.dto.DrinkReviewUpdateDto;
@@ -69,10 +70,9 @@ public class DrinkReviewController {
 
     @PostMapping("")
     public ResponseEntity<DrinkReviewResponseDto> createDrinkReview(
-            @RequestHeader("Authorization") String token,
+            @LoginUser Long userId,
             @ModelAttribute DrinkReviewRequestDto drinkReviewRequestDto,
             @RequestPart(value = "image", required = false) MultipartFile multipartFile) throws IOException {
-        Long userId = JwtUtil.parseUserIdFromToken(token);
         drinkReviewRequestDto.setUserId(userId);
 
         return ResponseEntity.ok().body(
@@ -87,28 +87,18 @@ public class DrinkReviewController {
                                                                             required = false)
                                                                     Optional<MultipartFile> multipartFile,
                                                                     @PathVariable Long userId,
-                                                                    @RequestHeader("Authorization")
-                                                                    String token) throws IOException {
-        JwtUtil.validateToken(token, userId);
-        checkCapacityFile(multipartFile);
+                                                                    @LoginUser Long loginUserId) throws IOException {
+        LoginUserGuard.requireSame(userId, loginUserId);
+        UploadSizeGuard.check(multipartFile);
         return ResponseEntity.ok().body(
                 drinkReviewService.updateDrinkReview(drinkReviewId, drinkReviewUpdateDto,
                                                      multipartFile.orElse(null), userId));
     }
 
-    private void checkCapacityFile(Optional<MultipartFile> multipartFile) {
-        if (multipartFile.isPresent()) {
-            if (multipartFile.get().getSize() > 1024 * 1024 * 20) {
-                throw new IllegalArgumentException("파일 업로드 크기는 20MB로 제한되어 있습니다.");
-            }
-        }
-    }
-
     @DeleteMapping("/{drinkReviewId}")
-    public ResponseEntity<String> deleteDrinkReview(@RequestHeader("Authorization") String token,
+    public ResponseEntity<String> deleteDrinkReview(@LoginUser Long userId,
                                                     @PathVariable Long drinkReviewId)
             throws IllegalArgumentException {
-        Long userId = JwtUtil.parseUserIdFromToken(token);
         drinkReviewService.deleteDrinkReview(drinkReviewId, userId);
         return ResponseEntity.ok("삭제 완료");
     }

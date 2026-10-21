@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.user.service.commentlike.manager;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Component;
 

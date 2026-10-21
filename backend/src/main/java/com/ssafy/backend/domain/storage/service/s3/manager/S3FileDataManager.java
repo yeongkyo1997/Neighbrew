@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.storage.service.s3.manager;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Component;
 

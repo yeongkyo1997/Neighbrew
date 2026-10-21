@@ -2,14 +2,14 @@ package com.ssafy.backend.common.filter;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.ssafy.backend.common.util.JwtUtil;
 import com.ssafy.backend.common.util.SseTicketStore;
@@ -83,7 +83,7 @@ public class TokenFilter implements Filter {
         filterChain.doFilter(request, response);
     }
 
-    private static final String[] SSE_CONNECT_PREFIXES = {"/api/auth/connect/", "/api/v2/auth/connect/", "/api/push/connect/"};
+    private static final String[] SSE_CONNECT_PREFIXES = {"/api/auth/connect/", "/api/push/connect/"};
 
     private boolean isSseConnectPath(String path) {
         for (String prefix : SSE_CONNECT_PREFIXES) {
@@ -99,7 +99,6 @@ public class TokenFilter implements Filter {
         if (isSseConnectPath(path)) {
             return false;
         }
-        return path.startsWith("/api/auth/") || path.startsWith("/api/v2/auth/")
-               || path.equals("/api/user/refresh-token");
+        return path.startsWith("/api/auth/") || path.equals("/api/user/refresh-token");
     }
 }

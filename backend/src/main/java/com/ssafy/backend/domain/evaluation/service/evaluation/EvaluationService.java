@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.evaluation.service.evaluation;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 

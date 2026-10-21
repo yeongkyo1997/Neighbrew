@@ -47,9 +47,4 @@ public class DrinkReviewValidator {
             throw new IllegalArgumentException("요청한 리뷰 ID와 전송된 데이터의 리뷰 ID가 일치하지 않습니다.");
         }
     }
-
-    public DrinkReview validateReviewByDrinkReviewId(Long drinkReviewId) {
-        return drinkReviewRepository.findByDrinkReviewId(drinkReviewId).orElseThrow(
-                () -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
-    }
 }

@@ -3,6 +3,7 @@ package com.ssafy.backend.domain.meet.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,11 +14,12 @@ import com.ssafy.backend.domain.meet.entity.MeetUser;
 
 @Repository
 public interface MeetUserRepository extends JpaRepository<MeetUser, Long> {
+    @EntityGraph(attributePaths = {"user", "meet", "meet.host", "meet.tag", "meet.drink"})
     List<MeetUser> findByUserUserIdOrderByMeetCreatedAtDesc(Long userId);
 
     void deleteByMeetMeetId(Long meetId);
 
-    Optional<List<MeetUser>> findByMeetMeetIdOrderByStatusDesc(Long meetId);
+    List<MeetUser> findByMeetMeetIdOrderByStatusDesc(Long meetId);
 
     Optional<MeetUser> findByUserUserIdAndMeetMeetId(Long userId, Long meetId);
 

@@ -2,7 +2,7 @@ package com.ssafy.backend.domain.follow.service.follow;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 

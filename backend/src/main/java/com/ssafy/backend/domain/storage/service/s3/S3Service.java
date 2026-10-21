@@ -50,8 +50,4 @@ public class S3Service {
             fileDataManager.deleteFileRecord(imgSrc);
         }
     }
-
-    public String getUUIDFileName(String fileName) {
-        return filenameGenerator.generateUUIDFileName(fileName);
-    }
 }

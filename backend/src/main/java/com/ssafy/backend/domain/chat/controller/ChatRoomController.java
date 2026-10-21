@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.backend.common.util.JwtUtil;
+import com.ssafy.backend.common.auth.LoginUser;
+import com.ssafy.backend.common.auth.LoginUserGuard;
 import com.ssafy.backend.domain.chat.entity.ChatRoom;
 import com.ssafy.backend.domain.chat.service.room.ChatRoomService;
 
@@ -29,16 +29,16 @@ public class ChatRoomController {
     @PostMapping("/room/{userId}")
     public ResponseEntity<ChatRoom> createChatRoom(@RequestBody Map<String, Object> map,
                                                    @PathVariable Long userId,
-                                                   @RequestHeader("Authorization") String token) {
-        JwtUtil.validateToken(token, userId);
+                                                   @LoginUser Long loginUserId) {
+        LoginUserGuard.requireSame(userId, loginUserId);
         return ResponseEntity.ok(chatRoomService.createChatRoom(map));
     }
 
     // 유저 아이디로 채팅방 조회
     @GetMapping("/{userId}/getChatRoom")
     public ResponseEntity<?> getUserChatRooms(@PathVariable Long userId,
-                                              @RequestHeader("Authorization") String token) {
-        JwtUtil.validateToken(token, userId);
+                                              @LoginUser Long loginUserId) {
+        LoginUserGuard.requireSame(userId, loginUserId);
         return ResponseEntity.ok(chatRoomService.findUserChatRooms(userId));
     }
 
@@ -46,8 +46,8 @@ public class ChatRoomController {
     @GetMapping("/{chatRoomId}/{userId}/users")
     public ResponseEntity<?> getChatRoomUsers(@PathVariable Long chatRoomId,
                                               @PathVariable Long userId,
-                                              @RequestHeader("Authorization") String token) {
-        JwtUtil.validateToken(token, userId);
+                                              @LoginUser Long loginUserId) {
+        LoginUserGuard.requireSame(userId, loginUserId);
         return ResponseEntity.ok(chatRoomService.getUsersInChatRoom(chatRoomId));
     }
 

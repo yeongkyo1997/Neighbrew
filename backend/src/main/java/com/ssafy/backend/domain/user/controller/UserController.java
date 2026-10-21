@@ -11,23 +11,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.backend.common.auth.LoginUser;
+import com.ssafy.backend.common.auth.LoginUserGuard;
 import com.ssafy.backend.authentication.application.LoginResponse;
 import com.ssafy.backend.common.enums.UploadType;
 import com.ssafy.backend.common.service.JwtService;
-import com.ssafy.backend.common.util.JwtUtil;
 import com.ssafy.backend.domain.storage.service.s3.S3Service;
 import com.ssafy.backend.domain.user.dto.UserResponseDto;
 import com.ssafy.backend.domain.user.dto.UserUpdateDto;
 import com.ssafy.backend.domain.user.service.UserService;
-import com.ssafy.backend.exception.ForbiddenException;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/myinfo")
-    public ResponseEntity<UserResponseDto> getMyInfo(@RequestHeader("Authorization") String token) {
-        Long userId = JwtUtil.parseUserIdFromToken(token);
+    public ResponseEntity<UserResponseDto> getMyInfo(@LoginUser Long userId) {
         return ResponseEntity.ok().body(userService.findByUserId(userId));
     }
 
@@ -72,16 +69,16 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponseDto> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto,
                                                           @PathVariable Long userId,
-                                                          @RequestAttribute("userId") String tokenUserId) {
-        validateSelf(userId, tokenUserId);
+                                                          @LoginUser Long loginUserId) {
+        LoginUserGuard.requireSame(userId, loginUserId);
         return ResponseEntity.ok(userService.updateUser(userId, userUpdateDto));
     }
 
     @PutMapping("/img/{userId}")
     public ResponseEntity<String> updateUserImg(@RequestParam("profile") Optional<MultipartFile> profile,
                                                 @PathVariable Long userId,
-                                                @RequestAttribute("userId") String tokenUserId) throws IOException {
-        validateSelf(userId, tokenUserId);
+                                                @LoginUser Long loginUserId) throws IOException {
+        LoginUserGuard.requireSame(userId, loginUserId);
         String url = profile.isPresent() ? Objects.equals(profile.get().getOriginalFilename(), "") ?
                                            "no image" : s3Service.upload(UploadType.USERPROFILE,
                                                                          profile.get()) : "no image";
@@ -90,11 +87,6 @@ public class UserController {
         return ResponseEntity.ok(url);
     }
 
-    private void validateSelf(Long userId, String tokenUserId) {
-        if (!userId.toString().equals(tokenUserId)) {
-            throw new ForbiddenException("본인 정보만 수정할 수 있습니다.");
-        }
-    }
 
     @GetMapping("/search/{nickname}")
     public ResponseEntity<List<UserResponseDto>> searchUsers(@PathVariable String nickname) {

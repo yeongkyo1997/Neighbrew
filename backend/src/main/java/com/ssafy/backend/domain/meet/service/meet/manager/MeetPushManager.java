@@ -74,7 +74,6 @@ public class MeetPushManager {
     }
 
     private List<Follow> findFollowersByUserId(Long userId) {
-        return followRepository.findByFollowingUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."));
+        return followRepository.findByFollowingUserId(userId);
     }
 }

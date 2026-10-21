@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class ChatRoomValidator {
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     public ChatRoomCreateRequest parseCreateRequest(Map<String, Object> map) {
         String name = (String) map.get("name");

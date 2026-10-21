@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.drink.service.subreview.manager;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Component;
 

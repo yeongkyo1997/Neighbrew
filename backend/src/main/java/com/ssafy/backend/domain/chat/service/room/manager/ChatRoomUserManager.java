@@ -32,7 +32,7 @@ public class ChatRoomUserManager {
     }
 
     public boolean isUserInChatRoom(Long chatRoomId, Long userId) {
-        return chatRoomUserRepository.findByChatRoomChatRoomIdAndUserUserId(chatRoomId, userId).isPresent();
+        return chatRoomUserRepository.existsByChatRoomChatRoomIdAndUserUserId(chatRoomId, userId);
     }
 
     public void addUserToRoom(ChatRoom chatRoom, User user) {
@@ -44,7 +44,7 @@ public class ChatRoomUserManager {
     }
 
     public boolean isUserAlreadyInRoom(ChatRoom chatRoom, Long userId) {
-        return chatRoom.getUsers().stream().anyMatch(cru -> cru.getUser().getUserId().equals(userId));
+        return chatRoomUserRepository.existsByChatRoomChatRoomIdAndUserUserId(chatRoom.getChatRoomId(), userId);
     }
 
     public User findUserById(Long userId) {
