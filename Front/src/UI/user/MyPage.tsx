@@ -391,6 +391,11 @@ const MyPage = () => {
       setNickname(userData.nickname);
       return;
     }
+    if (userData.nickname != nickname && /^user_\d+$/.test(nickname)) {
+      alert("user_숫자 형식의 닉네임은 사용할 수 없습니다.");
+      setNickname(userData.nickname);
+      return;
+    }
     if (userData.intro != intro && intro.length > 50) {
       alert("한줄소개는 50자 까지만 가능합니다");
       setIntro(userData.intro);
