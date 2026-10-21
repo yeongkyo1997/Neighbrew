@@ -1,6 +1,8 @@
 package com.ssafy.backend.domain.user.service;
 
+import java.text.Normalizer;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -20,6 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+    private static final Pattern MASKED_NICKNAME = Pattern.compile("user_\\d+", Pattern.CASE_INSENSITIVE);
+    // 공백·제로폭 문자 등 화면에 보이지 않는 문자
+    private static final Pattern INVISIBLE_CHARS = Pattern.compile("[\\s\\p{Z}\\p{Cc}\\p{Cf}]");
+
     private final UserRepository userRepository;
     private final S3Service s3Service;
 
@@ -63,11 +69,13 @@ public class UserService {
     }
 
     // 이메일은 닉네임으로 쓸 수 없고, 이메일 닉네임 사용자를 가린 공개 이름(user_{id})은 남이 가져갈 수 없다.
+    // 전각 문자·대소문자·보이지 않는 문자로 우회하지 못하도록 화면에 보이는 형태로 정규화해서 검사한다.
     private void validateNewNickname(String nickname) {
-        if (nickname.contains("@")) {
+        String visible = INVISIBLE_CHARS.matcher(Normalizer.normalize(nickname, Normalizer.Form.NFKC)).replaceAll("");
+        if (visible.contains("@")) {
             throw new IllegalArgumentException("닉네임에 '@'는 사용할 수 없습니다.");
         }
-        if (nickname.matches("user_\\d+")) {
+        if (MASKED_NICKNAME.matcher(visible).matches()) {
             throw new IllegalArgumentException("user_숫자 형식의 닉네임은 사용할 수 없습니다.");
         }
     }

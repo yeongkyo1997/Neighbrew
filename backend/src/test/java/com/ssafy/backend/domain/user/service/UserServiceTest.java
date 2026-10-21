@@ -17,6 +17,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -89,13 +91,23 @@ class UserServiceTest {
         then(userRepository).should(never()).save(any());
     }
 
-    @Test
-    void 가려진_공개_이름과_같은_형식의_닉네임으로_바꿀_수_없다() {
+    @ParameterizedTest
+    // 대소문자, 앞뒤 공백, 전각 숫자, 제로폭 공백으로 우회해도 화면에는 user_7로 보인다.
+    @ValueSource(strings = { "user_7", "USER_7", " user_7 ", "user_７", "user_​7" })
+    void 가려진_공개_이름과_같은_형식의_닉네임으로_바꿀_수_없다(String nickname) {
         given(userRepository.findById(9L)).willReturn(Optional.of(user(9L, "술꾼")));
 
-        assertThatThrownBy(() -> userService.updateUser(9L, updateDto("user_7", "안녕하세요")))
+        assertThatThrownBy(() -> userService.updateUser(9L, updateDto(nickname, "안녕하세요")))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("user_");
         then(userRepository).should(never()).save(any());
+    }
+
+    @Test
+    void 전각_골뱅이도_닉네임에_쓸_수_없다() {
+        given(userRepository.findById(9L)).willReturn(Optional.of(user(9L, "술꾼")));
+
+        assertThatThrownBy(() -> userService.updateUser(9L, updateDto("new＠example.com", "안녕하세요")))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("@");
     }
 
     @Test
