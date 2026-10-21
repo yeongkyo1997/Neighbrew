@@ -46,6 +46,9 @@ public class MeetParticipantManager {
         if (applyUserStatus == Status.HOST) {
             throw new IllegalArgumentException("죄송합니다.. 방장님은 나가실 수 없으십니다. 모임 삭제를 요청하세요.");
         }
+        if (applyUserStatus != Status.GUEST) {
+            throw new IllegalArgumentException("모임에 참여중인 유저만 나갈 수 있습니다.");
+        }
         meetUserService.deleteExitUser(userId, meetId, Status.GUEST);
     }
 

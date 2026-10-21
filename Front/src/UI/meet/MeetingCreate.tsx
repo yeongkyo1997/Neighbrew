@@ -307,7 +307,7 @@ const MeetingCreate = () => {
           createApi(f);
         })
         .catch(e => {
-          setErrorMsg(e.response.data);
+          setErrorMsg("이미지 처리 중 오류가 발생했습니다.");
           setLoadingModalOn(false);
           setIsModalOn(true);
           setIsClick(false);
@@ -322,7 +322,9 @@ const MeetingCreate = () => {
         GoMeetDetailHandler(res.data.meetId); //모임 상세 페이지로 이동
       })
       .catch(error => {
-        setErrorMsg(error);
+        const data = error?.response?.data;
+        setErrorMsg(typeof data === "string" ? data : "요청 처리 중 오류가 발생했습니다.");
+        setLoadingModalOn(false);
         setIsModalOn(true);
         setIsClick(false);
       });

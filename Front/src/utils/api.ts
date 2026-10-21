@@ -19,6 +19,25 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// 동시에 여러 요청이 401을 받아도 토큰 재발급은 한 번만 수행
+let refreshPromise: Promise<string> | null = null;
+
+const refreshAccessToken = (refreshToken: string) => {
+  if (!refreshPromise) {
+    refreshPromise = axios
+      .post("/api/user/refresh-token", { refreshToken })
+      .then(({ data }) => {
+        localStorage.setItem("token", data.accessToken);
+        if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+        return data.accessToken as string;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+};
+
 // 응답 인터셉터: 토큰 만료 시 재요청 or 로그인 페이지로 리디렉션
 api.interceptors.response.use(
   (response) => {
@@ -26,7 +45,8 @@ api.interceptors.response.use(
   },
   async (err) => {
     const originalRequest = err.config;
-    if (err.response.status === 401 && !originalRequest._retry) {
+    // 네트워크/CORS/타임아웃 오류는 response가 없으므로 그대로 전달
+    if (err.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem("refreshToken");
@@ -38,11 +58,8 @@ api.interceptors.response.use(
 
       try {
         // 토큰 재발급 API 호출
-        const { data } = await axios.post("/api/user/refresh-token", {
-          refreshToken,
-        });
-        localStorage.setItem("token", data.accessToken);
-        originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
+        const accessToken = await refreshAccessToken(refreshToken);
+        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (err) {
         // 리프레시 토큰이 만료되었거나 재발급 요청에 문제가 있으면 로그인 페이지로 리디렉션

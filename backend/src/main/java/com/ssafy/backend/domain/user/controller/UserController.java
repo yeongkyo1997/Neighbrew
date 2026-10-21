@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ import com.ssafy.backend.domain.storage.service.s3.S3Service;
 import com.ssafy.backend.domain.user.dto.UserResponseDto;
 import com.ssafy.backend.domain.user.dto.UserUpdateDto;
 import com.ssafy.backend.domain.user.service.UserService;
+import com.ssafy.backend.exception.ForbiddenException;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -69,19 +71,29 @@ public class UserController {
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponseDto> updateUserInfo(@RequestBody UserUpdateDto userUpdateDto,
-                                                          @PathVariable Long userId) {
+                                                          @PathVariable Long userId,
+                                                          @RequestAttribute("userId") String tokenUserId) {
+        validateSelf(userId, tokenUserId);
         return ResponseEntity.ok(userService.updateUser(userId, userUpdateDto));
     }
 
     @PutMapping("/img/{userId}")
     public ResponseEntity<String> updateUserImg(@RequestParam("profile") Optional<MultipartFile> profile,
-                                                @PathVariable Long userId) throws IOException {
+                                                @PathVariable Long userId,
+                                                @RequestAttribute("userId") String tokenUserId) throws IOException {
+        validateSelf(userId, tokenUserId);
         String url = profile.isPresent() ? Objects.equals(profile.get().getOriginalFilename(), "") ?
                                            "no image" : s3Service.upload(UploadType.USERPROFILE,
                                                                          profile.get()) : "no image";
 
         userService.updateUserImg(userId, url);
         return ResponseEntity.ok(url);
+    }
+
+    private void validateSelf(Long userId, String tokenUserId) {
+        if (!userId.toString().equals(tokenUserId)) {
+            throw new ForbiddenException("본인 정보만 수정할 수 있습니다.");
+        }
     }
 
     @GetMapping("/search/{nickname}")

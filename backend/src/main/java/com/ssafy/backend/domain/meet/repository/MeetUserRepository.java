@@ -27,6 +27,10 @@ public interface MeetUserRepository extends JpaRepository<MeetUser, Long> {
     Status findStatusByUserIdAndMeetId(@Param("userId") Long userId,
                                        @Param("meetId") Long meetId);
 
+    @Query("select mu.status from MeetUser mu where mu.user.userId = :userId and mu.meet.chatRoom.chatRoomId = :chatRoomId")
+    Status findStatusByUserIdAndChatRoomId(@Param("userId") Long userId,
+                                           @Param("chatRoomId") Long chatRoomId);
+
     Optional<Long> countByMeetMeetId(Long meetId);
 }
 

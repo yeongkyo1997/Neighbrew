@@ -221,7 +221,7 @@ const ChatRoom = () => {
       return ws;
     });
 
-    client.current.connect({}, () => {
+    client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {
       // 웹소켓 이벤트 핸들러 설정
       client.current!.subscribe(`/pub/room/${id}`, (res) => {
         const receivedMessage = JSON.parse(res.body);
@@ -249,7 +249,10 @@ const ChatRoom = () => {
 
   useEffect(() => {
     connectToWebSocket();
-  }, []);
+    return () => {
+      client.current?.disconnect();
+    };
+  }, [id]);
   // 엔터 누르면 메세지 전송
   const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     if (message.trim() === "") return;

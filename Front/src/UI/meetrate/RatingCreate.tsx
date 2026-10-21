@@ -59,6 +59,7 @@ const RatingCreate = () => {
   // const [evaluation, setEvaluation] = useState<Evaluation[]>();
   const [selectedValues, setSelectedValues] = useState([]); // 사용자별로 선택된 버튼 값을 저장
   const [meetTitle, setMeetTitle] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false); //중복 제출 방지
   const myId = parseInt(localStorage.getItem("myId"));
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
 
@@ -69,15 +70,29 @@ const RatingCreate = () => {
   };
 
   const PostHandler = rateValue => {
-    callApi("POST", "/api/evaluation", {
+    return callApi("POST", "/api/evaluation", {
       ratedUser: myId,
       reviewer: rateValue.userId,
       meetId: meetId,
       evaluationType: evaluationType[rateValue.evaluationType],
       description: rateValue.description,
-    }).then(res => {
-      GoMainHandler();
     });
+  };
+
+  //평가한(1~3 선택) 멤버만 전송하고, 모두 끝난 뒤 메인으로 이동
+  const submitHandler = async () => {
+    if (isSubmitting) return;
+    const rated = selectedValues.filter(rateValue => evaluationType[rateValue.evaluationType]);
+    if (rated.length === 0) {
+      alert("평가할 멤버를 선택해주세요.");
+      return;
+    }
+    setIsSubmitting(true);
+    const results = await Promise.allSettled(rated.map(rateValue => PostHandler(rateValue)));
+    if (results.some(result => result.status === "rejected")) {
+      alert("일부 평가 등록에 실패했습니다.");
+    }
+    GoMainHandler();
   };
 
   const handleSelectedButton = (userId: number, buttonNumber: number, desc: string) => {
@@ -134,13 +149,7 @@ const RatingCreate = () => {
             />
           ))}
         </MemberContainer>
-        <RatingButton
-          onClick={() => {
-            selectedValues.map(rateValue => {
-              PostHandler(rateValue);
-            });
-          }}
-        >
+        <RatingButton onClick={submitHandler} disabled={isSubmitting}>
           등록하기
         </RatingButton>
       </div>

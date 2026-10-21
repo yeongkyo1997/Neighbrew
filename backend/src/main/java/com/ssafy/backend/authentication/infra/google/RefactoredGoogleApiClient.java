@@ -9,7 +9,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -20,7 +19,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import com.ssafy.backend.authentication.domain.template.AbstractOAuthApiClient;
 import com.ssafy.backend.authentication.infra.google.GoogleInfoResponse.Response;
 
-@Component
+// 기존 클라이언트와 같은 OAuthProvider를 반환하므로 빈으로 등록하지 않음(등록 시 Duplicate key로 기동 실패)
 public class RefactoredGoogleApiClient extends AbstractOAuthApiClient {
 
     private static final String GRANT_TYPE = "authorization_code";

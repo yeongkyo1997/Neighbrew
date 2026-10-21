@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.backend.common.enums.Status;
 import com.ssafy.backend.domain.chat.entity.ChatMessageMongo;
 import com.ssafy.backend.domain.chat.entity.ChatRoom;
 import com.ssafy.backend.domain.chat.service.room.dto.ChatRoomCreateRequest;
@@ -20,6 +21,7 @@ import com.ssafy.backend.domain.chat.service.room.manager.ChatRoomManager;
 import com.ssafy.backend.domain.chat.service.room.manager.ChatRoomMessageManager;
 import com.ssafy.backend.domain.chat.service.room.manager.ChatRoomUserManager;
 import com.ssafy.backend.domain.chat.service.room.validator.ChatRoomValidator;
+import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
 import com.ssafy.backend.domain.push.service.push.PushService;
 import com.ssafy.backend.domain.user.entity.User;
 
@@ -35,6 +37,7 @@ public class ChatRoomService {
     private final ChatRoomUserManager userManager;
     private final ChatRoomMessageManager messageManager;
     private final PushService pushService;
+    private final MeetUserRepository meetUserRepository;
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Value("${neighbrew.full.url}")
@@ -113,6 +116,12 @@ public class ChatRoomService {
 
         User joinUser = userManager.findUserById(request.userId);
         ChatRoom chatRoom = roomManager.findChatRoomById(roomId);
+
+        // 모임 멤버(방장/참여자)만 모임 채팅방에 (재)입장할 수 있다.
+        Status meetStatus = meetUserRepository.findStatusByUserIdAndChatRoomId(request.userId, roomId);
+        if (meetStatus != Status.HOST && meetStatus != Status.GUEST) {
+            throw new IllegalArgumentException("모임에 참여중인 유저만 채팅방에 입장할 수 있습니다.");
+        }
 
         if (userManager.isUserAlreadyInRoom(chatRoom, request.userId)) {
             return "";

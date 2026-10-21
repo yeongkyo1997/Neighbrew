@@ -57,11 +57,11 @@ public class ChatDmService {
                 Collectors.toList());
     }
 
-    public Map<String, Object> findDmMessagesByRoomId(Long user1Id, Long user2Id) {
+    public Map<String, Object> findDmMessagesByRoomId(Long user1Id, Long user2Id, Long requestUserId) {
         Map<String, Object> result = new HashMap<>();
 
         chatDmRoomRepository.findByUser1UserIdAndUser2UserId(user1Id, user2Id).ifPresent(dmRoom -> {
-            LocalDateTime attendTime = roomManager.getAttendTimeForUser(dmRoom, user1Id, user2Id);
+            LocalDateTime attendTime = roomManager.getAttendTimeForUser(dmRoom, requestUserId);
             List<ChatDmMessage> messages =
                     chatDmMessageRepository.findByChatDmRoomChatDmRoomIdAndCreatedAtBetween(
                             dmRoom.getChatDmRoomId(), attendTime, LocalDateTime.now());

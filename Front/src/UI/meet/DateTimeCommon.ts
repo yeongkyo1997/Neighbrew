@@ -1,6 +1,11 @@
 //현재 날짜를 받아오기
 export const localDate = () => {
-  const date = new Date().toISOString().substring(0, 10);
+  //UTC가 아닌 로컬 날짜 기준 (localTime과 동일한 방식)
+  const date = new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .substring(0, 10);
   return date;
 };
 

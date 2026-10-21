@@ -169,7 +169,7 @@ const DrinkpostCreate = () => {
   const [iseEmptyName, setIsEmptyName] = useState(false);
   const [drinkName, setDrinkName] = useState("");
   const [drinkDescription, setDrinkDescription] = useState("");
-  const [drinkAlcohol, setDrinkAlcohol] = useState<number>();
+  const [drinkAlcohol, setDrinkAlcohol] = useState<number>(0);
   const [inputCheck, setInputCheck] = useState(false);
 
   const [isClick, setIsClick] = useState(false); //throttle 역할, 폼 중복 제출 막아주기
@@ -188,7 +188,8 @@ const DrinkpostCreate = () => {
       setOverHundred(true);
       return;
     }
-    setDrinkAlcohol(parseInt(e.target.value));
+    //빈 값(NaN)은 0으로 처리
+    setDrinkAlcohol(parseInt(e.target.value) || 0);
   };
   const drinkDescriptionHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDrinkDescription(e.target.value);
@@ -226,15 +227,14 @@ const DrinkpostCreate = () => {
       setIsEmptyDesc(true);
       return;
     }
+    setIsClick(true); //클릭했음(api 중복호출방지)
     formData.append("name", drinkName.trim());
-    formData.append("image", file);
+    if (file) formData.append("image", file);
     formData.append("description", drinkDescription.trim());
     formData.append("degree", drinkAlcohol.toString());
     formData.append("tagId", selectedCategory.toString());
 
-    callApi("post", "api/drink", formData).then(res => {
-      navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
-    });
+    createApi(formData);
   };
 
   const createApi = (f: FormData) => {
@@ -297,7 +297,6 @@ const DrinkpostCreate = () => {
         <InputDivAlcohol>
           <h3 style={{ marginRight: "1rem" }}>도수</h3>
           <InputAlcohol
-            defaultValue={0}
             value={drinkAlcohol}
             onChange={drinkAlcoholHandler}
             type="number"

@@ -34,8 +34,12 @@ public class S3ClientManager {
         amazonS3Client.deleteObject(bucket, objectKey);
     }
 
+    // 우리 버킷 URL로 시작하는 경우에만 객체 키를 반환하고, 그 외(외부 URL, 잘못된 값)는 null을 반환한다.
     public String parseObjectKeyFromUrl(String imageUrl) {
-        String[] urlParts = imageUrl.split("/");
-        return urlParts[3] + "/" + urlParts[4];
+        String bucketUrl = amazonS3Client.getUrl(bucket, "").toString();
+        if (imageUrl == null || !imageUrl.startsWith(bucketUrl) || imageUrl.length() == bucketUrl.length()) {
+            return null;
+        }
+        return imageUrl.substring(bucketUrl.length());
     }
 }

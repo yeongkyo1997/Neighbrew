@@ -33,6 +33,9 @@ public class DrinkQueryManager {
 
     public Page<DrinkResponseDto> searchDrinksByCriteria(String name, Long tagId, Pageable pageable) {
         Page<Drink> drinks;
+        if (tagId == null) {
+            tagId = 0L; // tagId 미전달 시 전체 카테고리
+        }
 
         if (name == null && tagId == 0) {
             drinks = drinkRepository.findAll(pageable);

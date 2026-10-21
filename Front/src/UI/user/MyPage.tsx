@@ -334,11 +334,13 @@ const MyPage = () => {
     e.preventDefault();
     setIntro(e.target.value);
   };
+  //이 연도 이상 출생자는 만 18세 미만으로 간주
+  const adultCutoffYear = new Date().getFullYear() - 18;
   const birthHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (parseInt(e.target.value.split("-")[0]) >= 2005) {
+    if (parseInt(e.target.value.split("-")[0]) >= adultCutoffYear) {
       alert("만 18세 이상만 이용 가능합니다");
-      setBirth("2003-01-01");
+      setBirth(userData.birth);
       return;
     }
     setBirth(e.target.value);
@@ -377,6 +379,22 @@ const MyPage = () => {
     const file = imgRef.current.files[0];
     const formData = new FormData();
     formData.append("profile", file);
+    if (userData.nickname != nickname && nickname.length > 20) {
+      alert("닉네임은 20자 까지만 가능합니다.");
+      setNickname(userData.nickname);
+      return;
+    }
+    if (userData.intro != intro && intro.length > 50) {
+      alert("한줄소개는 50자 까지만 가능합니다");
+      setIntro(userData.intro);
+      return;
+    }
+    //생년월일을 바꾼 경우에만 검사 (가입 기본값 2005-01-01 사용자도 다른 항목 수정 가능)
+    if (birth !== userData.birth && parseInt(birth.split("-")[0]) >= adultCutoffYear) {
+      alert("만 18세 이상만 가입 가능합니다.");
+      setBirth(userData.birth);
+      return;
+    }
     if (file !== undefined && profile !== null) {
       axios
         .put(`/api/user/img/${userid}`, formData, {
@@ -417,21 +435,6 @@ const MyPage = () => {
           myDrinks();
         });
     }
-    if (userData.nickname != nickname && nickname.length > 20) {
-      alert("닉네임은 20자 까지만 가능합니다.");
-      setNickname(userData.nickname);
-      return;
-    }
-    if (userData.intro != intro && intro.length > 50) {
-      alert("한줄소개는 50자 까지만 가능합니다");
-      setNickname(userData.intro);
-      return;
-    }
-    if (parseInt(birth.split("-")[0]) >= 2005) {
-      alert("만 18세 이상만 가입 가능합니다.");
-      setBirth(userData.birth);
-      return;
-    }
     if (intro == "" || nickname == "" || birth == "") {
       alert("빈 값이 존재합니다.");
       return;
@@ -453,7 +456,7 @@ const MyPage = () => {
         myDrinks();
       })
       .catch(err => {
-        if (err.response.data == "중복") {
+        if (err?.response?.data === "닉네임 중복") {
           alert("중복된 닉네임입니다. 다시 입력해주세요.");
         }
       });
@@ -764,7 +767,7 @@ const MyPage = () => {
               id="date"
               value={birth}
               onInput={birthHandler}
-              max="2005-01-01"
+              max={`${adultCutoffYear - 1}-12-31`}
               style={{ width: "70%", marginRight: "1rem" }}
             />
           </FlexDiv>

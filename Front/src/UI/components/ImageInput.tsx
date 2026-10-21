@@ -86,7 +86,7 @@ const ImageInput = (props: ImageInputProps) => {
         }
       };
     } else {
-      props.getImgSrc("no image");
+      props.getImgSrc?.("no image");
       props.getFunc(null);
     }
   };

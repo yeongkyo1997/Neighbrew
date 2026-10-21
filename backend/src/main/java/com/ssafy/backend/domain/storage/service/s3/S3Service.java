@@ -41,6 +41,9 @@ public class S3Service {
 
     public void deleteImg(String imgSrc) {
         String objectKey = clientManager.parseObjectKeyFromUrl(imgSrc);
+        if (objectKey == null) {
+            return;
+        }
 
         if (clientManager.doesObjectExist(objectKey)) {
             clientManager.deleteObject(objectKey);

@@ -88,7 +88,7 @@ const Chat = (props: {
   useEffect(() => {
     setlastMessageTime(
       props.lastMessageTime &&
-        props.lastMessageTime.substring(6, 10) + " " + props.lastMessageTime.substring(11, 16)
+        props.lastMessageTime.substring(5, 10) + " " + props.lastMessageTime.substring(11, 16)
     );
   }, [props.lastMessageTime]);
   useEffect(() => {

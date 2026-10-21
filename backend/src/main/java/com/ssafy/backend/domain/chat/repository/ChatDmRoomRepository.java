@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,7 +17,6 @@ public interface ChatDmRoomRepository extends JpaRepository<ChatDmRoom, Long> {
     Optional<ChatDmRoom> findDmUsers(@Param("user1") User user1,
                                      @Param("user2") User user2);
 
-    @Modifying
     @Query("select cdr from ChatDmRoom cdr where cdr.user1.userId = :userId or cdr.user2.userId = :userId order by cdr.lastMessageTime desc")
     Optional<List<ChatDmRoom>> findChatDmRoomByIdOrderByLastMessageTimeDesc(@Param("userId") Long userId);
 

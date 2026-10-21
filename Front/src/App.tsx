@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import "./App.css";
-import { useNavigate, Route, Routes } from "react-router-dom";
+import { useNavigate, useLocation, Route, Routes } from "react-router-dom";
 import Loading from "./UI/etc/Loading";
 import Login from "./UI/user/Login";
 import Main from "./UI/home/Main";
@@ -33,21 +33,26 @@ import NotFound from "./UI/etc/NotFound";
 import logo from "./assets/logoNavbar.svg";
 import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
 import AlarmPage from "./UI/etc/AlarmPage";
+import { callApi } from "./utils/api";
 
 function App() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
-  const [userid, setUserid] = useState(null);
-  const [isConnect, setIsConnect] = useState(false);
+  const [userid, setUserid] = useState<string | null>(null);
   const es = useRef<EventSource | undefined>();
+  const location = useLocation();
+  // 로그인/로그아웃 시 localStorage의 myId와 SSE 연결 대상을 동기화
   const connectHandler = () => {
-    setIsConnect(true);
+    setUserid(localStorage.getItem("myId"));
   };
+  useEffect(() => {
+    connectHandler();
+  }, [location.pathname]);
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       // Register a service worker hosted at the root of the
       // site using the default scope.
-      navigator.serviceWorker.register("sw.js");
+      navigator.serviceWorker.register("/sw.js");
     }
   }, []);
   useEffect(() => {
@@ -55,8 +60,20 @@ function App() {
       setIsLoading(true);
     }, 1000);
   }, []);
-  const esconnect = () => {
-    es.current = new EventSource(`https://i9b310.p.ssafy.io/api/auth/connect/${userid}`, {
+  // EventSource는 헤더를 보낼 수 없으므로, 인증된 요청으로 30초짜리 일회용 티켓을 받아 URL에 사용
+  // (access 토큰을 URL에 싣지 않음). 티켓은 1회용이라 끊기면 새 티켓으로 직접 재연결한다.
+  const esconnect = async (id: string, isActive: () => boolean) => {
+    let ticket: string;
+    try {
+      const res = await callApi("post", "api/push/sse-ticket");
+      ticket = res.data.ticket;
+    } catch {
+      if (isActive()) setTimeout(() => esconnect(id, isActive), 5000);
+      return;
+    }
+    if (!isActive()) return;
+
+    es.current = new EventSource(`/api/auth/connect/${id}?ticket=${encodeURIComponent(ticket)}`, {
       withCredentials: true,
     });
 
@@ -71,26 +88,22 @@ function App() {
         return;
       }
     };
-    es.current.onerror = err => {};
+    es.current.onerror = err => {
+      es.current?.close();
+      if (isActive()) setTimeout(() => esconnect(id, isActive), 5000);
+    };
   };
   useEffect(() => {
-    if (userid == null) {
-      setUserid(localStorage.getItem("myId"));
-      if (localStorage.getItem("myId") != null) {
-        setUserid(localStorage.getItem("myId"));
-        esconnect();
-      }
-    } else {
-      esconnect();
-    }
+    if (userid == null) return;
+    let active = true;
+    esconnect(userid, () => active);
 
     return () => {
-      unsubscribe();
+      active = false;
+      es.current?.close();
+      es.current = undefined;
     };
-  }, [isConnect, userid]);
-  const unsubscribe = async () => {
-    es.current?.close();
-  };
+  }, [userid]);
   useEffect(() => {
     subscribe();
   }, []);

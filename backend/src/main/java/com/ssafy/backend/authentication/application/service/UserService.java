@@ -12,7 +12,7 @@ import com.ssafy.backend.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Service("authUserService")
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;

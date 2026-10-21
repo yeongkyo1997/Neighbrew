@@ -87,13 +87,7 @@ public class User {
         if (updateDto.getBirth() != null) {
             this.birth = updateDto.getBirth();
         }
-
-        if (updateDto.getProfile() != null) {
-            this.profile = updateDto.getProfile();
-        }
-        if (updateDto.getLiverPoint() != null) {
-            this.liverPoint = updateDto.getLiverPoint();
-        }
+        // profile은 /img API로만, liverPoint는 평가로만 변경한다.
     }
 
     public void updateImg(String url) {

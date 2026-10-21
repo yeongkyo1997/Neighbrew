@@ -88,7 +88,7 @@ public class MeetValidator {
 
     public void validateHostPermission(Meet meet, Long hostId) {
         if (!meet.getHost().getUserId().equals(hostId)) {
-            throw new IllegalArgumentException("방장이 아니면 방을 삭제할 수 없습니다.");
+            throw new IllegalArgumentException("방장만 요청할 수 있습니다.");
         }
     }
 }
