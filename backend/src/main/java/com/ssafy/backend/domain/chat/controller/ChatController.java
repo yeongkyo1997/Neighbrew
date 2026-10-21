@@ -25,7 +25,7 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatRoomService chatRoomService;
     private final ChatDmService chatDmService;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     //단체 메세지를 보낸다.
     @MessageMapping("/chat/{roomId}/sendMessage")

@@ -43,15 +43,14 @@ public class ChatDmService {
     private final ChatDmValidator validator;
     private final ChatDmRoomManager roomManager;
     private final ChatDmMessageManager messageManager;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     @Value("${neighbrew.full.url}")
     private String neighbrewUrl;
 
     //DM 목록 조회
     public List<ChatDmRoom> findMyDmList(Long userId) {
-        return chatDmRoomRepository.findChatDmRoomByIdOrderByLastMessageTimeDesc(userId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 유저입니다.")).stream().filter(
+        return chatDmRoomRepository.findChatDmRoomByIdOrderByLastMessageTimeDesc(userId).stream().filter(
                 cdr -> (cdr.getUser1().getUserId().equals(userId) && cdr.getUser1AttendTime() != null) || (
                         cdr.getUser2().getUserId().equals(userId) && cdr.getUser2AttendTime() != null)).collect(
                 Collectors.toList());
@@ -132,8 +131,7 @@ public class ChatDmService {
         return mapper.writeValueAsString(result);
     }
 
-    @Transactional
-    public Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, User receiver,
+    private Map<String, Object> saveMessageAndPush(ChatDmRoom chatDmRoom, User sender, User receiver,
                                                   String message) {
         LocalDateTime currentTime = LocalDateTime.now();
 

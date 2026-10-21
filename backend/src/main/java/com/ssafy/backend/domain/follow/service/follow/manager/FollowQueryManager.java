@@ -17,7 +17,6 @@ public class FollowQueryManager {
 
     public List<FollowResponseDto> getFollowers(Long userId) {
         return followRepository.findByFollowingUserId(userId)
-                               .orElseThrow(() -> new IllegalArgumentException("팔로워 정보를 찾을 수 없습니다."))
                                .stream()
                                .map(FollowResponseDto::fromEntity)
                                .collect(Collectors.toList());
@@ -25,7 +24,6 @@ public class FollowQueryManager {
 
     public List<FollowResponseDto> getFollowing(Long userId) {
         return followRepository.findByFollowerUserId(userId)
-                               .orElseThrow(() -> new IllegalArgumentException("팔로잉 정보를 찾을 수 없습니다."))
                                .stream()
                                .map(FollowResponseDto::fromEntity)
                                .collect(Collectors.toList());

@@ -105,7 +105,7 @@ public class StompAuthInterceptor implements ChannelInterceptor {
     // 채팅방 참여자이거나, 채팅방이 속한 모임의 방장/참여자면 허용한다.
     // (모임 멤버는 재입장(/sub/join) 처리 전에 구독해도 끊기지 않도록)
     private boolean isRoomMember(Long userId, Long roomId) {
-        if (chatRoomUserRepository.findByChatRoomChatRoomIdAndUserUserId(roomId, userId).isPresent()) {
+        if (chatRoomUserRepository.existsByChatRoomChatRoomIdAndUserUserId(roomId, userId)) {
             return true;
         }
         Status meetStatus = meetUserRepository.findStatusByUserIdAndChatRoomId(userId, roomId);

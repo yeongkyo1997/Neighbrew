@@ -10,4 +10,6 @@ import com.ssafy.backend.domain.user.entity.UserCommentLike;
 @Repository
 public interface UserCommentLikeRepository extends JpaRepository<UserCommentLike, Long> {
     Optional<UserCommentLike> findByUserUserIdAndDrinkReviewDrinkReviewId(Long userId, Long drinkReviewId);
+
+    boolean existsByUserUserIdAndDrinkReviewDrinkReviewId(Long userId, Long drinkReviewId);
 }

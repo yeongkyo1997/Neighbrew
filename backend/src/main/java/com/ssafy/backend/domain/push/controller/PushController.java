@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.ssafy.backend.common.auth.LoginUser;
 import com.ssafy.backend.common.util.SseTicketStore;
 import com.ssafy.backend.domain.push.entity.Push;
 import com.ssafy.backend.domain.push.service.push.PushService;
@@ -32,8 +32,8 @@ public class PushController {
 
     // SSE 연결용 단기(30초)·일회용 티켓 발급 (Authorization 헤더로 인증된 요청만)
     @PostMapping("/sse-ticket")
-    public Map<String, String> issueSseTicket(@RequestAttribute("userId") String tokenUserId) {
-        return Collections.singletonMap("ticket", sseTicketStore.issue(tokenUserId));
+    public Map<String, String> issueSseTicket(@LoginUser Long loginUserId) {
+        return Collections.singletonMap("ticket", sseTicketStore.issue(String.valueOf(loginUserId)));
     }
 
     @GetMapping(value = "/connect/{userId}", produces = "text/event-stream")

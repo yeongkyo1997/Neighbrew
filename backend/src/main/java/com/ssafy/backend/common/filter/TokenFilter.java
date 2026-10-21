@@ -83,7 +83,7 @@ public class TokenFilter implements Filter {
         filterChain.doFilter(request, response);
     }
 
-    private static final String[] SSE_CONNECT_PREFIXES = {"/api/auth/connect/", "/api/v2/auth/connect/", "/api/push/connect/"};
+    private static final String[] SSE_CONNECT_PREFIXES = {"/api/auth/connect/", "/api/push/connect/"};
 
     private boolean isSseConnectPath(String path) {
         for (String prefix : SSE_CONNECT_PREFIXES) {
@@ -99,7 +99,6 @@ public class TokenFilter implements Filter {
         if (isSseConnectPath(path)) {
             return false;
         }
-        return path.startsWith("/api/auth/") || path.startsWith("/api/v2/auth/")
-               || path.equals("/api/user/refresh-token");
+        return path.startsWith("/api/auth/") || path.equals("/api/user/refresh-token");
     }
 }

@@ -24,12 +24,4 @@ public class UserCommentLikeValidator {
         return drinkReviewRepository.findById(reviewId).orElseThrow(
                 () -> new IllegalArgumentException("해당 리뷰가 없습니다. id=" + reviewId));
     }
-
-    public User getUserOrNull(Long userId) {
-        return userRepository.findById(userId).orElse(null);
-    }
-
-    public DrinkReview getDrinkReviewOrNull(Long reviewId) {
-        return drinkReviewRepository.findById(reviewId).orElse(null);
-    }
 }

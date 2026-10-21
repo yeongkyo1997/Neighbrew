@@ -75,16 +75,4 @@ public class JwtUtil {
     private static String stripBearer(String token) {
         return token != null && token.startsWith(BEARER_PREFIX) ? token.substring(BEARER_PREFIX.length()) : token;
     }
-
-    public static Long parseUserIdFromToken(String token) {
-        Claims claims = getClaims(stripBearer(token));
-        return Long.parseLong(claims.getSubject());
-    }
-
-    public static void validateToken(String token, Long userId) {
-        Long subject = parseUserIdFromToken(token);
-        if (!subject.equals(userId)) {
-            throw new RuntimeException("토큰 정보가 유효하지 않습니다.");
-        }
-    }
 }

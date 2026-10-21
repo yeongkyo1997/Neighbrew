@@ -56,17 +56,6 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     }
 
     //회원과 관련된 모든 Emitter 제거
-    @Override
-    public void deleteAllEmitterStartWithId(String userId) {
-        emitters.forEach(
-                (key, emitter) -> {
-                    if (key.split("_")[0].equals((userId))) {
-                        emitters.remove(key);
-                    }
-                }
-        );
-
-    }
 
     //회원과 관련된 모든 이벤트 제거
     @Override

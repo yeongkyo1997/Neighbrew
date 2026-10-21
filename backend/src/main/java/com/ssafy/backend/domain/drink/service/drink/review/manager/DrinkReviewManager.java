@@ -31,8 +31,4 @@ public class DrinkReviewManager {
     public void deleteDrinkReview(Long drinkReviewId) {
         drinkReviewRepository.deleteById(drinkReviewId);
     }
-
-    public DrinkReview saveDrinkReview(DrinkReview drinkReview) {
-        return drinkReviewRepository.save(drinkReview);
-    }
 }
