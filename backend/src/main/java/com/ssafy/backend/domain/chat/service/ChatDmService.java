@@ -25,7 +25,7 @@ import com.ssafy.backend.domain.chat.service.manager.ChatDmMessageManager;
 import com.ssafy.backend.domain.chat.service.manager.ChatDmRoomManager;
 import com.ssafy.backend.domain.chat.service.validator.ChatDmValidator;
 import com.ssafy.backend.domain.push.service.push.PushService;
-import com.ssafy.backend.domain.user.dto.UserResponseDto;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.entity.User;
 import com.ssafy.backend.domain.user.repository.UserRepository;
 
@@ -67,8 +67,8 @@ public class ChatDmService {
             result.put("messages", messages);
         });
 
-        result.put("user1", getUserResponseDto(user1Id));
-        result.put("user2", getUserResponseDto(user2Id));
+        result.put("user1", getPublicUser(user1Id));
+        result.put("user2", getPublicUser(user2Id));
 
         return result;
     }
@@ -94,8 +94,8 @@ public class ChatDmService {
                 () -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
     }
 
-    private UserResponseDto getUserResponseDto(Long userId) {
-        return UserResponseDto.fromEntity(findUserById(userId));
+    private PublicUserResponseDto getPublicUser(Long userId) {
+        return PublicUserResponseDto.fromEntity(findUserById(userId));
     }
 
     @Transactional
@@ -127,7 +127,7 @@ public class ChatDmService {
         Map<String, Object> result = new HashMap<>();
         result.put("message", leaveMessage);
         result.put("userId", leaveUserId);
-        result.put("user", UserResponseDto.fromEntity(leaveUser));
+        result.put("user", PublicUserResponseDto.fromEntity(leaveUser));
         return mapper.writeValueAsString(result);
     }
 
@@ -155,7 +155,7 @@ public class ChatDmService {
         Map<String, Object> result = new HashMap<>();
         result.put("message", message);
         result.put("userId", sender.getUserId());
-        result.put("user", UserResponseDto.fromEntity(sender));
+        result.put("user", PublicUserResponseDto.fromEntity(sender));
         return result;
     }
 }

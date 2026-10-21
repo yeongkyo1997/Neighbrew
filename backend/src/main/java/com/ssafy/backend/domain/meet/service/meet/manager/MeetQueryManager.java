@@ -26,7 +26,7 @@ import com.ssafy.backend.domain.region.entity.Gugun;
 import com.ssafy.backend.domain.region.entity.Sido;
 import com.ssafy.backend.domain.region.repository.GugunRepository;
 import com.ssafy.backend.domain.region.repository.SidoRepository;
-import com.ssafy.backend.domain.user.entity.User;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,6 +57,7 @@ public class MeetQueryManager {
     private Page<MeetResponseDto> getMeetSearchDtos(Page<Meet> data) {
         return data.map(meet -> {
             MeetResponseDto meetResponseDto = modelMapper.map(meet, MeetResponseDto.class);
+            meetResponseDto.setHost(PublicUserResponseDto.fromEntity(meet.getHost()));
             meetResponseDto.setSido(SidoResponseDto.fromEntity(findSidoById(meet.getSidoCode())));
             meetResponseDto.setGugun(
                     GugunResponseDto.fromEntity(findGugunByCodes(meet.getSidoCode(), meet.getGugunCode())));
@@ -66,12 +67,13 @@ public class MeetQueryManager {
 
     public Map<String, Object> findMeetdetailByMeetId(Long meetId) {
         List<MeetUser> meetUsers = findMeetUsersByMeetId(meetId);
-        List<User> users = meetUsers.stream().map(MeetUser::getUser).collect(Collectors.toList());
+        List<PublicUserResponseDto> users = toPublicUsers(meetUsers);
         List<Status> statuses = meetUsers.stream().map(MeetUser::getStatus).collect(Collectors.toList());
         return createResultMap(findByMeetId(meetId), users, statuses);
     }
 
-    private Map<String, Object> createResultMap(MeetResponseDto meet, List<User> users, List<Status> statuses) {
+    private Map<String, Object> createResultMap(MeetResponseDto meet, List<PublicUserResponseDto> users,
+                                                List<Status> statuses) {
         Map<String, Object> result = new HashMap<>();
         result.put("meet", meet);
         result.put("users", users);
@@ -103,10 +105,14 @@ public class MeetQueryManager {
     }
 
     private void addUsersAndStatusesToDto(MeetUserDto meetUserDto, List<MeetUser> meetUsers) {
-        List<User> users = meetUsers.stream().map(MeetUser::getUser).collect(Collectors.toList());
         List<Status> statuses = meetUsers.stream().map(MeetUser::getStatus).collect(Collectors.toList());
-        meetUserDto.setUsers(users);
+        meetUserDto.setUsers(toPublicUsers(meetUsers));
         meetUserDto.setStatuses(statuses);
+    }
+
+    private List<PublicUserResponseDto> toPublicUsers(List<MeetUser> meetUsers) {
+        return meetUsers.stream().map(MeetUser::getUser).map(PublicUserResponseDto::fromEntity)
+                        .collect(Collectors.toList());
     }
 
     public Map<String, List<MeetResponseDto>> findUserMeetByUserId(Long userId) {

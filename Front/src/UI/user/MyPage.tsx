@@ -298,7 +298,9 @@ const MyPage = () => {
     navigate("/myPage/follow/" + userid);
   };
   const userInfo = () => {
-    callApi("get", `api/user/${userid}`)
+    //생년월일 등 개인정보는 본인 정보(myinfo)에만 포함된다
+    const url = userid === localStorage.getItem("myId") ? "api/user/myinfo" : `api/user/${userid}`;
+    callApi("get", url)
       .then(res => {
         setUserData(res.data);
       })
@@ -324,7 +326,7 @@ const MyPage = () => {
   useEffect(() => {
     setNickname(userData.nickname);
     setIntro(userData.intro);
-    setBirth(userData.birth !== null ? userData.birth : birth);
+    setBirth(userData.birth ?? birth);
   }, [userData]);
   const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -381,6 +383,16 @@ const MyPage = () => {
     formData.append("profile", file);
     if (userData.nickname != nickname && nickname.length > 20) {
       alert("닉네임은 20자 까지만 가능합니다.");
+      setNickname(userData.nickname);
+      return;
+    }
+    if (userData.nickname != nickname && nickname.includes("@")) {
+      alert("닉네임에 '@'는 사용할 수 없습니다.");
+      setNickname(userData.nickname);
+      return;
+    }
+    if (userData.nickname != nickname && /^user_\d+$/.test(nickname)) {
+      alert("user_숫자 형식의 닉네임은 사용할 수 없습니다.");
       setNickname(userData.nickname);
       return;
     }

@@ -2,7 +2,7 @@ package com.ssafy.backend.domain.drink.dto;
 
 import com.ssafy.backend.domain.drink.entity.Drink;
 import com.ssafy.backend.domain.drink.entity.DrinkReview;
-import com.ssafy.backend.domain.user.entity.User;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,12 +19,12 @@ import lombok.Setter;
 public class DrinkReviewResponseDto {
     public static DrinkReviewResponseDto fromEntity(DrinkReview drinkReview) {
         return DrinkReviewResponseDto.builder().drinkReviewId(drinkReview.getDrinkReviewId()).user(
-                drinkReview.getUser()).drink(drinkReview.getDrink()).content(drinkReview.getContent()).img(
+                PublicUserResponseDto.fromEntity(drinkReview.getUser())).drink(drinkReview.getDrink()).content(drinkReview.getContent()).img(
                 drinkReview.getImg()).likeCount(drinkReview.getLikeCount()).build();
     }
 
     private Long drinkReviewId;
-    private User user;
+    private PublicUserResponseDto user;
     private Drink drink;
     private String content;
     private String img;

@@ -291,7 +291,8 @@ const MeetingDetail = () => {
   //현재 유저의 정보 가져오기
   useEffect(() => {
     if (userId === 0) return;
-    const promise = callApi("get", `api/user/${userId}`);
+    //생년월일은 본인 정보(myinfo)에만 포함된다
+    const promise = callApi("get", "api/user/myinfo");
     promise.then(res => {
       setUserData(res.data);
     });
@@ -334,6 +335,12 @@ const MeetingDetail = () => {
 
   //참여 신청하기
   function applyMeet() {
+    //내 정보를 아직 못 불러왔으면 나이 확인을 할 수 없다
+    if (!userData.birth) {
+      setErrMsg("사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      setSimpleModalOn(true);
+      return;
+    }
     //간수치 제한 확인
     if ((meetDetailData.meet.minLiverPoint ?? 0) > userData.liverPoint) {
       setErrMsg("간수치 제한에 부합하지 않습니다.");

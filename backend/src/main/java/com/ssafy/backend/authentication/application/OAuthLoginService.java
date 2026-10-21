@@ -51,20 +51,27 @@ public class OAuthLoginService {
 
     private Long newUser(OAuthInfoResponse oAuthInfoResponse) {
         if (oAuthInfoResponse.getEmail() == null) {
-            String uuid = String.valueOf(UUID.randomUUID()).substring(0, 7);
-
             User user = User.builder().email(oAuthInfoResponse.getName()).name(oAuthInfoResponse.getName())
-                            .nickname(oAuthInfoResponse.getName() + uuid).oAuthProvider(
-                            oAuthInfoResponse.getOAuthProvider()).build();
+                            .nickname(generateNickname()).oAuthProvider(oAuthInfoResponse.getOAuthProvider())
+                            .build();
             return userRepository.save(user).getUserId();
         } else {
             User user = User.builder().email(oAuthInfoResponse.getEmail()).name(oAuthInfoResponse.getName())
-                            .nickname(oAuthInfoResponse.getNickname()).oAuthProvider(
-                            oAuthInfoResponse.getOAuthProvider()).build();
+                            .nickname(generateNickname()).oAuthProvider(oAuthInfoResponse.getOAuthProvider())
+                            .build();
             return userRepository.save(user).getUserId();
 
         }
 
+    }
+
+    // 닉네임은 공개되므로 이메일·실명 대신 겹치지 않는 무작위 값으로 만든다. (가입 후 마이페이지에서 변경)
+    private String generateNickname() {
+        String nickname;
+        do {
+            nickname = "user_" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        } while (userRepository.existsByNickname(nickname));
+        return nickname;
     }
 
     public String redirectApiUrl(OAuthLoginParams params) {

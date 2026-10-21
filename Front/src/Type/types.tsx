@@ -1,8 +1,9 @@
 export interface User {
   userId: number;
-  email: string;
+  //email·name·birth는 본인 정보(api/user/myinfo)에만 포함된다
+  email?: string;
   nickname: string;
-  name: string;
+  name?: string;
   birth?: string;
   intro?: string;
   liverPoint: number;

@@ -12,7 +12,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
-    List<User> findByNicknameContaining(String name);
+    // 이메일이 닉네임으로 남은 예전 가입자는 공개 닉네임(user_{id})과 다르므로 excluded("@")로 검색 대상에서 뺀다.
+    List<User> findByNicknameContainingAndNicknameNotContaining(String nickname, String excluded);
 
     boolean existsByNickname(String name);
 }

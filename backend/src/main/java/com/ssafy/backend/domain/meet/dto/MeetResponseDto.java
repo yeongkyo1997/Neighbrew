@@ -8,7 +8,7 @@ import com.ssafy.backend.common.enums.MeetStatus;
 import com.ssafy.backend.domain.drink.dto.DrinkResponseDto;
 import com.ssafy.backend.domain.region.dto.GugunResponseDto;
 import com.ssafy.backend.domain.region.dto.SidoResponseDto;
-import com.ssafy.backend.domain.user.dto.UserResponseDto;
+import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class MeetResponseDto {
     private Long meetId;
     private String meetName;
     private String description;
-    private UserResponseDto host;
+    private PublicUserResponseDto host;
     private Integer nowParticipants;
     private Integer maxParticipants;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
