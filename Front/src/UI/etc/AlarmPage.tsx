@@ -56,7 +56,9 @@ const alarmPage = () => {
   }, []);
   const goPageHandler = async (url: string, id: number) => {
     await deletePush(id);
-    await navigate(url.split("io")[1]);
+    // 푸시 URL은 도메인을 포함하므로 앱 안의 경로만 꺼내 이동한다. (예전 상대 경로 "meet/12"도 "/meet/12"로 해석)
+    const { pathname, search } = new URL(url, window.location.origin);
+    await navigate(pathname + search);
   };
   return (
     <>

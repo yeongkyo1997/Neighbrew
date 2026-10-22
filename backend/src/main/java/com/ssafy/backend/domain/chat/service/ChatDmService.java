@@ -9,12 +9,10 @@ import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.common.enums.PushType;
 import com.ssafy.backend.domain.chat.entity.ChatDmMessage;
 import com.ssafy.backend.domain.chat.entity.ChatDmRoom;
 import com.ssafy.backend.domain.chat.repository.ChatDmMessageRepository;
@@ -24,6 +22,7 @@ import com.ssafy.backend.domain.chat.service.dto.ChatMessageRequest;
 import com.ssafy.backend.domain.chat.service.manager.ChatDmMessageManager;
 import com.ssafy.backend.domain.chat.service.manager.ChatDmRoomManager;
 import com.ssafy.backend.domain.chat.service.validator.ChatDmValidator;
+import com.ssafy.backend.domain.push.service.push.PushMessage;
 import com.ssafy.backend.domain.push.service.push.PushService;
 import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.entity.User;
@@ -44,9 +43,6 @@ public class ChatDmService {
     private final ChatDmRoomManager roomManager;
     private final ChatDmMessageManager messageManager;
     private final ObjectMapper mapper;
-
-    @Value("${neighbrew.full.url}")
-    private String neighbrewUrl;
 
     //DM 목록 조회
     public List<ChatDmRoom> findMyDmList(Long userId) {
@@ -146,9 +142,8 @@ public class ChatDmService {
     }
 
     private void sendPushNotification(User sender, User receiver) {
-        String pushMessage = sender.getNickname() + "님께서 메세지를 보냈습니다.";
-        String pushUrl = neighbrewUrl + "/directchat/" + sender.getUserId() + "/" + receiver.getUserId();
-        pushService.send(sender, receiver, PushType.DM, pushMessage, pushUrl);
+        pushService.send(sender, receiver,
+                         PushMessage.directMessage(sender.getNickname(), sender.getUserId(), receiver.getUserId()));
     }
 
     private Map<String, Object> createMessageResponse(User sender, String message) {
