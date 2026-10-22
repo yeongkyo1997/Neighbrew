@@ -37,7 +37,7 @@ npm run lint      # eslint, --max-warnings 0
 ```
 
 - 테스트 스크립트는 없습니다.
-- `npm run lint`는 아직 422건이 남아 실패합니다. CI에서는 결과만 보여주고 막지 않습니다. 남은 것은 API 응답이 `any`라서 생기는 `no-unsafe-*`(355)·`no-explicit-any`·`restrict-*`와 `react-hooks/exhaustive-deps`(47)입니다. 다음 단계에서 `callApi`에 응답 타입을 붙이고, `exhaustive-deps`를 화면별로 정리한 뒤 CI lint를 막는 단계로 바꿉니다. 새 코드는 이 규칙들을 늘리지 않게 작성하세요.
+- `npm run lint`는 아직 51건이 남아 실패합니다(`react-hooks/exhaustive-deps` 47건, `react-refresh/only-export-components` 경고 4건). CI에서는 결과만 보여주고 막지 않습니다. `exhaustive-deps`를 화면별로 정리한 뒤 CI lint를 막는 단계로 바꿀 예정이니, 새 코드는 이 규칙과 `any` 관련 규칙을 늘리지 않게 작성하세요.
 - Vite dev 서버는 `/api`, `/ws` 요청을 `VITE_API_BASE_URL`(`.env.*`, git에 없음)로 프록시합니다.
 
 ### CI
@@ -116,7 +116,7 @@ domain/<name>/   user, meet, drink, chat, follow, evaluation, push, region, stor
 - `Front/src/App.tsx`: 모든 라우트와 SSE 연결(티켓 발급 후 `EventSource`, 끊기면 재연결)이 있습니다.
 - `Front/src/UI/<기능>/`: 화면 컴포넌트 (chat, drinkpost, meet, meetrate, user 등)
 - `Front/src/UI/components/`: 공용 컴포넌트
-- `Front/src/store.ts`: Redux 상태는 푸터 메뉴 하나뿐입니다. 서버 호출은 화면 컴포넌트에서 `utils/api.ts`의 `callApi`로 바로 합니다. react-query는 `main.tsx`에 Provider만 있고 실제로는 거의 쓰지 않습니다.
+- `Front/src/store.ts`: Redux 상태는 푸터 메뉴 하나뿐입니다. 서버 호출은 화면 컴포넌트에서 `utils/api.ts`의 `callApi<응답 타입>(...)`으로 바로 합니다. 응답 타입을 지정하지 않으면 `res.data`가 `unknown`이라 쓸 수 없습니다. 응답 타입은 백엔드 DTO에 맞춰 `Type/types.tsx`에 둡니다. react-query는 `main.tsx`에 Provider만 있고 실제로는 거의 쓰지 않습니다.
 - `Front/reference.md`의 팀 규칙:
   - 한글 입력이 두 번 들어가는 문제 때문에 Enter 처리는 `onKeyDown` 대신 `onKeyUp`을 씁니다.
   - 모바일 Enter는 `e.keyCode === 13`으로 판별합니다.
