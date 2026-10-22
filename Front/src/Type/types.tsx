@@ -66,11 +66,16 @@ export interface Meeting {
   chatRoomId?: number;
 }
 
+//미팅 참여자와 참여 상태(HOST/GUEST/APPLY)
+export type Participant = {
+  user: User;
+  status: string;
+};
+
 //미팅 상세 정보 type
 export type MeetDetail = {
   meet: Meeting;
-  users: User[];
-  statuses: [];
+  participants: Participant[];
 };
 
 export interface Drink {
