@@ -34,7 +34,7 @@ import logo from "./assets/logoNavbar.svg";
 import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
 import AlarmPage from "./UI/etc/AlarmPage";
 import { callApi } from "./utils/api";
-import { SseTicket } from "./Type/types";
+import { SseTicket, AlarmLog } from "./Type/types";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
@@ -84,7 +84,7 @@ function App() {
     es.current.onmessage = event => {
       if (event.lastEventId) lastEventId.current = event.lastEventId;
       try {
-        const data = JSON.parse(event.data);
+        const data = JSON.parse(event.data as string) as Pick<AlarmLog, "content" | "url">;
         noti(data.content, data.url);
       } catch {
         // JSON이 아닌 메시지(연결 확인 등)는 알림으로 띄우지 않는다

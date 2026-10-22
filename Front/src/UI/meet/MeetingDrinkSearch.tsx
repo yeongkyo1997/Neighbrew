@@ -118,7 +118,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
 
   //검색 결과 창 애니메이션 용
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const parent = useRef(null);
+  const parent = useRef<HTMLDivElement>(null);
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);

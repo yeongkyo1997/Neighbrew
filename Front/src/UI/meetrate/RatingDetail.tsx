@@ -112,7 +112,7 @@ const RatingDetail = (props: { ratingNum: number; getFunc(desc: string): void })
     { id: 5, content: "반말을 해요" },
   ];
 
-  const tagTable = {
+  const tagTable: Record<number, string> = {
     1: "좋아요",
     2: "보통이에요",
     3: "아쉬워요",

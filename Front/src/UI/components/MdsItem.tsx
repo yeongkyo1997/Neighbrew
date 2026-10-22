@@ -11,7 +11,7 @@ const MdsItem = ({ pick }: { pick: Drink }) => {
   const [limit] = useState(5);
   const name = pick.name;
   const img = pick.image;
-  const nameEllipsis = (str, limit) => {
+  const nameEllipsis = (str: string, limit: number) => {
     return {
       string: str.slice(0, limit),
     };

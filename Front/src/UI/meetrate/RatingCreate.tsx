@@ -48,6 +48,9 @@ const RatingButton = styled.button`
   margin-top: 50px;
 `;
 
+// 멤버별 평가 선택값 (evaluationType: 1 좋아요, 2 보통, 3 아쉬워요)
+type RatingValue = { userId: number; evaluationType: number; description: string };
+
 const RatingCreate = () => {
   //네비게이터 : 모임 관리 페이지로 이동, 뒤로가기 기능
   const navigate = useNavigate();
@@ -57,19 +60,19 @@ const RatingCreate = () => {
 
   const [users, setUsers] = useState<User[]>();
   // const [evaluation, setEvaluation] = useState<Evaluation[]>();
-  const [selectedValues, setSelectedValues] = useState([]); // 사용자별로 선택된 버튼 값을 저장
+  const [selectedValues, setSelectedValues] = useState<RatingValue[]>([]); // 사용자별로 선택된 버튼 값을 저장
   const [meetTitle, setMeetTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false); //중복 제출 방지
   const myId = parseInt(localStorage.getItem("myId"));
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
 
-  const evaluationType = {
+  const evaluationType: Record<number, string> = {
     1: "GOOD",
     2: "MID",
     3: "BAD",
   };
 
-  const PostHandler = rateValue => {
+  const PostHandler = (rateValue: RatingValue) => {
     return callApi("POST", "/api/evaluation", {
       ratedUser: myId,
       reviewer: rateValue.userId,
@@ -117,7 +120,7 @@ const RatingCreate = () => {
     void callApi<MeetDetail>("GET", `/api/meet/${meetId}`)
       .then(res => {
         setMeetTitle(res.data.meet.meetName);
-        const { participants } = res.data as MeetDetail;
+        const { participants } = res.data;
         return participants
           .filter(participant => participant.user.userId !== myId && participant.status !== "APPLY")
           .map(participant => participant.user);

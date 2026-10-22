@@ -1,5 +1,5 @@
 // 마이 페이지
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import { useNavigate, useParams } from "react-router-dom";
@@ -361,7 +361,7 @@ const MyPage = () => {
     localStorage.setItem("chooseMenu", "3");
   }, [userid]);
 
-  const [imgFile, setImgFile] = useState(null);
+  const [imgFile, setImgFile] = useState<string | null>(null);
   const imgRef = useRef<HTMLInputElement>(null);
 
   //이미지 파일 업로드 시 미리보기
@@ -468,7 +468,7 @@ const MyPage = () => {
       .then(() => {
         myDrinks();
       })
-      .catch(err => {
+      .catch((err: AxiosError<string>) => {
         if (err?.response?.data === "닉네임 중복") {
           alert("중복된 닉네임입니다. 다시 입력해주세요.");
         }

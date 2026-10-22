@@ -15,6 +15,7 @@ import { callApi } from "../../utils/api";
 import { initialMeet } from "../common";
 import { WhiteModal } from "../../style/common";
 import { Meeting, MeetDetail } from "../../Type/types";
+import { AxiosError } from "axios";
 
 const BigBtn = styled.div`
   border-radius: 30px;
@@ -86,7 +87,7 @@ const MeetingManageMain = () => {
       .then(() => {
         GoMeetMainHandler();
       })
-      .catch((e) => {
+      .catch((e: AxiosError<string>) => {
         setErrMsg(e.response.data);
         setErrorModalOn(true);
       });

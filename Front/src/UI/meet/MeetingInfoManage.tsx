@@ -30,6 +30,7 @@ import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
 import imageCompression from "browser-image-compression";
 import LoadingDot from "../etc/LoadingDot";
+import { AxiosError } from "axios";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -107,12 +108,12 @@ const TooltipBtn = styled.div`
 `;
 
 const MeetingInfoManage = () => {
-  const titleRef = useRef(null);
-  const sidoRef = useRef(null);
-  const dateRef = useRef(null);
-  const maxPRef = useRef(null);
-  const liverRef = useRef(null);
-  const minAgeRef = useRef(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const sidoRef = useRef<HTMLSelectElement>(null);
+  const dateRef = useRef<HTMLInputElement>(null);
+  const maxPRef = useRef<HTMLInputElement>(null);
+  const liverRef = useRef<HTMLInputElement>(null);
+  const minAgeRef = useRef<HTMLInputElement>(null);
 
   const navigate = useNavigate();
   //모임 수정 후 모임 상세로 이동
@@ -148,7 +149,7 @@ const MeetingInfoManage = () => {
   const [maxAge, setMaxAge] = useState(0); //최대나이
   const [meetDesc, setMeetDesc] = useState(""); //모임 소개
   const [, setImgSrc] = useState<string>(""); //이미지 경로
-  const [file, setFile] = useState(null); //파일 타입
+  const [file, setFile] = useState<File | null>(null); //파일 타입
 
   //이미지 수정용
   const [newImgSrc, setNewImgSrc] = useState("");
@@ -372,7 +373,7 @@ const MeetingInfoManage = () => {
       .then(() => {
         GoMeetDetailHandler(); //모임 상세 페이지로 이동
       })
-      .catch(error => {
+      .catch((error: AxiosError) => {
         const data = error?.response?.data;
         setErrorMsg(typeof data === "string" ? data : "요청 처리 중 오류가 발생했습니다.");
         setLoadingModalOn(false);

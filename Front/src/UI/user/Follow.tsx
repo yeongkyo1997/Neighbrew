@@ -15,7 +15,7 @@ const Follow = () => {
   };
   const ArrowLeftIcon = arrowLeftIcon("var(--c-black)");
   const [users, setUsers] = useState<userType[]>([]);
-  const parent = useRef(null);
+  const parent = useRef<HTMLDivElement>(null);
   const { userid } = useParams();
   useEffect(() => {
     parent.current && autoAnimate(parent.current);

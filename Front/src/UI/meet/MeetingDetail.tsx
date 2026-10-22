@@ -24,6 +24,7 @@ import { WhiteModal, ModalInner } from "../../style/common";
 import { formateDate, formateTime } from "./DateTimeCommon";
 import { deleteIcon, editIcon } from "./../../assets/AllIcon";
 import YesOrNoModal from "../components/YesOrNoModal";
+import { AxiosError } from "axios";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -365,7 +366,7 @@ const MeetingDetail = () => {
         setErrMsg(`모임에 참여 신청하였습니다!\n신청 취소는 '승인 대기중' 버튼을 클릭해주세요.`);
         setSimpleModalOn(true);
       })
-      .catch(err => {
+      .catch((err: AxiosError<string>) => {
         setErrMsg(err.response.data);
         setSimpleModalOn(true);
       });
@@ -404,7 +405,7 @@ const MeetingDetail = () => {
       .then(() => {
         GoBackHandler(); //모임 삭제 후 뒤로가기
       })
-      .catch(e => {
+      .catch((e: AxiosError<string>) => {
         setErrMsg(e.response.data);
         setSimpleModalOn(true);
       });
@@ -421,7 +422,7 @@ const MeetingDetail = () => {
       .then(() => {
         fetchMeetData();
       })
-      .catch(e => {
+      .catch((e: AxiosError<string>) => {
         setErrMsg(e.response.data);
         setSimpleModalOn(true);
       });
@@ -437,7 +438,7 @@ const MeetingDetail = () => {
     GotoChatHandler();
   };
 
-  const sendMessageHandler = roomId => {
+  const sendMessageHandler = (roomId: number) => {
     client.current.send(`/sub/join/${roomId}`, {}, JSON.stringify({ userId }));
   };
 

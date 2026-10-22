@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Loading from "../etc/Loading";
+import { LoginResponse } from "../../Type/types";
 
 const GoogleLogin = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const GoogleLogin = () => {
     const temcode = location.search.split("=")[1];
     const code = temcode.split("&")[0];
     void axios
-      .post("/api/auth/google", {
+      .post<LoginResponse>("/api/auth/google", {
         code: code,
       })
       .then(res => {

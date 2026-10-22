@@ -50,7 +50,7 @@ const DrinkpostReviewCreate = () => {
   const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중 모달
   const [isClick, setIsClick] = useState(false);
 
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
     void callApi<Drink>("get", `api/drink/${drinkId}`).then(res => {

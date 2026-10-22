@@ -104,7 +104,7 @@ const MeetingFind = () => {
 
   //필터 애니메이션 관련
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const parent = useRef(null);
+  const parent = useRef<HTMLDivElement>(null);
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
@@ -155,7 +155,7 @@ const MeetingFind = () => {
 
   const Filtering = () => {
     //전체 목록 중에 필터링 적용
-    const filterData = meetAllData.reduce((acc, cur) => {
+    const filterData = meetAllData.reduce<Meeting[]>((acc, cur) => {
       //교집합만 push
       if (
         categoryFiltering(cur) &&

@@ -168,7 +168,7 @@ const DrinkpostCreate = () => {
     setDrinkDescription(e.target.value);
   };
 
-  const [imgFile, setImgFile] = useState(null);
+  const [imgFile, setImgFile] = useState<File | null>(null);
 
   //이미지 압축에 사용하는 옵션
 

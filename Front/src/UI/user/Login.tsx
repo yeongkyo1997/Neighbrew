@@ -11,7 +11,7 @@ import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 �
 import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import { callApi } from "../../utils/api";
-import { TokenResponse } from "../../Type/types";
+import { TokenResponse, LoginRedirect } from "../../Type/types";
 
 const ImgDivIcon = styled.div`
   overflow: hidden;
@@ -99,7 +99,7 @@ const Login = () => {
     }
   }, []);
   const KakaologinHandler = () => {
-    void axios({
+    void axios<LoginRedirect>({
       method: "get",
       url: "/api/auth/login/kakao",
     }).then((res) => {
@@ -108,7 +108,7 @@ const Login = () => {
     });
   };
   const NaverloginHandler = () => {
-    void axios({
+    void axios<LoginRedirect>({
       method: "get",
       url: "api/auth/login/naver",
     }).then((res) => {
@@ -117,7 +117,7 @@ const Login = () => {
     });
   };
   const GoogleloginHandler = () => {
-    void axios({
+    void axios<LoginRedirect>({
       method: "get",
       url: "api/auth/login/google",
     }).then((res) => {
