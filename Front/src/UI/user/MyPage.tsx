@@ -259,7 +259,7 @@ const MyPage = () => {
 
   // 팔로우 하기
   const followHandler = async () => {
-    const api = await callApi("post", `api/follow/${userid}`).then(res => {
+    await callApi("post", `api/follow/${userid}`).then(() => {
       followers();
     });
   };
@@ -416,7 +416,7 @@ const MyPage = () => {
             UserID: localStorage.getItem("myId"),
           },
         })
-        .then(res => {
+        .then(() => {
           userInfo();
         })
         .then(() => {
@@ -437,7 +437,7 @@ const MyPage = () => {
             UserID: localStorage.getItem("myId"),
           },
         })
-        .then(res => {
+        .then(() => {
           userInfo();
         })
         .then(() => {
@@ -459,7 +459,7 @@ const MyPage = () => {
       //비워 두면 보내지 않는다 (서버는 null이면 기존 값을 유지)
       birth: birth || undefined,
     })
-      .then(res => {
+      .then(() => {
         userInfo();
       })
       .then(() => {

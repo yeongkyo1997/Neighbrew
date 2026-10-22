@@ -1,7 +1,5 @@
 import { createSlice, configureStore, PayloadAction } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
 
-const 초기값 = { count: 0, user: "kim" };
 
 const FooterMenu = createSlice({
   name: "chooseMenu",

@@ -22,7 +22,7 @@ import defaultImg from "../../assets/defaultImg.png";
 import { getTagName } from "../common";
 import { WhiteModal, ModalInner } from "../../style/common";
 import { formateDate, formateTime } from "./DateTimeCommon";
-import { deleteIcon, editIcon, personIcon } from "./../../assets/AllIcon";
+import { deleteIcon, editIcon } from "./../../assets/AllIcon";
 import YesOrNoModal from "../components/YesOrNoModal";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
@@ -149,15 +149,6 @@ const Description = styled.div`
   word-break: break-all;
 `;
 
-const ModalBtnDiv = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 10%;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-`;
 
 const ManageModal = {
   content: {
@@ -274,7 +265,7 @@ const MeetingDetail = () => {
       .then(res => {
         setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
       })
-      .catch(e => {
+      .catch(() => {
         GotoMainHandler();
       });
   };
@@ -369,7 +360,7 @@ const MeetingDetail = () => {
       meetId: meetId,
     });
     promise
-      .then(res => {
+      .then(() => {
         setUserStatus("APPLY");
         setErrMsg(`모임에 참여 신청하였습니다!\n신청 취소는 '승인 대기중' 버튼을 클릭해주세요.`);
         setSimpleModalOn(true);
@@ -386,7 +377,7 @@ const MeetingDetail = () => {
       userId: userId,
       meetId: meetId,
     });
-    void promise.then(res => {
+    void promise.then(() => {
       setUserStatus("NONE");
     });
   }
@@ -398,7 +389,7 @@ const MeetingDetail = () => {
       meetId: meetId,
     });
     void promise
-      .then(res => {
+      .then(() => {
         setUserStatus("NONE");
       })
       .then(() => fetchMeetData());
@@ -410,7 +401,7 @@ const MeetingDetail = () => {
       userId: parseInt(localStorage.getItem("myId")),
     });
     promise
-      .then(res => {
+      .then(() => {
         GoBackHandler(); //모임 삭제 후 뒤로가기
       })
       .catch(e => {

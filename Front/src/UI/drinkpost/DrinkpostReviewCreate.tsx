@@ -48,7 +48,7 @@ const DrinkpostReviewCreate = () => {
   const { drinkId } = useParams();
   const [drink, setDrink] = useState<Drink>();
   const [review, setReview] = useState("");
-  const [myInfo, setMyInfo] = useState<User>();
+  const [, setMyInfo] = useState<User>();
   const reviewHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReview(e.target.value);
   };

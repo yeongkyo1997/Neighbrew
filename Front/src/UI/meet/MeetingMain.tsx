@@ -2,7 +2,7 @@
 [MeetingMain.tsx]
 모임 메인 페이지. 상단 탭에서 모임 찾기와 내 모임으로 전환 가능
 */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MeetingMy from "./MeetingMy";

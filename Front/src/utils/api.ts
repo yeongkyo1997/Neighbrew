@@ -87,9 +87,9 @@ export const callApi = async (method: string, url: string, body: any = {}) => {
 };
 
 // 알림 관련 함수
-export const noti = (message: string, type: string, url: string) => {
+export const noti = () => {
   void navigator.serviceWorker.ready.then((registration) => {
-    const notiAlarm = registration.showNotification("알림", {
+    void registration.showNotification("알림", {
       body: "pinyin + '\n' + means",
       actions: [
         {

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
-import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
+import { arrowLeftIcon } from "../../assets/AllIcon";
 import { useState, useEffect, useRef } from "react";
 import Footer from "../footer/Footer";
 import autoAnimate from "@formkit/auto-animate";

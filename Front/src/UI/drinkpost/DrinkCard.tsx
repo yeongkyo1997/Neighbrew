@@ -94,7 +94,7 @@ const DrinkCard = ({ drink }: { drink: Drink }) => {
     }
   };
 
-  const [limit, setLimit] = useState(8);
+  const [limit] = useState(8);
   const moveToDrinkDetailHandler = () => {
     navigate(`/drinkpost/${drink.drinkId}`);
   };

@@ -6,7 +6,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
@@ -147,7 +147,7 @@ const MeetingInfoManage = () => {
   const [minAge, setMinAge] = useState(0); //최소나이
   const [maxAge, setMaxAge] = useState(0); //최대나이
   const [meetDesc, setMeetDesc] = useState(""); //모임 소개
-  const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
+  const [, setImgSrc] = useState<string>(""); //이미지 경로
   const [file, setFile] = useState(null); //파일 타입
 
   //이미지 수정용
@@ -355,7 +355,7 @@ const MeetingInfoManage = () => {
         .then(() => {
           updateApi(f);
         })
-        .catch(e => {
+        .catch(() => {
           setErrorMsg("이미지 처리 중 오류가 발생했습니다.");
           setLoadingModalOn(false);
           setIsModalOn(true);
@@ -369,7 +369,7 @@ const MeetingInfoManage = () => {
   const updateApi = (f: FormData) => {
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
-      .then(res => {
+      .then(() => {
         GoMeetDetailHandler(); //모임 상세 페이지로 이동
       })
       .catch(error => {

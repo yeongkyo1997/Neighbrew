@@ -1,20 +1,12 @@
 import { callApi } from "../../utils/api";
-import { backIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import AlarmItem from "../components/AlarmItem";
 import Footer from "../footer/Footer";
 import { useNavigate } from "react-router-dom";
-import autoAnimate from "@formkit/auto-animate";
 import { AlarmLog } from "../../Type/types";
 import EmptyMsg from "../components/EmptyMsg.tsx";
-import {
-  LeadingActions,
-  SwipeableList,
-  SwipeableListItem,
-  SwipeAction,
-  TrailingActions,
-} from "react-swipeable-list";
+import { SwipeableList, SwipeableListItem, SwipeAction, TrailingActions } from "react-swipeable-list";
 import "react-swipeable-list/dist/styles.css";
 import NavbarSimple from "../navbar/NavbarSimple.tsx";
 
@@ -43,7 +35,6 @@ const trailingActions = (id: number) => (
   </TrailingActions>
 );
 const AlarmPage = () => {
-  const BackIcon = backIcon();
   const navigate = useNavigate();
   const myId = localStorage.getItem("myId");
   const [alarmList, setAlarmList] = useState<AlarmLog[]>([]);

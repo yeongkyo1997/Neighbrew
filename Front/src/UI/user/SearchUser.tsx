@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { useNavigate, useParams } from "react-router-dom";
-import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
+import { useNavigate } from "react-router-dom";
+import { arrowLeftIcon } from "../../assets/AllIcon";
 import SearchBox from "../components/SearchBox";
 import { useState, useEffect, useRef } from "react";
 import Footer from "../footer/Footer";
@@ -17,7 +17,6 @@ const SearchUser = () => {
   const ArrowLeftIcon = arrowLeftIcon("var(--c-black)");
   const [users, setUsers] = useState<userType[]>([]);
   const parent = useRef(null);
-  const { userid } = useParams();
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);

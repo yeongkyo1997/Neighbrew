@@ -3,7 +3,7 @@ import { forwardRef, useState } from "react";
 import { SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 import { useNavigate } from "react-router-dom";
-import { moreIcon, deleteIcon, editIcon } from "../../assets/AllIcon";
+import { moreIcon, deleteIcon } from "../../assets/AllIcon";
 import { ShortThreeDotModal, WhiteModal } from "../../style/common";
 import Modal from "react-modal";
 import Siren from "../../assets/siren.png";
@@ -74,7 +74,6 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
   const { subReview } = props;
   const navigate = useNavigate();
   const MoreIcon = moreIcon();
-  const EditIcon = editIcon();
   const DeleteIcon = deleteIcon();
 
   const [report, setReport] = useState(false); // 타인 신고하기 버튼 눌렀을 때, 신고할지 말지 묻는 모달을 띄운다.
@@ -85,7 +84,7 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
   const nickname = subReview.user.nickname.includes("@")
     ? subReview.user?.nickname.split("@")[0]
     : subReview.user?.nickname;
-  const [nameLimit, setNameLimit] = useState(15);
+  const [nameLimit] = useState(15);
   const truncatedNickname =
     nickname.length > nameLimit ? nickname.substring(0, nameLimit) + "..." : nickname;
   const goReviewUser = () => {

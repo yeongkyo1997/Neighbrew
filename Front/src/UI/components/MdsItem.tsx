@@ -8,7 +8,7 @@ const Card = styled.div`
 `;
 
 const MdsItem = ({ pick }: { pick: Drink }) => {
-  const [limit, setLimit] = useState(5);
+  const [limit] = useState(5);
   const name = pick.name;
   const img = pick.image;
   const nameEllipsis = (str, limit) => {

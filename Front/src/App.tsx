@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import { useNavigate, useLocation, Route, Routes } from "react-router-dom";
+import { useLocation, Route, Routes } from "react-router-dom";
 import Loading from "./UI/etc/Loading";
 import Login from "./UI/user/Login";
 import Main from "./UI/home/Main";
@@ -36,7 +36,6 @@ import AlarmPage from "./UI/etc/AlarmPage";
 import { callApi } from "./utils/api";
 
 function App() {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
   const [userid, setUserid] = useState<string | null>(null);
   const es = useRef<EventSource | undefined>();
@@ -81,7 +80,7 @@ function App() {
       withCredentials: true,
     });
 
-    es.current.onopen = e => {};
+    es.current.onopen = () => {};
     es.current.onmessage = event => {
       if (event.lastEventId) lastEventId.current = event.lastEventId;
       try {
@@ -93,7 +92,7 @@ function App() {
         return;
       }
     };
-    es.current.onerror = err => {
+    es.current.onerror = () => {
       es.current?.close();
       if (isActive()) setTimeout(() => esconnect(id, isActive), 5000);
     };
@@ -134,7 +133,7 @@ function App() {
       void Notification.requestPermission().then(permission => {
         // 사용자가 승인하면, 알림을 표시한다
         if (permission === "granted") {
-          const notification = new Notification("알림을 허용하셨습니다.");
+          new Notification("알림을 허용하셨습니다.");
         }
       });
     }

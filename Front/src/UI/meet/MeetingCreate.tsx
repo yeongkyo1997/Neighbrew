@@ -6,7 +6,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
@@ -306,7 +306,7 @@ const MeetingCreate = () => {
         .then(() => {
           createApi(f);
         })
-        .catch(e => {
+        .catch(() => {
           setErrorMsg("이미지 처리 중 오류가 발생했습니다.");
           setLoadingModalOn(false);
           setIsModalOn(true);

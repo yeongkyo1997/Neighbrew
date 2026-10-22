@@ -4,7 +4,7 @@ import DrinkCard from "../drinkpost/DrinkCard";
 import { useState, useEffect } from "react";
 
 import Footer from "../footer/Footer";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 import EmptyMsg from "../components/EmptyMsg.tsx";
@@ -17,10 +17,6 @@ const ShowcaseBody = styled.div`
 const DrinkPostUseInUser = () => {
   const { userid } = useParams();
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
-  const navigate = useNavigate();
-  const toDrinkSearch = () => {
-    navigate("/drinkpost/search");
-  };
   const myDrinkHandler = () => {
     void callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
       setDrinkList(res.data);

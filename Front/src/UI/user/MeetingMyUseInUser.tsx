@@ -4,7 +4,6 @@
 내가 주최 중인 모임, 내가 참여 중인 모임, 내가 신청한 모임 출력
 */
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MeetingListItem from "./../meet/MeetingListItem";
 import EmptyMsg from "./../components/EmptyMsg";

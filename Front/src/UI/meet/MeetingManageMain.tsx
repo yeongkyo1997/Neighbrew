@@ -83,7 +83,7 @@ const MeetingManageMain = () => {
       userId: parseInt(localStorage.getItem("myId")),
     });
     promise
-      .then((res) => {
+      .then(() => {
         GoMeetMainHandler();
       })
       .catch((e) => {

@@ -180,15 +180,6 @@ const InputDiv = styled.div`
   justify-content: space-around;
 `;
 
-const Input = styled.input`
-  width: 85%;
-  height: 70%;
-  border: none;
-
-  &:focus-visible {
-    outline: none;
-  }
-`;
 
 const BackDrop = styled.div<{ ismodal: boolean }>`
   display: ${(props) => (props.ismodal ? "block" : "none")};
@@ -254,7 +245,7 @@ const ChatRoom = () => {
     };
   }, [id]);
   // 엔터 누르면 메세지 전송
-  const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+  const sendMessageHandler = () => {
     if (message.trim() === "") return;
     client.current.send(
       `/sub/chat/${id}/sendMessage`,
@@ -284,13 +275,13 @@ const ChatRoom = () => {
           setChatRoomName(res.data.chatRoomName);
         });
       })
-      .catch((e) => {});
+      .catch(() => {});
 
     callApi("GET", `/api/chatroom/${id}/${localStorage.getItem("myId")}/users`)
       .then((res) => {
         setUsers(res.data);
       })
-      .catch((e) => {});
+      .catch(() => {});
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
@@ -494,24 +485,6 @@ const ChatRoom = () => {
 
 export default ChatRoom;
 
-const SendIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="28"
-      height="25"
-      viewBox="0 0 30 27"
-      fill="none"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M4.61325 12.302H13.1325C13.5468 12.302 13.8825 12.6378 13.8825 13.052C13.8825 13.4662 13.5467 13.802 13.1325 13.802H4.63339L-9.26055e-06 26.1577L29.4275 13.0789L-9.26055e-06 -2.1257e-05L4.61325 12.302Z"
-        fill="var(--c-yellow)"
-      />
-    </svg>
-  );
-};
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
   flex-basis: 90%;

@@ -1,7 +1,7 @@
 // main
 import { styled } from "styled-components";
 import DrinkCard from "./DrinkCard";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";

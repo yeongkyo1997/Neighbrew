@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import likeIcon from "../../assets/likeIcon.svg";
 import { likeIcon2 } from "../../assets/AllIcon";
 import { useState, useEffect } from "react";
 import { Review } from "../../Type/types";
@@ -49,11 +48,6 @@ const UserNickname = styled.div`
 `;
 
 // 유저 프로필 사진
-const UserImg = styled.img`
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-`;
 
 // 길이가 길면 ...으로 표시
 // MoreButton을 누르면 글이 전체로 표시
@@ -74,25 +68,6 @@ const DescriptionP = styled.p`
 
 // 좋아요 버튼
 // likeIcon을 누르면 좋아요 취소
-const LikeButton = styled.button`
-  width: 0.7rem;
-  height: 0.7rem;
-  background-color: white;
-  border: none;
-  background-image: url(${likeIcon});
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  margin-right: 1vw;
-  margin-top: 1vh;
-  margin-bottom: 1vh;
-  &.like {
-    background-image: url(${likeIcon});
-  }
-  &.unlike {
-    background-image: url(${likeIcon});
-  }
-`;
 
 // 좋아요 수와 버튼
 const LikeDiv = styled.div`
@@ -112,10 +87,10 @@ const ReviewItem = ({ review }: { review: Review }) => {
   const nickname = review.user.nickname.includes("@")
     ? review.user.nickname.split("@")[0]
     : review.user.nickname;
-  const [nameLimit, setNameLimit] = useState(12);
+  const [nameLimit] = useState(12);
   const truncatedNickname =
     nickname.length > nameLimit ? nickname.substring(0, nameLimit) + "..." : nickname;
-  const [showMore, setShowMore] = useState(false);
+  const [showMore] = useState(false);
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(review.likeCount);
   const navigate = useNavigate();
