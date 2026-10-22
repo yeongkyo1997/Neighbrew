@@ -17,7 +17,7 @@ import lombok.Setter;
 public class UserResponseDto {
     public static UserResponseDto fromEntity(User user) {
         return UserResponseDto.builder().userId(user.getUserId()).email(user.getEmail()).nickname(
-                user.getNickname()).name(user.getName()).birth(String.valueOf(user.getBirth())).intro(
+                user.getNickname()).name(user.getName()).birth(user.getBirth() == null ? null : user.getBirth().toString()).intro(
                 user.getIntro()).liverPoint(user.getLiverPoint()).profile(user.getProfile()).build();
     }
 

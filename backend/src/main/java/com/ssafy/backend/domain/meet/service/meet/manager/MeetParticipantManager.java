@@ -1,5 +1,7 @@
 package com.ssafy.backend.domain.meet.service.meet.manager;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Component;
 
 import com.ssafy.backend.common.enums.Status;
@@ -24,10 +26,16 @@ public class MeetParticipantManager {
         if (attendMeet.getNowParticipants() >= attendMeet.getMaxParticipants()) {
             throw new IllegalArgumentException("해당 모임에 참여 인원이 가득 찼습니다.");
         }
+        checkEligibility(attendMeet, attendUser);
         // HOST, GUEST, APPLY 중 어떤 상태든 있으면 이미 참여(신청)한 사용자다
         if (meetUserService.findUserStatus(attendUser.getUserId(), attendMeet.getMeetId()) != null) {
             throw new IllegalArgumentException("이미 참여하신 모임 입니다.");
         }
+    }
+
+    // 신청 후 승인 전까지 간수치나 제한이 바뀔 수 있으므로 승인할 때도 호출한다.
+    public void checkEligibility(Meet meet, User user) {
+        meet.validateEligibility(user, LocalDate.now());
     }
 
     public void applyCancelMeet(Long userId, Long meetId) {

@@ -218,4 +218,34 @@ class MeetServiceTest {
         assertThat(publishedEvents(1)).containsExactly(new MeetApplied(guest, host, "모임", 10L));
         then(queryManager).shouldHaveNoInteractions();
     }
+
+    @Test
+    void 승인할_때_참여_조건에_맞지_않으면_인원과_상태를_바꾸지_않는다() {
+        Meet meet = meet(1);
+        given(validator.validateAndGetMeetForUpdate(10L)).willReturn(meet);
+        given(validator.validateAndGetUser(2L)).willReturn(guest);
+        given(meetUserService.findUserStatus(2L, 10L)).willReturn(Status.APPLY);
+        willThrow(new IllegalArgumentException("간수치 제한에 부합하지 않습니다.")).given(participantManager)
+                                                                       .checkEligibility(meet, guest);
+
+        assertThatThrownBy(() -> meetService.manageMeet(1L, 2L, 10L, true))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        then(meetManager).should(never()).increaseParticipants(any());
+        then(participantManager).should(never()).manageMeet(any(), any(), anyBoolean());
+        then(eventPublisher).shouldHaveNoInteractions();
+    }
+
+    @Test
+    void 거절할_때는_참여_조건을_확인하지_않는다() {
+        Meet meet = meet(1);
+        given(validator.validateAndGetMeetForUpdate(10L)).willReturn(meet);
+        given(validator.validateAndGetUser(2L)).willReturn(guest);
+        given(meetUserService.findUserStatus(2L, 10L)).willReturn(Status.APPLY);
+
+        meetService.manageMeet(1L, 2L, 10L, false);
+
+        then(participantManager).should(never()).checkEligibility(any(), any());
+        then(participantManager).should().manageMeet(2L, 10L, false);
+    }
 }

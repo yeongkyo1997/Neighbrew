@@ -2,6 +2,7 @@ package com.ssafy.backend.domain.user.service;
 
 import java.text.Normalizer;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class UserService {
         }
 
         if (!nicknameExists && updateDto.getNickname().equals(
-                user.getNickname()) && updateDto.getBirth().equals(user.getBirth()) && updateDto.getIntro()
+                user.getNickname()) && Objects.equals(updateDto.getBirth(), user.getBirth()) && updateDto.getIntro()
                                                                                                 .equals(user.getIntro())) {
             throw new IllegalArgumentException("변경사항이 없습니다.");
         }

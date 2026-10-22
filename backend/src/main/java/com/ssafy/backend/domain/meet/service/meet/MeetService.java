@@ -180,6 +180,7 @@ public class MeetService {
         }
 
         if (applyResult) {
+            participantManager.checkEligibility(managementMeet, manageUser);
             meetManager.increaseParticipants(managementMeet);
         }
         String result = participantManager.manageMeet(userId, meetId, applyResult);
