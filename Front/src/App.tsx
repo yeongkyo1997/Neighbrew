@@ -13,7 +13,7 @@ import MeetingCreate from "./UI/meet/MeetingCreate";
 import MeetingManageMain from "./UI/meet/MeetingManageMain";
 import MeetingMemberManage from "./UI/meet/MeetingMemberManage";
 import MeetingInfoManage from "./UI/meet/MeetingInfoManage";
-import Mypage from "./UI/user/MyPage";
+import Mypage from "./UI/user/mypage/MyPage";
 import Follower from "./UI/user/Follower";
 import Follow from "./UI/user/Follow";
 import KakaoLogin from "./UI/user/KakaoLogin";
