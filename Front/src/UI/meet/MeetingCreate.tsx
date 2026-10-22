@@ -192,7 +192,7 @@ const MeetingCreate = () => {
   //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
-    let isValid =
+    const isValid =
       titleCheck(meetTitle.trim()) &&
       drinkCheck(selectedDrink) &&
       positionCheck(sido.sidoCode, gugun.gugunCode) &&
@@ -243,7 +243,7 @@ const MeetingCreate = () => {
   //필수가 아닌 입력값 검증
   const checkNonRequiredValue = (value: string | number) => {
     //숫자 값이 없는지 -> 있어야만 폼데이터에 넣음
-    let res = value !== 0 && value != null && !Number.isNaN(value);
+    const res = value !== 0 && value != null && !Number.isNaN(value);
     return res;
   };
 
@@ -267,7 +267,7 @@ const MeetingCreate = () => {
 
     setIsClick(true);
 
-    let f = new FormData();
+    const f = new FormData();
     //필수 입력o
     f.append("userId", userId.toString());
     f.append("meetName", meetTitle.trim());

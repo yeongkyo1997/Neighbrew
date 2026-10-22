@@ -255,7 +255,7 @@ const DirectChat = () => {
 
     client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/dm/${user1}/${user2}`, res => {
+      client.current.subscribe(`/pub/dm/${user1}/${user2}`, res => {
         const receivedMessage = JSON.parse(res.body);
         setMessages((prevMessages: any) => [
           ...prevMessages,
@@ -325,7 +325,7 @@ const DirectChat = () => {
   // 스크롤 로직
   const scroll = () => {
     window.scrollTo({
-      top: rapperDiv.current!.scrollHeight,
+      top: rapperDiv.current.scrollHeight,
       behavior: "smooth",
     });
   };

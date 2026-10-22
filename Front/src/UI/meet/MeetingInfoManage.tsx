@@ -220,7 +220,7 @@ const MeetingInfoManage = () => {
   //유저 아이디와 호스트 아이디 확인
   //권한이 없다면 메인 페이지로 이동시킴
   const checkIsHost = () => {
-    let isValid: boolean = true;
+    let isValid = true;
     if (userId !== meetData.meet.host.userId) {
       isValid = false;
       setErrorMsg("모임 편집 권한이 없습니다.");
@@ -231,7 +231,7 @@ const MeetingInfoManage = () => {
   //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
-    let isValid =
+    const isValid =
       titleCheck(meetTitle.trim()) &&
       drinkCheck(selectedDrink) &&
       positionCheck(sido.sidoCode, gugun.gugunCode) &&
@@ -289,7 +289,7 @@ const MeetingInfoManage = () => {
   //필수가 아닌 입력값 검증
   const checkNonRequiredValue = (value: string | number) => {
     //숫자 값이 없는지 -> 있어야만 폼데이터에 넣음
-    let res = value !== 0 && value != null && !Number.isNaN(value);
+    const res = value !== 0 && value != null && !Number.isNaN(value);
     return res;
   };
 
@@ -316,7 +316,7 @@ const MeetingInfoManage = () => {
 
     setIsClick(true);
 
-    let f = new FormData();
+    const f = new FormData();
     //필수 입력o
     f.append("meetName", meetTitle.trim());
     f.append("maxParticipants", maxParticipants.toString());

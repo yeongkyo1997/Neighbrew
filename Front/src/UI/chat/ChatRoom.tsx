@@ -223,7 +223,7 @@ const ChatRoom = () => {
 
     client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/room/${id}`, (res) => {
+      client.current.subscribe(`/pub/room/${id}`, (res) => {
         const receivedMessage = JSON.parse(res.body);
         setMessages((prevMessages: any) => [
           ...prevMessages,
@@ -300,7 +300,7 @@ const ChatRoom = () => {
   // 스크롤 로직
   const scroll = () => {
     window.scrollTo({
-      top: rapperDiv.current!.scrollHeight,
+      top: rapperDiv.current.scrollHeight,
       behavior: "smooth",
     });
   };

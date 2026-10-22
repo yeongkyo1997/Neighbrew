@@ -25,4 +25,4 @@ export default store;
 export type RootState = ReturnType<typeof store.getState>;
 
 //수정방법 만든거 export
-export let { chooseMenu } = FooterMenu.actions;
+export const { chooseMenu } = FooterMenu.actions;

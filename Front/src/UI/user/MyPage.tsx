@@ -514,9 +514,9 @@ const MyPage = () => {
             <InfoDiv>
               <UserImgDiv data-tooltip-id="liver-tooltip">
                 <p style={{ marginBottom: "0.5rem" }}>
-                  {parseFloat(userData!.liverPoint.toFixed(1))} IU/L
+                  {parseFloat(userData.liverPoint.toFixed(1))} IU/L
                 </p>
-                <LiverDiv liverpoint={userData!.liverPoint ?? 40}>
+                <LiverDiv liverpoint={userData.liverPoint ?? 40}>
                   <Img src={liver} alt="" />
                 </LiverDiv>
                 <p style={{ marginTop: "0.2rem" }}>간수치</p>
