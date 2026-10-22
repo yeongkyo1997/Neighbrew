@@ -234,7 +234,6 @@ const BtnDiv = styled.div`
 
 const MyPage = () => {
   const [userData, setUserData] = useState<User>({
-    birth: "2003-01-01",
     email: "이메일",
     follower: 0,
     following: 0,
@@ -255,7 +254,7 @@ const MyPage = () => {
   const [nickname, setNickname] = useState("");
   const [profile, setProfile] = useState("profile");
   const [intro, setIntro] = useState("");
-  const [birth, setBirth] = useState("2003-01-01");
+  const [birth, setBirth] = useState("");
   const navigate = useNavigate();
 
   // 팔로우 하기
@@ -305,7 +304,8 @@ const MyPage = () => {
         setUserData(res.data);
       })
       .then(() => {
-        setBirth(userData.birth == null ? "2003-01-01" : userData.birth);
+        //생년월일을 입력하지 않은 사용자는 빈 값으로 둔다 (기본값을 채우면 다른 항목만 저장해도 그 값이 저장된다)
+        setBirth(userData.birth ?? "");
       })
       .then(() => {
         myDrinks();
@@ -326,7 +326,7 @@ const MyPage = () => {
   useEffect(() => {
     setNickname(userData.nickname);
     setIntro(userData.intro);
-    setBirth(userData.birth ?? birth);
+    setBirth(userData.birth ?? "");
   }, [userData]);
   const nicknameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -342,7 +342,7 @@ const MyPage = () => {
     e.preventDefault();
     if (parseInt(e.target.value.split("-")[0]) >= adultCutoffYear) {
       alert("만 18세 이상만 이용 가능합니다");
-      setBirth(userData.birth);
+      setBirth(userData.birth ?? "");
       return;
     }
     setBirth(e.target.value);
@@ -401,10 +401,10 @@ const MyPage = () => {
       setIntro(userData.intro);
       return;
     }
-    //생년월일을 바꾼 경우에만 검사 (가입 기본값 2005-01-01 사용자도 다른 항목 수정 가능)
-    if (birth !== userData.birth && parseInt(birth.split("-")[0]) >= adultCutoffYear) {
+    //생년월일을 바꾼 경우에만 검사 (생년월일을 비워 둔 사용자도 다른 항목 수정 가능)
+    if (birth !== (userData.birth ?? "") && parseInt(birth.split("-")[0]) >= adultCutoffYear) {
       alert("만 18세 이상만 가입 가능합니다.");
-      setBirth(userData.birth);
+      setBirth(userData.birth ?? "");
       return;
     }
     if (file !== undefined && profile !== null) {
@@ -447,16 +447,17 @@ const MyPage = () => {
           myDrinks();
         });
     }
-    if (intro == "" || nickname == "" || birth == "") {
+    if (intro == "" || nickname == "") {
       alert("빈 값이 존재합니다.");
       return;
     }
-    if (userData.nickname == nickname && userData.intro == intro && userData.birth == birth) return;
+    if (userData.nickname == nickname && userData.intro == intro && (userData.birth ?? "") == birth) return;
 
     callApi("put", `api/user/${localStorage.getItem("myId")}`, {
       nickname: nickname,
       intro: intro,
-      birth: birth,
+      //비워 두면 보내지 않는다 (서버는 null이면 기존 값을 유지)
+      birth: birth || undefined,
     })
       .then(res => {
         userInfo();

@@ -335,9 +335,15 @@ const MeetingDetail = () => {
 
   //참여 신청하기
   function applyMeet() {
-    //내 정보를 아직 못 불러왔으면 나이 확인을 할 수 없다
-    if (!userData.birth) {
+    //내 정보를 아직 못 불러왔으면 제한을 확인할 수 없다
+    if (userData.userId === 0) {
       setErrMsg("사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      setSimpleModalOn(true);
+      return;
+    }
+    //나이 제한이 있는 모임은 생년월일을 입력해야 참여할 수 있다 (서버도 같은 규칙으로 확인한다)
+    if (hasAgeLimit() && !userData.birth) {
+      setErrMsg("생년월일을 입력해야 나이 제한이 있는 모임에 참여할 수 있습니다.\n마이페이지에서 입력해 주세요.");
       setSimpleModalOn(true);
       return;
     }
@@ -347,10 +353,12 @@ const MeetingDetail = () => {
       setSimpleModalOn(true);
       return;
     }
-    //나이 제한 확인
+    //나이 제한 확인 (0 이하는 제한 없음)
+    const minAge = meetDetailData.meet.minAge ?? 0;
+    const maxAge = meetDetailData.meet.maxAge ?? 0;
     if (
-      (meetDetailData.meet.minAge ?? 0) > calcAge(userData.birth) ||
-      (meetDetailData.meet.maxAge ?? 200) < calcAge(userData.birth)
+      hasAgeLimit() &&
+      ((minAge > 0 && minAge > calcAge(userData.birth)) || (maxAge > 0 && maxAge < calcAge(userData.birth)))
     ) {
       setErrMsg("나이 제한에 부합하지 않습니다.");
       setSimpleModalOn(true);
