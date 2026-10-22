@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
@@ -41,15 +42,15 @@ class OAuthLoginServiceTest {
     @InjectMocks
     private OAuthLoginService oAuthLoginService;
 
-    private void givenOAuthInfo(OAuthProvider provider, String oAuthId, String email) throws Exception {
+    private void givenOAuthInfo(OAuthProvider provider, String oAuthId) throws Exception {
         given(requestOAuthInfoService.request(params)).willReturn(oAuthInfo);
         given(oAuthInfo.getOAuthProvider()).willReturn(provider);
         given(oAuthInfo.getOAuthId()).willReturn(oAuthId);
-        given(oAuthInfo.getEmail()).willReturn(email);
     }
 
     private void givenNewUser(String email) throws Exception {
-        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678", email);
+        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678");
+        given(oAuthInfo.getEmail()).willReturn(email);
         given(oAuthInfo.getName()).willReturn("홍길동");
         given(userRepository.findByOAuth(OAuthProvider.KAKAO, "3012345678")).willReturn(Optional.empty());
         given(userRepository.existsByNickname(anyString())).willReturn(false);
@@ -117,7 +118,7 @@ class OAuthLoginServiceTest {
 
     @Test
     void 기존_사용자는_새로_저장하지_않는다() throws Exception {
-        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678", "old@example.com");
+        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678");
         given(userRepository.findByOAuth(OAuthProvider.KAKAO, "3012345678")).willReturn(
                 Optional.of(User.builder().userId(3L).build()));
 
@@ -132,11 +133,13 @@ class OAuthLoginServiceTest {
         given(userRepository.findByOAuth(OAuthProvider.KAKAO, "3012345678")).willReturn(
                 Optional.of(User.builder().userId(1L).build()));
 
+        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678");
+        // 기존 사용자를 찾을 때는 이메일을 읽지 않으므로 lenient로 둔다
         // 이메일 없이 로그인
-        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678", null);
+        lenient().when(oAuthInfo.getEmail()).thenReturn(null);
         LoginResponse withoutEmail = oAuthLoginService.login(params);
         // 나중에 이메일 제공에 동의한 뒤 로그인
-        given(oAuthInfo.getEmail()).willReturn("new@example.com");
+        lenient().when(oAuthInfo.getEmail()).thenReturn("new@example.com");
         LoginResponse withEmail = oAuthLoginService.login(params);
 
         assertThat(withoutEmail.getUserId()).isEqualTo(1L);
@@ -147,7 +150,8 @@ class OAuthLoginServiceTest {
     @Test
     void 다른_provider에서_같은_이메일로_로그인해도_기존_계정을_찾지_않는다() throws Exception {
         // victim@gmail.com은 GOOGLE 계정의 이메일이지만, KAKAO 고유 ID로만 찾으므로 그 계정에 닿지 않는다
-        givenOAuthInfo(OAuthProvider.KAKAO, "attacker-id", "victim@gmail.com");
+        givenOAuthInfo(OAuthProvider.KAKAO, "attacker-id");
+        given(oAuthInfo.getEmail()).willReturn("victim@gmail.com");
         given(oAuthInfo.getName()).willReturn("공격자");
         given(userRepository.findByOAuth(OAuthProvider.KAKAO, "attacker-id")).willReturn(Optional.empty());
         given(userRepository.existsByNickname(anyString())).willReturn(false);
