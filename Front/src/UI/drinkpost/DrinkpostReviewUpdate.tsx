@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { callApi } from "../../utils/api";
 import { User, Drink } from "../../Type/types";
 import ImageInput from "../components/ImageInput";
@@ -43,7 +43,7 @@ const DrinkpostReviewCreate = () => {
   const { drinkId, reviewId } = useParams();
   const [drink, setDrink] = useState<Drink>();
   const [review, setReview] = useState("");
-  const [myInfo, setMyInfo] = useState<User>();
+  const [, setMyInfo] = useState<User>();
   const reviewHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReview(e.target.value);
   };
@@ -53,16 +53,16 @@ const DrinkpostReviewCreate = () => {
   const [file, setFile] = useState(null);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
-    callApi("get", `api/drinkreview/review/${reviewId}`).then(res => {
+    void callApi("get", `api/drinkreview/review/${reviewId}`).then(res => {
       setReview(res.data.content);
       setNewImgSrc(res.data.img);
     });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/myinfo`).then(res => {
+    void callApi("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);
@@ -109,7 +109,7 @@ const DrinkpostReviewCreate = () => {
         .then(() => {
           updateApi(formData);
         })
-        .catch(e => {
+        .catch(() => {
           setLoadingModalOn(false);
           setIsClick(false);
         });
@@ -127,17 +127,14 @@ const DrinkpostReviewCreate = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then(res => {
+      .then(() => {
         navigate(-1);
       })
-      .catch(err => {
+      .catch(() => {
         setIsClick(false);
       });
   };
 
-  const toPreviousPage = () => {
-    navigate(`/drinkpost/${drinkId}`);
-  };
 
   return (
     <>
@@ -169,7 +166,7 @@ const DrinkpostReviewCreate = () => {
       <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
       <Modal
         isOpen={loadingModalOn}
-        onRequestClose={() => {}} //닫히지 않아야함
+        onRequestClose={() => undefined} //닫히지 않아야함
         style={WhiteModal}
       >
         <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>

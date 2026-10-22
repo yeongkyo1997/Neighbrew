@@ -5,7 +5,7 @@ import styled from "styled-components";
 import reviewIcon from "../../assets/reviewIcon.svg";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import { callApi } from "../../utils/api";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Drink, Review } from "../../Type/types";
 import backgroundImg from "../../assets/mdsimg.png";
 
@@ -106,26 +106,6 @@ const MoreButton = styled.div`
   }
 `;
 
-const RoundBtn = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  bottom: 10%;
-
-  background: var(--c-yellow);
-  width: 4rem;
-  height: 4rem;
-  border-radius: 100px;
-  z-index: 10;
-
-  @media (max-width: 430px) {
-    right: 5%;
-  }
-  @media (min-width: 431px) {
-    left: 350px;
-  }
-`;
 
 const DrinkpostDetail = () => {
   const { drinkId } = useParams();
@@ -146,13 +126,13 @@ const DrinkpostDetail = () => {
       top: 0,
       behavior: "smooth",
     });
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi("get", `api/drink/${drinkId}`).then(res => {
       setDetail(res.data);
     });
   }, []);
 
   useEffect(() => {
-    callApi("get", `api/drinkreview/${drinkId}`).then(res => {
+    void callApi("get", `api/drinkreview/${drinkId}`).then(res => {
       setReviewList(prev => [...prev, ...res.data.content]);
     });
   }, []);

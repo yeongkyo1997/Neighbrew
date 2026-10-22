@@ -180,15 +180,6 @@ const InputDiv = styled.div`
   justify-content: space-around;
 `;
 
-const Input = styled.input`
-  width: 85%;
-  height: 70%;
-  border: none;
-
-  &:focus-visible {
-    outline: none;
-  }
-`;
 
 const BackDrop = styled.div<{ ismodal: boolean }>`
   display: ${(props) => (props.ismodal ? "block" : "none")};
@@ -223,7 +214,7 @@ const ChatRoom = () => {
 
     client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {
       // 웹소켓 이벤트 핸들러 설정
-      client.current!.subscribe(`/pub/room/${id}`, (res) => {
+      client.current.subscribe(`/pub/room/${id}`, (res) => {
         const receivedMessage = JSON.parse(res.body);
         setMessages((prevMessages: any) => [
           ...prevMessages,
@@ -235,12 +226,7 @@ const ChatRoom = () => {
               userId: receivedMessage.userId,
               nickname: receivedMessage.userNickname,
             },
-            createdAt:
-              new Date().getHours() +
-              ":" +
-              (new Date().getMinutes() < 10
-                ? "0" + new Date().getMinutes()
-                : new Date().getMinutes()),
+            createdAt: `${new Date().getHours()}:${String(new Date().getMinutes()).padStart(2, "0")}`,
           },
         ]);
       });
@@ -254,7 +240,7 @@ const ChatRoom = () => {
     };
   }, [id]);
   // 엔터 누르면 메세지 전송
-  const sendMessageHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+  const sendMessageHandler = () => {
     if (message.trim() === "") return;
     client.current.send(
       `/sub/chat/${id}/sendMessage`,
@@ -280,17 +266,17 @@ const ChatRoom = () => {
         return res;
       })
       .then(() => {
-        callApi("GET", `api/chatroom/${id}/detail`).then((res) => {
+        void callApi("GET", `api/chatroom/${id}/detail`).then((res) => {
           setChatRoomName(res.data.chatRoomName);
         });
       })
-      .catch((e) => {});
+      .catch(() => undefined);
 
     callApi("GET", `/api/chatroom/${id}/${localStorage.getItem("myId")}/users`)
       .then((res) => {
         setUsers(res.data);
       })
-      .catch((e) => {});
+      .catch(() => undefined);
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
@@ -300,16 +286,13 @@ const ChatRoom = () => {
   // 스크롤 로직
   const scroll = () => {
     window.scrollTo({
-      top: rapperDiv.current!.scrollHeight,
+      top: rapperDiv.current.scrollHeight,
       behavior: "smooth",
     });
   };
 
   useEffect(() => {
-    const foo = async () => {
-      await scroll();
-    };
-    foo();
+    scroll();
   }, []);
 
   const ArrowLeftIcon = arrowLeftIcon("black");
@@ -497,24 +480,6 @@ const ChatRoom = () => {
 
 export default ChatRoom;
 
-const SendIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="28"
-      height="25"
-      viewBox="0 0 30 27"
-      fill="none"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M4.61325 12.302H13.1325C13.5468 12.302 13.8825 12.6378 13.8825 13.052C13.8825 13.4662 13.5467 13.802 13.1325 13.802H4.63339L-9.26055e-06 26.1577L29.4275 13.0789L-9.26055e-06 -2.1257e-05L4.61325 12.302Z"
-        fill="var(--c-yellow)"
-      />
-    </svg>
-  );
-};
 const StyleAutoTextArea = styled(TextareaAutosize)`
   display: flex;
   flex-basis: 90%;

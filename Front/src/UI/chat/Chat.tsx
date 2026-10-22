@@ -1,6 +1,5 @@
 // 채팅방 목록에서 보일 개별 채팅방 컴포넌트
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { callApi } from "../../utils/api";
 import defaultImg from "../../assets/defaultImg.png";
@@ -46,14 +45,13 @@ const Chat = (props: {
   chatRoomName: string;
   chatRoomDetail(roomId: number): void;
 }) => {
-  const navigate = useNavigate();
   const [user, setUsers] = useState([]);
   useEffect(() => {
     callApi("GET", `/api/chatroom/${props.chatRoomId}/${localStorage.getItem("myId")}/users`)
       .then(res => {
         setUsers(res.data);
       })
-      .catch(e => {});
+      .catch(() => undefined);
   }, []);
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(props.chatRoomId)}>

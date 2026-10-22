@@ -27,8 +27,8 @@ const ModalBtn = styled.div`
 
 type YesOrNoModalProps = {
   msg: string; //~하시겠습니까? 하고 띄울 메시지
-  yesFunc(): void; //예 버튼 클릭 시 실행될 함수(모달닫는함수 포함)
-  noFunc(): void; //예 버튼 클릭 시 실행될 함수(모달닫는 함수 포함)
+  yesFunc: () => void; //예 버튼 클릭 시 실행될 함수(모달닫는함수 포함)
+  noFunc: () => void; //예 버튼 클릭 시 실행될 함수(모달닫는 함수 포함)
 };
 
 const YesOrNoModal = (props: YesOrNoModalProps) => {

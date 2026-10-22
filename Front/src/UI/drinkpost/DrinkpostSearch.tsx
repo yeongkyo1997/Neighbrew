@@ -55,7 +55,7 @@ const DrinkpostSearch = () => {
   //inputText로 술장 검색 api
   useEffect(() => {
     const promise = callApi("get", `api/drink/search?tagId=${selectedCategory}&name=${inputText}`);
-    promise.then(res => {
+    void promise.then(res => {
       setSearchResult(res.data.content);
     });
   }, [inputText, selectedCategory]);

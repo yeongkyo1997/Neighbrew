@@ -4,7 +4,6 @@
 내가 주최 중인 모임, 내가 참여 중인 모임, 내가 신청한 모임 출력
 */
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MeetingListItem from "./../meet/MeetingListItem";
 import EmptyMsg from "./../components/EmptyMsg";
@@ -21,7 +20,7 @@ const MeetTitle = styled.div`
   text-align: left;
 `;
 
-const meetingMy = (props: { userId: number }) => {
+const MeetingMyUseInUser = (props: { userId: number }) => {
   //현재 유저의 userId
   const [userId, setUserId] = useState(0);
 
@@ -49,7 +48,7 @@ const meetingMy = (props: { userId: number }) => {
   useEffect(() => {
     if (userId !== 0) {
       const promise = callApi("get", `api/meet/mymeet/${userId}`);
-      promise.then(res => {
+      void promise.then(res => {
         setMeetData(res.data); //받아온 데이터로 meetData 세팅
       });
     }
@@ -86,4 +85,4 @@ const meetingMy = (props: { userId: number }) => {
     </div>
   );
 };
-export default meetingMy;
+export default MeetingMyUseInUser;

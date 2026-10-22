@@ -3,7 +3,7 @@
 
 import DrinkCategory from "../drinkCategory/DrinkCategory";
 import styled from "styled-components";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import ImageInput from "../components/ImageInput";
@@ -108,36 +108,8 @@ const QuestionDiv = styled.div`
   margin-top: 1.5rem;
 `;
 
-const Title = styled.div`
-  font-family: "JejuGothic";
-  font-size: 20px;
-  text-align: left;
-  margin-bottom: 0.5rem;
-`;
 
-const ImgInput = styled.div`
-  // label로 대신하고 input은 숨기기 위한 css
-  input[type="file"] {
-    position: absolute;
-    width: 0;
-    height: 0;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
-  }
-`;
 
-const ImageArea = styled.div<{ src: string }>`
-  background: url(${props => props.src}) no-repeat center;
-  background-size: cover;
-  border-radius: 15px;
-  position: relative;
-  width: 30%;
-  padding-bottom: 30%;
-  overflow: hidden;
-`;
 
 const CateDiv = styled.div`
   height: 10rem;
@@ -170,7 +142,7 @@ const DrinkpostCreate = () => {
   const [drinkName, setDrinkName] = useState("");
   const [drinkDescription, setDrinkDescription] = useState("");
   const [drinkAlcohol, setDrinkAlcohol] = useState<number>(0);
-  const [inputCheck, setInputCheck] = useState(false);
+  const [inputCheck] = useState(false);
 
   const [isClick, setIsClick] = useState(false); //throttle 역할, 폼 중복 제출 막아주기
 
@@ -198,11 +170,8 @@ const DrinkpostCreate = () => {
   const [imgFile, setImgFile] = useState(null);
 
   //이미지 압축에 사용하는 옵션
-  const options = {
-    maxWidthOrHeight: 1000, // 허용하는 최대 width, height 값 지정
-  };
 
-  const drinkSubmitHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+  const drinkSubmitHandler = () => {
     if (isClick) return; //클릭했다면(api 중복호출방지)
 
     const file = imgFile;
@@ -242,7 +211,7 @@ const DrinkpostCreate = () => {
       .then(res => {
         navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
       })
-      .catch(err => {
+      .catch(() => {
         setIsClick(false);
       });
   };

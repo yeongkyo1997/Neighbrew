@@ -4,7 +4,6 @@ import { Meeting } from "../../Type/types";
 import ListInfoItem from "../components/ListInfoItem";
 import MeetingDetailSimple from "./MeetingDetailSimple";
 import PeopleNumInfo from "./PeopleNumInfo";
-import { getTagName } from "../common";
 
 type MeetingListItemProps = {
   data: Meeting[];
@@ -27,7 +26,6 @@ const MeetingListItem = ({ data, isWaiting = false }: MeetingListItemProps) => {
     <div>
       {data.map((meeting: Meeting) => {
         const meetId = meeting.meetId;
-        const tagName = getTagName(meeting.tagId);
         const bgImg =
           meeting.imgSrc === "no image" || meeting.imgSrc == null
             ? "/src/assets/meetDefaultImg.jpg"

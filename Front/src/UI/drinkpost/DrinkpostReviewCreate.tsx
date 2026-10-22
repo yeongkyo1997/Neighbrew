@@ -48,7 +48,7 @@ const DrinkpostReviewCreate = () => {
   const { drinkId } = useParams();
   const [drink, setDrink] = useState<Drink>();
   const [review, setReview] = useState("");
-  const [myInfo, setMyInfo] = useState<User>();
+  const [, setMyInfo] = useState<User>();
   const reviewHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReview(e.target.value);
   };
@@ -58,12 +58,12 @@ const DrinkpostReviewCreate = () => {
   const [isClick, setIsClick] = useState(false);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/myinfo`).then(res => {
+    void callApi("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);
@@ -181,7 +181,7 @@ const DrinkpostReviewCreate = () => {
       <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
       <Modal
         isOpen={loadingModalOn}
-        onRequestClose={() => {}} //닫히지 않아야함
+        onRequestClose={() => undefined} //닫히지 않아야함
         style={WhiteModal}
       >
         <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>

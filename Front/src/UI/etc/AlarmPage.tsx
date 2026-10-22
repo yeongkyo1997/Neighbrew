@@ -1,20 +1,12 @@
 import { callApi } from "../../utils/api";
-import { backIcon } from "../../assets/AllIcon";
 import styled from "styled-components";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import AlarmItem from "../components/AlarmItem";
 import Footer from "../footer/Footer";
 import { useNavigate } from "react-router-dom";
-import autoAnimate from "@formkit/auto-animate";
 import { AlarmLog } from "../../Type/types";
 import EmptyMsg from "../components/EmptyMsg.tsx";
-import {
-  LeadingActions,
-  SwipeableList,
-  SwipeableListItem,
-  SwipeAction,
-  TrailingActions,
-} from "react-swipeable-list";
+import { SwipeableList, SwipeableListItem, SwipeAction, TrailingActions } from "react-swipeable-list";
 import "react-swipeable-list/dist/styles.css";
 import NavbarSimple from "../navbar/NavbarSimple.tsx";
 
@@ -33,7 +25,7 @@ const ActionContent = styled.div`
 `;
 
 const deletePush = (id: number) => {
-  callApi("delete", `api/push/${id}`);
+  void callApi("delete", `api/push/${id}`);
 };
 const trailingActions = (id: number) => (
   <TrailingActions>
@@ -42,23 +34,22 @@ const trailingActions = (id: number) => (
     </SwipeAction>
   </TrailingActions>
 );
-const alarmPage = () => {
-  const BackIcon = backIcon();
+const AlarmPage = () => {
   const navigate = useNavigate();
   const myId = localStorage.getItem("myId");
   const [alarmList, setAlarmList] = useState<AlarmLog[]>([]);
 
   // 비동기 통신으로 알림을 불러옵니다.
   useEffect(() => {
-    callApi("get", `api/push/${myId}`).then(res => {
+    void callApi("get", `api/push/${myId}`).then(res => {
       setAlarmList(res.data);
     });
   }, []);
-  const goPageHandler = async (url: string, id: number) => {
-    await deletePush(id);
+  const goPageHandler = (url: string, id: number) => {
+    deletePush(id);
     // 푸시 URL은 도메인을 포함하므로 앱 안의 경로만 꺼내 이동한다. (예전 상대 경로 "meet/12"도 "/meet/12"로 해석)
     const { pathname, search } = new URL(url, window.location.origin);
-    await navigate(pathname + search);
+    navigate(pathname + search);
   };
   return (
     <>
@@ -90,4 +81,4 @@ const alarmPage = () => {
     </>
   );
 };
-export default alarmPage;
+export default AlarmPage;

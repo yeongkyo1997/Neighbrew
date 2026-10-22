@@ -1,7 +1,7 @@
 // main
 import { styled } from "styled-components";
 import DrinkCard from "./DrinkCard";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Navbar from "../navbar/NavbarForDrinkpost";
 import Footer from "../footer/Footer";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
@@ -39,7 +39,7 @@ const RoundBtn = styled.div`
 
 // 무한 스크롤
 
-const drinkpostTotal = () => {
+const DrinkpostTotal = () => {
   const [page, setPage] = useState(0);
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const drinkpostTotal = () => {
     if (isIntersecting) {
       if (page < 10) {
         setTimeout(() => {
-          callApi("get", `api/drink?page=${page}&size=12`).then(res => {
+          void callApi("get", `api/drink?page=${page}&size=12`).then(res => {
             setDrinkList(prev => [...prev, ...res.data.content]);
             setPage(prev => prev + 1);
           });
@@ -98,4 +98,4 @@ const drinkpostTotal = () => {
   );
 };
 
-export default drinkpostTotal;
+export default DrinkpostTotal;

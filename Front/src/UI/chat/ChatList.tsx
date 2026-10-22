@@ -6,11 +6,9 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Chat from "./Chat";
 import ChatDM from "./ChatDM";
-import { meetingicon, directMessage } from "../../assets/AllIcon";
 import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
-import MeetingListItem from "../meet/MeetingListItem.tsx";
 import EmptyMsg from "../components/EmptyMsg.tsx";
 
 const ChatListDiv = styled.div`
@@ -28,24 +26,6 @@ const Button = styled.button`
   font-family: "JejuGothic";
   font-size: 20px;
 `;
-const TopMenu = styled.div`
-  height: 2rem;
-  display: flex;
-  margin: 0 0.5rem 0 0.5rem;
-  background-color: white;
-  border-bottom: 1px solid var(--c-gray);
-`;
-const TopMenuDetail = styled.button<{ isfocused: string }>`
-  color: var(--${props => (props.isfocused === "true" ? "c-black" : "c-gray")});
-  font-family: "JejuGothic";
-  font-size: 20px;
-  line-height: 150%;
-  padding: 0 1rem;
-  outline: none;
-  border: none;
-  border-bottom: ${props => (props.isfocused === "true" ? "2px solid var(--c-black);" : "none;")};
-  background: white;
-`;
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
@@ -59,12 +39,12 @@ const ChatList = () => {
 
   const userId = localStorage.getItem("myId");
   const classListHandler = () => {
-    callApi("GET", `api/chatroom/${userId}/getChatRoom`).then(res => {
+    void callApi("GET", `api/chatroom/${userId}/getChatRoom`).then(res => {
       setChatList(res.data);
     });
   };
   const dmListHandler = () => {
-    callApi("GET", `api/dm/list/${userId}`).then(res => {
+    void callApi("GET", `api/dm/list/${userId}`).then(res => {
       setChatList(res.data);
     });
   };
@@ -81,7 +61,6 @@ const ChatList = () => {
       dmListHandler();
     }
   }, [chooseChat]);
-  const [selectedMenu, setSelectedMenu] = useState("find");
   return (
     <>
       <ChatListDiv>

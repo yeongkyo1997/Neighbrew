@@ -1,10 +1,6 @@
 // 채팅방 목록에서 보일 개별 채팅방 컴포넌트
 import styled from "styled-components";
-import tempimg from "../../assets/tempgif.gif";
-import temimg from "../../assets/temgif.gif";
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { callApi } from "../../utils/api";
 import { User } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 
@@ -59,7 +55,6 @@ const Chat = (props: {
   chatRoomDetail(user1: number, user2: number): void;
   lastMessageTime: string;
 }) => {
-  const navigate = useNavigate();
   const [user1, setUsers1] = useState<User>({
     birth: "생년월일",
     email: "이메일",

@@ -48,7 +48,7 @@ type InputProps = {
  * @property {string} placeholder 아무것도 입력하지 않았을 때 표시될 문구
  * @todo 추후 검색 버튼 클릭시 적용될 함수를 props에서 받도록 수정 예정
  */
-const searchBox = (props: InputProps) => {
+const SearchBox = (props: InputProps) => {
   const searchButton = searchNavIcon();
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue, 200);
@@ -69,4 +69,4 @@ const searchBox = (props: InputProps) => {
   );
 };
 
-export default React.memo(searchBox);
+export default React.memo(SearchBox);

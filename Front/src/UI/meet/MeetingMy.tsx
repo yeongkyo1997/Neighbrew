@@ -22,7 +22,7 @@ const MeetTitle = styled.div`
   padding-bottom: 0;
 `;
 
-const meetingMy = () => {
+const MeetingMy = () => {
   //현재 유저의 userId
   const [userId, setUserId] = useState(0);
 
@@ -58,7 +58,7 @@ const meetingMy = () => {
   //api 호출
   useEffect(() => {
     const promise = callApi("get", `api/meet/mymeet/${userId}`);
-    promise.then(res => {
+    void promise.then(res => {
       setMeetData(res.data); //받아온 데이터로 meetData 세팅
     });
   }, [userId]);
@@ -119,4 +119,4 @@ const meetingMy = () => {
     </div>
   );
 };
-export default meetingMy;
+export default MeetingMy;

@@ -7,14 +7,7 @@ import defaultImg from "../../assets/defaultImg.png";
 import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
 import { callApi } from "../../utils/api";
 import NavbarSimple from "../navbar/NavbarSimple";
-import {
-  commentIcon,
-  likeIcon,
-  deleteIcon,
-  editIcon,
-  moreIcon,
-  likeIcon2,
-} from "./../../assets/AllIcon";
+import { commentIcon, deleteIcon, editIcon, moreIcon, likeIcon2 } from "./../../assets/AllIcon";
 import sendImage from "./../../assets/send.png";
 import CommentItem from "./../components/CommentItem";
 import Modal from "react-modal";
@@ -100,23 +93,6 @@ const MoreButton = styled.div`
   }
 `;
 
-const Description = styled.div`
-  font-family: "NanumSquareNeo";
-  text-align: start;
-  margin: 0.5rem;
-  white-space: pre-wrap;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-
-  &.show {
-    display: block;
-    max-height: none;
-    overflow: auto;
-    -webkit-line-clamp: unset;
-  }
-`;
 
 const WholeDiv = styled.div``;
 
@@ -239,7 +215,7 @@ const DrinkpostReviewDetail = () => {
   const CommentIcon = commentIcon();
   const { drinkId, reviewId } = useParams();
   const [showMore, setShowMore] = useState(false);
-  const [followRejection, setFollowRejection] = useState(false);
+  const [, setFollowRejection] = useState(false);
   const [deleteModalOn, setDeleteModalOn] = useState(false);
   const [threeDotOn, setThreeDotOn] = useState(false);
   const [review, setReview] = useState<Review>();
@@ -255,11 +231,11 @@ const DrinkpostReviewDetail = () => {
     setShowMore(!showMore);
   };
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
 
-    callApi("get", `api/subreview/list/${reviewId}`).then(res => {
+    void callApi("get", `api/subreview/list/${reviewId}`).then(res => {
       setSubReviewList(res.data);
     });
   }, []);
@@ -288,11 +264,11 @@ const DrinkpostReviewDetail = () => {
       });
     }
 
-    summonReview();
+    void summonReview();
   }, []);
 
   useEffect(() => {
-    callApi("GET", `api/like/${reviewId}`, {
+    void callApi("GET", `api/like/${reviewId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
@@ -302,7 +278,7 @@ const DrinkpostReviewDetail = () => {
   }, [localStorage.getItem("token")]);
 
   const likeHandler = () => {
-    callApi("POST", `api/like/${reviewId}`, {
+    void callApi("POST", `api/like/${reviewId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
@@ -326,11 +302,11 @@ const DrinkpostReviewDetail = () => {
       .then(() => {
         followers();
       })
-      .catch(() => {});
+      .catch(() => undefined);
   };
 
-  const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
+  const followers = () => {
+    void callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -351,7 +327,6 @@ const DrinkpostReviewDetail = () => {
     navigate(`/myPage/${review?.user.userId}`);
   };
 
-  useEffect(() => {}, [comment]);
 
   // 술 후기에 대한 댓글 제출하는 함수.
   const submitHandler = async () => {
@@ -378,7 +353,7 @@ const DrinkpostReviewDetail = () => {
   };
 
   const deleteHandler = () => {
-    callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
+    void callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
       navigate(-1);
     });
   };
@@ -498,7 +473,7 @@ const DrinkpostReviewDetail = () => {
           />
           <CommentButton
             onClick={() => {
-              submitHandler();
+              void submitHandler();
             }}
           >
             <SendImg src={sendImage} alt="" />

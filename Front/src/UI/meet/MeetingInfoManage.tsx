@@ -6,7 +6,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
@@ -147,7 +147,7 @@ const MeetingInfoManage = () => {
   const [minAge, setMinAge] = useState(0); //최소나이
   const [maxAge, setMaxAge] = useState(0); //최대나이
   const [meetDesc, setMeetDesc] = useState(""); //모임 소개
-  const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
+  const [, setImgSrc] = useState<string>(""); //이미지 경로
   const [file, setFile] = useState(null); //파일 타입
 
   //이미지 수정용
@@ -168,7 +168,7 @@ const MeetingInfoManage = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    callApi("get", "api/sido").then(res => {
+    void callApi("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -176,7 +176,7 @@ const MeetingInfoManage = () => {
   //api 호출, 기존 모임의 정보 저장
   useEffect(() => {
     const promise = callApi("get", `api/meet/${meetId}`);
-    promise.then(res => {
+    void promise.then(res => {
       setMeetData(res.data);
     });
     //로컬 스토리지에서 userId 가져오기
@@ -211,7 +211,7 @@ const MeetingInfoManage = () => {
     if (gugun.sidoCode !== sido.sidoCode) {
       setGugun(initialGugun); //초기화
     }
-    callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
@@ -220,7 +220,7 @@ const MeetingInfoManage = () => {
   //유저 아이디와 호스트 아이디 확인
   //권한이 없다면 메인 페이지로 이동시킴
   const checkIsHost = () => {
-    let isValid: boolean = true;
+    let isValid = true;
     if (userId !== meetData.meet.host.userId) {
       isValid = false;
       setErrorMsg("모임 편집 권한이 없습니다.");
@@ -231,7 +231,7 @@ const MeetingInfoManage = () => {
   //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
-    let isValid =
+    const isValid =
       titleCheck(meetTitle.trim()) &&
       drinkCheck(selectedDrink) &&
       positionCheck(sido.sidoCode, gugun.gugunCode) &&
@@ -289,7 +289,7 @@ const MeetingInfoManage = () => {
   //필수가 아닌 입력값 검증
   const checkNonRequiredValue = (value: string | number) => {
     //숫자 값이 없는지 -> 있어야만 폼데이터에 넣음
-    let res = value !== 0 && value != null && !Number.isNaN(value);
+    const res = value !== 0 && value != null && !Number.isNaN(value);
     return res;
   };
 
@@ -316,7 +316,7 @@ const MeetingInfoManage = () => {
 
     setIsClick(true);
 
-    let f = new FormData();
+    const f = new FormData();
     //필수 입력o
     f.append("meetName", meetTitle.trim());
     f.append("maxParticipants", maxParticipants.toString());
@@ -355,7 +355,7 @@ const MeetingInfoManage = () => {
         .then(() => {
           updateApi(f);
         })
-        .catch(e => {
+        .catch(() => {
           setErrorMsg("이미지 처리 중 오류가 발생했습니다.");
           setLoadingModalOn(false);
           setIsModalOn(true);
@@ -369,7 +369,7 @@ const MeetingInfoManage = () => {
   const updateApi = (f: FormData) => {
     const promise = callApi("put", `/api/meet/modify/${userId}/${meetId}`, f);
     promise
-      .then(res => {
+      .then(() => {
         GoMeetDetailHandler(); //모임 상세 페이지로 이동
       })
       .catch(error => {
@@ -612,7 +612,7 @@ const MeetingInfoManage = () => {
       </Modal>
       <Modal
         isOpen={loadingModalOn}
-        onRequestClose={() => {}} //닫히지 않아야함
+        onRequestClose={() => undefined} //닫히지 않아야함
         style={WhiteModal}
       >
         <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>

@@ -1,7 +1,5 @@
 import { createSlice, configureStore, PayloadAction } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
 
-const 초기값 = { count: 0, user: "kim" };
 
 const FooterMenu = createSlice({
   name: "chooseMenu",
@@ -25,4 +23,4 @@ export default store;
 export type RootState = ReturnType<typeof store.getState>;
 
 //수정방법 만든거 export
-export let { chooseMenu } = FooterMenu.actions;
+export const { chooseMenu } = FooterMenu.actions;

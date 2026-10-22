@@ -4,34 +4,13 @@ import styled from "styled-components";
 import { Drink, Review } from "../../Type/types";
 import { forwardIcon } from "../../assets/AllIcon";
 import totaldrink from "../../assets/clickTotal.png";
-import darkwood from "../../assets/darkwood.jpg";
-import mdsPick from "../../assets/mdsimg.png";
 import { callApi } from "../../utils/api";
-import MdsItem from "../components/MdsItem";
 import ReviewItem from "../components/ReviewItem";
 import Footer from "../footer/Footer";
 import Navbar from "../navbar/NavbarForDrinkpost";
 import SlideComponent from "../components/Banner";
 
-const MdsDiv = styled.div`
-  width: 96%;
-  height: 192px;
-  border-radius: 20px 20px 0px 0px;
-  background-image: url(${mdsPick});
-  /* background-size: cover; */
-  background-repeat: no-repeat;
-  background-position: center;
-  margin: 0px 2vw 0px 2vw;
-  text-align: start;
-`;
 
-const DarkWood = styled.div`
-  width: 100%;
-  background-image: url(${darkwood});
-  background-repeat: no-repeat;
-  background-position: center;
-  height: 24px;
-`;
 
 const Total = styled.div`
   width: 100%;
@@ -81,12 +60,6 @@ const ReviewList = styled.div`
 // 한줄에 두개씩 보여주기
 
 // 리뷰 이미지
-const ReviewImg = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  object-fit: cover;
-`;
 
 const SortButton = styled.div`
   width: 5rem;
@@ -100,7 +73,7 @@ const SortButton = styled.div`
   color: white;
 `;
 
-const drinkpostMain = (props: { connectHandler: () => void }) => {
+const DrinkpostMain = (props: { connectHandler: () => void }) => {
   const toForward = forwardIcon();
   const [reviewList, setReviewList] = useState<Review[]>([]);
   const [reviewListLike, setReviewListLike] = useState<Review[]>([]);
@@ -112,7 +85,7 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
   const toDrinkSearch = () => {
     navigate("/drinkpost/search");
   };
-  const [threePick, setThreePick] = useState<Drink[]>([]);
+  const [, setThreePick] = useState<Drink[]>([]);
 
   const reviewButtonHandler = () => {
     setReviewButton(!reviewButton);
@@ -120,11 +93,11 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
 
   useEffect(() => {
     // 놀랍지만 생성순
-    callApi("get", "api/drinkreview/likes").then(res => {
+    void callApi("get", "api/drinkreview/likes").then(res => {
       setReviewList(res.data.content);
     });
-    callApi("get", "api/drinkreview/makes").then(res => setReviewListLike(res.data.content));
-    callApi("get", "api/drink/mdPick").then(res => {
+    void callApi("get", "api/drinkreview/makes").then(res => setReviewListLike(res.data.content));
+    void callApi("get", "api/drink/mdPick").then(res => {
       setThreePick([...res.data]);
     });
     props.connectHandler();
@@ -202,4 +175,4 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
     </>
   );
 };
-export default drinkpostMain;
+export default DrinkpostMain;

@@ -1,6 +1,6 @@
 import logo from "../../assets/logo.png";
 import styled from "styled-components";
-import { alertNavIcon, resetUserInfo, searchNavIcon } from "../../assets/AllIcon";
+import { alertNavIcon, searchNavIcon } from "../../assets/AllIcon";
 import { useNavigate } from "react-router-dom";
 
 const NavCustom = styled.nav`

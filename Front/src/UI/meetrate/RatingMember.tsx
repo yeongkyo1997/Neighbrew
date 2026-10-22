@@ -1,8 +1,6 @@
 import { styled } from "styled-components";
-import { MeetDetail } from "../../Type/types";
 import { useEffect, useState } from "react";
 import RatingDetail from "./RatingDetail";
-import defaultImg from "../../assets/defaultImg.png";
 import UserInfoItem from "../components/UserInfoItem";
 
 // 라디오 버튼 컨테이너

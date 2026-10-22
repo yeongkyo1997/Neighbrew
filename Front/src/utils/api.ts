@@ -23,7 +23,7 @@ api.interceptors.request.use(
 let refreshPromise: Promise<string> | null = null;
 
 const refreshAccessToken = (refreshToken: string) => {
-  if (!refreshPromise) {
+  if (refreshPromise === null) {
     refreshPromise = axios
       .post("/api/user/refresh-token", { refreshToken })
       .then(({ data }) => {
@@ -87,9 +87,9 @@ export const callApi = async (method: string, url: string, body: any = {}) => {
 };
 
 // 알림 관련 함수
-export const noti = (message: string, type: string, url: string) => {
-  navigator.serviceWorker.ready.then((registration) => {
-    const notiAlarm = registration.showNotification("알림", {
+export const noti = () => {
+  void navigator.serviceWorker.ready.then((registration) => {
+    void registration.showNotification("알림", {
       body: "pinyin + '\n' + means",
       actions: [
         {

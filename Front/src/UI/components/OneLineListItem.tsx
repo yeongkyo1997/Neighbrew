@@ -47,7 +47,7 @@ type OneLineListItemProps = {
  */
 const OneLineListItem = (props: OneLineListItemProps) => {
   return (
-    <ItemDiv onClick={() => {}}>
+    <ItemDiv onClick={() => undefined}>
       <Desc>{props.content}</Desc>
       <Tag>{props.tag}</Tag>
     </ItemDiv>

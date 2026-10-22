@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { useNavigate, useParams } from "react-router-dom";
-import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
+import { useNavigate } from "react-router-dom";
+import { arrowLeftIcon } from "../../assets/AllIcon";
 import SearchBox from "../components/SearchBox";
 import { useState, useEffect, useRef } from "react";
 import Footer from "../footer/Footer";
@@ -17,13 +17,12 @@ const SearchUser = () => {
   const ArrowLeftIcon = arrowLeftIcon("var(--c-black)");
   const [users, setUsers] = useState<userType[]>([]);
   const parent = useRef(null);
-  const { userid } = useParams();
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
   const search = (name: string) => {
-    callApi("get", `api/user/search/${name}`).then(res => {
+    void callApi("get", `api/user/search/${name}`).then(res => {
       setUsers(res.data);
     });
   };
@@ -62,7 +61,7 @@ const SearchUser = () => {
           return (
             <User
               onClick={() => {
-                navigate("/myPage/" + user.userId);
+                navigate(`/myPage/${user.userId}`);
               }}
               style={{ cursor: "pointer" }}
               key={idx}

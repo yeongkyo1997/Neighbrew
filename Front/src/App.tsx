@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import { useNavigate, useLocation, Route, Routes } from "react-router-dom";
+import { useLocation, Route, Routes } from "react-router-dom";
 import Loading from "./UI/etc/Loading";
 import Login from "./UI/user/Login";
 import Main from "./UI/home/Main";
@@ -36,7 +36,6 @@ import AlarmPage from "./UI/etc/AlarmPage";
 import { callApi } from "./utils/api";
 
 function App() {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
   const [userid, setUserid] = useState<string | null>(null);
   const es = useRef<EventSource | undefined>();
@@ -55,7 +54,7 @@ function App() {
     if ("serviceWorker" in navigator) {
       // Register a service worker hosted at the root of the
       // site using the default scope.
-      navigator.serviceWorker.register("/sw.js");
+      void navigator.serviceWorker.register("/sw.js");
     }
   }, []);
   useEffect(() => {
@@ -81,19 +80,20 @@ function App() {
       withCredentials: true,
     });
 
-    es.current.onopen = e => {};
     es.current.onmessage = event => {
       if (event.lastEventId) lastEventId.current = event.lastEventId;
       try {
         const data = JSON.parse(event.data);
         noti(data.content, data.url);
-      } catch {}
+      } catch {
+        // JSON이 아닌 메시지(연결 확인 등)는 알림으로 띄우지 않는다
+      }
       if (event.data === "finished") {
         es.current?.close();
         return;
       }
     };
-    es.current.onerror = err => {
+    es.current.onerror = () => {
       es.current?.close();
       if (isActive()) setTimeout(() => esconnect(id, isActive), 5000);
     };
@@ -101,7 +101,7 @@ function App() {
   useEffect(() => {
     if (userid == null) return;
     let active = true;
-    esconnect(userid, () => active);
+    void esconnect(userid, () => active);
 
     return () => {
       active = false;
@@ -131,18 +131,18 @@ function App() {
     // 알림 권한이 거부된 상태는 아니라면
     if (Notification.permission !== "denied") {
       // 사용자에게 알림 권한 승인을 요청한다
-      Notification.requestPermission().then(permission => {
+      void Notification.requestPermission().then(permission => {
         // 사용자가 승인하면, 알림을 표시한다
         if (permission === "granted") {
-          const notification = new Notification("알림을 허용하셨습니다.");
+          new Notification("알림을 허용하셨습니다.");
         }
       });
     }
   };
 
   const noti = (message: string, url: string) => {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.showNotification("NeighBrew", {
+    void navigator.serviceWorker.ready.then(registration => {
+      void registration.showNotification("NeighBrew", {
         body: message,
         icon: logo,
         data: url,

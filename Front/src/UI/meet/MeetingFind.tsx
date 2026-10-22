@@ -16,7 +16,7 @@ import { initialSido, initialGugun } from "../common";
 import { localDate } from "./DateTimeCommon";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
-const meetingFind = () => {
+const MeetingFind = () => {
   //받아온 모임 정보 리스트(전체)
   const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   //필터링 한 후 모임 정보
@@ -60,7 +60,7 @@ const meetingFind = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    callApi("get", "api/sido").then(res => {
+    void callApi("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -69,12 +69,12 @@ const meetingFind = () => {
   useEffect(() => {
     const promise = callApi("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
     if (page === 0) {
-      promise.then(res => {
+      void promise.then(res => {
         setTotalPage(res.data.totalPages);
         setMeetAllData(res.data.content); //받아온 데이터 meetAllData에 추가
       });
     } else {
-      promise.then(res => {
+      void promise.then(res => {
         setTotalPage(res.data.totalPages);
         setMeetAllData(prev => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
       });
@@ -85,7 +85,7 @@ const meetingFind = () => {
   useEffect(() => {
     if (page === 0) {
       const promise = callApi("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
-      promise.then(res => {
+      void promise.then(res => {
         setTotalPage(res.data.totalPages);
         setMeetAllData(res.data.content); //받아온 데이터로 meetAllData 초기화
       });
@@ -97,7 +97,7 @@ const meetingFind = () => {
 
   useEffect(() => {
     //선택한 시도에 따라 구군 fetch
-    callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
@@ -288,7 +288,7 @@ const meetingFind = () => {
     </div>
   );
 };
-export default meetingFind;
+export default MeetingFind;
 
 const CateDiv = styled.div`
   height: 10rem;

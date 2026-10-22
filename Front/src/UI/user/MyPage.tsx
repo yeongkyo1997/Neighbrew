@@ -142,7 +142,7 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
   overflow: hidden;
   /* background-image: linear-gradient(to top, #e591a1 50%, #ececec 50%); */
   background-image: linear-gradient(to top, var(--c-pink) 50%, #ececec 50%);
-  background-size: ${props => "50% " + (props.liverpoint + 80) + "%"};
+  background-size: ${props => `50% ${props.liverpoint + 80}%`};
   /* background-size: 50% 150%; */
   animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
@@ -164,7 +164,7 @@ const BottleDiv = styled.div<{ drinkcount: number }>`
   /* height: 100%; */
   overflow: hidden;
   background-image: linear-gradient(to top, #d5a002 50%, #ececec 50%);
-  background-size: ${props => "50% " + (props.drinkcount * 8 + 80) + "%"};
+  background-size: ${props => `50% ${props.drinkcount * 8 + 80}%`};
   animation: fillAnimation 0.2s forwards;
   @keyframes fillAnimation {
     0% {
@@ -259,13 +259,13 @@ const MyPage = () => {
 
   // 팔로우 하기
   const followHandler = async () => {
-    const api = await callApi("post", `api/follow/${userid}`).then(res => {
+    await callApi("post", `api/follow/${userid}`).then(() => {
       followers();
     });
   };
   // 팔로워, 팔로잉 인원 수 세기 (팔로우 버튼 색깔 변경)
-  const followers = async () => {
-    callApi("get", `api/follow/follower/${userid}`).then(res => {
+  const followers = () => {
+    void callApi("get", `api/follow/follower/${userid}`).then(res => {
       if (res.data.length == 0) {
         setUserData(userData => ({ ...userData, follower: res.data.length }));
         setFollowing(0);
@@ -281,12 +281,12 @@ const MyPage = () => {
         }
       });
     });
-    callApi("get", `api/follow/following/${userid}`).then(res => {
+    void callApi("get", `api/follow/following/${userid}`).then(res => {
       setUserData(userData => ({ ...userData, following: res.data.length }));
     });
   };
   const myDrinks = () => {
-    callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
+    void callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
       setUserData(userData => ({ ...userData, drinkcount: res.data.length }));
     });
   };
@@ -299,7 +299,7 @@ const MyPage = () => {
   const userInfo = () => {
     //생년월일 등 개인정보는 본인 정보(myinfo)에만 포함된다
     const url = userid === localStorage.getItem("myId") ? "api/user/myinfo" : `api/user/${userid}`;
-    callApi("get", url)
+    void callApi("get", url)
       .then(res => {
         setUserData(res.data);
       })
@@ -314,7 +314,7 @@ const MyPage = () => {
   };
   const refresh = () => {
     if (localStorage.getItem("token") != null) {
-      callApi("post", "api/user/refresh-token", {
+      void callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
       }).then(res => {
         localStorage.setItem("token", res.data.accessToken);
@@ -408,7 +408,7 @@ const MyPage = () => {
       return;
     }
     if (file !== undefined && profile !== null) {
-      axios
+      void axios
         .put(`/api/user/img/${userid}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -416,7 +416,7 @@ const MyPage = () => {
             UserID: localStorage.getItem("myId"),
           },
         })
-        .then(res => {
+        .then(() => {
           userInfo();
         })
         .then(() => {
@@ -429,7 +429,7 @@ const MyPage = () => {
     if (profile == null) {
       const formData = new FormData();
       formData.append("profile", null);
-      axios
+      void axios
         .put(`/api/user/img/${localStorage.getItem("myId")}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -437,7 +437,7 @@ const MyPage = () => {
             UserID: localStorage.getItem("myId"),
           },
         })
-        .then(res => {
+        .then(() => {
           userInfo();
         })
         .then(() => {
@@ -459,7 +459,7 @@ const MyPage = () => {
       //비워 두면 보내지 않는다 (서버는 null이면 기존 값을 유지)
       birth: birth || undefined,
     })
-      .then(res => {
+      .then(() => {
         userInfo();
       })
       .then(() => {
@@ -477,7 +477,6 @@ const MyPage = () => {
   const reportHandler = () => {
     if (window.confirm("정말 신고 하시겠습니까?")) {
       alert("신고되었습니다..");
-    } else {
     }
   };
 
@@ -514,9 +513,9 @@ const MyPage = () => {
             <InfoDiv>
               <UserImgDiv data-tooltip-id="liver-tooltip">
                 <p style={{ marginBottom: "0.5rem" }}>
-                  {parseFloat(userData!.liverPoint.toFixed(1))} IU/L
+                  {parseFloat(userData.liverPoint.toFixed(1))} IU/L
                 </p>
-                <LiverDiv liverpoint={userData!.liverPoint ?? 40}>
+                <LiverDiv liverpoint={userData.liverPoint ?? 40}>
                   <Img src={liver} alt="" />
                 </LiverDiv>
                 <p style={{ marginTop: "0.2rem" }}>간수치</p>
@@ -629,7 +628,7 @@ const MyPage = () => {
                 cursor: "pointer",
                 flex: "0 0 40%", // flex-grow, flex-shrink, flex-basis
               }}
-              onClick={followHandler}
+              onClick={() => void followHandler()}
             >
               {following === 0 ? "팔로우" : "언팔로우"}
             </button>

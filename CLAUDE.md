@@ -37,7 +37,7 @@ npm run lint      # eslint, --max-warnings 0
 ```
 
 - 테스트 스크립트는 없습니다.
-- `npm run lint`는 기존 오류가 남아 있어 현재 실패합니다. CI에서는 결과만 보여주고 막지 않습니다.
+- `npm run lint`는 아직 422건이 남아 실패합니다. CI에서는 결과만 보여주고 막지 않습니다. 남은 것은 API 응답이 `any`라서 생기는 `no-unsafe-*`(355)·`no-explicit-any`·`restrict-*`와 `react-hooks/exhaustive-deps`(47)입니다. 다음 단계에서 `callApi`에 응답 타입을 붙이고, `exhaustive-deps`를 화면별로 정리한 뒤 CI lint를 막는 단계로 바꿉니다. 새 코드는 이 규칙들을 늘리지 않게 작성하세요.
 - Vite dev 서버는 `/api`, `/ws` 요청을 `VITE_API_BASE_URL`(`.env.*`, git에 없음)로 프록시합니다.
 
 ### CI

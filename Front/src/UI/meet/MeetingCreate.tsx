@@ -6,7 +6,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarSimple from "../navbar/NavbarSimple";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
@@ -176,7 +176,7 @@ const MeetingCreate = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    callApi("get", "api/sido").then(res => {
+    void callApi("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -184,7 +184,7 @@ const MeetingCreate = () => {
   //선택한 시도에 따라 구군 fetch
   useEffect(() => {
     setGugun(initialGugun); //초기화
-    callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
@@ -192,7 +192,7 @@ const MeetingCreate = () => {
   //필수 입력값 검증(위 내용 외에 추가로 모달창 오픈)
   const checkRequiredValue = () => {
     //빨간글씨가 하나라도 있으면 모달 오픈
-    let isValid =
+    const isValid =
       titleCheck(meetTitle.trim()) &&
       drinkCheck(selectedDrink) &&
       positionCheck(sido.sidoCode, gugun.gugunCode) &&
@@ -243,7 +243,7 @@ const MeetingCreate = () => {
   //필수가 아닌 입력값 검증
   const checkNonRequiredValue = (value: string | number) => {
     //숫자 값이 없는지 -> 있어야만 폼데이터에 넣음
-    let res = value !== 0 && value != null && !Number.isNaN(value);
+    const res = value !== 0 && value != null && !Number.isNaN(value);
     return res;
   };
 
@@ -267,7 +267,7 @@ const MeetingCreate = () => {
 
     setIsClick(true);
 
-    let f = new FormData();
+    const f = new FormData();
     //필수 입력o
     f.append("userId", userId.toString());
     f.append("meetName", meetTitle.trim());
@@ -306,7 +306,7 @@ const MeetingCreate = () => {
         .then(() => {
           createApi(f);
         })
-        .catch(e => {
+        .catch(() => {
           setErrorMsg("이미지 처리 중 오류가 발생했습니다.");
           setLoadingModalOn(false);
           setIsModalOn(true);
@@ -532,7 +532,7 @@ const MeetingCreate = () => {
       </Modal>
       <Modal
         isOpen={loadingModalOn}
-        onRequestClose={() => {}} //닫히지 않아야함
+        onRequestClose={() => undefined} //닫히지 않아야함
         style={WhiteModal}
       >
         <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>

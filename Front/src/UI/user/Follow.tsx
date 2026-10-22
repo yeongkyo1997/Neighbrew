@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
-import { arrowLeftIcon, outRoom } from "../../assets/AllIcon";
+import { arrowLeftIcon } from "../../assets/AllIcon";
 import { useState, useEffect, useRef } from "react";
 import Footer from "../footer/Footer";
 import autoAnimate from "@formkit/auto-animate";
@@ -22,7 +22,7 @@ const Follow = () => {
   }, [parent]);
 
   const getFollower = () => {
-    callApi("get", `api/follow/following/${userid}`).then(res => {
+    void callApi("get", `api/follow/following/${userid}`).then(res => {
       res.data.map(tem => {
         setUsers(users => [...users, tem.following]);
       });
@@ -56,7 +56,7 @@ const Follow = () => {
           return (
             <User
               onClick={() => {
-                navigate("/myPage/" + user.userId);
+                navigate(`/myPage/${user.userId}`);
               }}
               style={{ cursor: "pointer" }}
               key={idx}

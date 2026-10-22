@@ -22,7 +22,7 @@ import defaultImg from "../../assets/defaultImg.png";
 import { getTagName } from "../common";
 import { WhiteModal, ModalInner } from "../../style/common";
 import { formateDate, formateTime } from "./DateTimeCommon";
-import { deleteIcon, editIcon, personIcon } from "./../../assets/AllIcon";
+import { deleteIcon, editIcon } from "./../../assets/AllIcon";
 import YesOrNoModal from "../components/YesOrNoModal";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
@@ -149,15 +149,6 @@ const Description = styled.div`
   word-break: break-all;
 `;
 
-const ModalBtnDiv = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 10%;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-`;
 
 const ManageModal = {
   content: {
@@ -264,7 +255,7 @@ const MeetingDetail = () => {
       const ws = new SockJS("/ws");
       return ws;
     });
-    client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {});
+    client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => undefined);
   };
 
   //api호출
@@ -274,7 +265,7 @@ const MeetingDetail = () => {
       .then(res => {
         setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
       })
-      .catch(e => {
+      .catch(() => {
         GotoMainHandler();
       });
   };
@@ -293,7 +284,7 @@ const MeetingDetail = () => {
     if (userId === 0) return;
     //생년월일은 본인 정보(myinfo)에만 포함된다
     const promise = callApi("get", "api/user/myinfo");
-    promise.then(res => {
+    void promise.then(res => {
       setUserData(res.data);
     });
   }, [userId]);
@@ -307,12 +298,12 @@ const MeetingDetail = () => {
     if (meetDetailData === undefined) return;
     if (meetDetailData !== undefined) {
       //users에서 apply인 유저 제외하고 memberList에 넣기
-      let members = meetDetailData.participants
+      const members = meetDetailData.participants
         .filter(participant => participant.status !== "APPLY")
         .map(participant => participant.user);
       setMemberList(members);
       //apply 세팅
-      let applicants = meetDetailData.participants
+      const applicants = meetDetailData.participants
         .filter(participant => participant.status === "APPLY")
         .map(participant => participant.user);
       setApplicantList(applicants);
@@ -329,7 +320,7 @@ const MeetingDetail = () => {
     const today = new Date();
     const currentYear = today.getFullYear();
     const birthYear = parseInt(birth.substring(0, 4), 10);
-    let age = currentYear - birthYear + 1;
+    const age = currentYear - birthYear + 1;
     return age;
   };
 
@@ -369,7 +360,7 @@ const MeetingDetail = () => {
       meetId: meetId,
     });
     promise
-      .then(res => {
+      .then(() => {
         setUserStatus("APPLY");
         setErrMsg(`모임에 참여 신청하였습니다!\n신청 취소는 '승인 대기중' 버튼을 클릭해주세요.`);
         setSimpleModalOn(true);
@@ -386,7 +377,7 @@ const MeetingDetail = () => {
       userId: userId,
       meetId: meetId,
     });
-    promise.then(res => {
+    void promise.then(() => {
       setUserStatus("NONE");
     });
   }
@@ -397,20 +388,20 @@ const MeetingDetail = () => {
       userId: userId,
       meetId: meetId,
     });
-    promise
-      .then(res => {
+    void promise
+      .then(() => {
         setUserStatus("NONE");
       })
       .then(() => fetchMeetData());
   }
 
   //모임 삭제 요청
-  const DeleteMeeting = async () => {
+  const DeleteMeeting = () => {
     const promise = callApi("delete", `api/meet/delete/${meetId}`, {
       userId: parseInt(localStorage.getItem("myId")),
     });
     promise
-      .then(res => {
+      .then(() => {
         GoBackHandler(); //모임 삭제 후 뒤로가기
       })
       .catch(e => {
@@ -437,8 +428,8 @@ const MeetingDetail = () => {
   };
 
   //채팅방 참여하기
-  const gotoChat = async () => {
-    await connectToWebSocket();
+  const gotoChat = () => {
+    connectToWebSocket();
     setTimeout(() => {
       sendMessageHandler(meetDetailData.meet.chatRoomId);
     }, 500);
