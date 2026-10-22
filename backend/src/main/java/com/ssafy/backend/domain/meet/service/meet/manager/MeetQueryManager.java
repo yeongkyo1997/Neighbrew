@@ -2,7 +2,6 @@ package com.ssafy.backend.domain.meet.service.meet.manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,7 +14,8 @@ import org.springframework.stereotype.Component;
 import com.ssafy.backend.common.enums.MeetStatus;
 import com.ssafy.backend.common.enums.Status;
 import com.ssafy.backend.domain.meet.dto.MeetResponseDto;
-import com.ssafy.backend.domain.meet.dto.MeetUserDto;
+import com.ssafy.backend.domain.meet.dto.MeetDetailResponse;
+import com.ssafy.backend.domain.meet.dto.MeetDetailResponse.Participant;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.entity.MeetUser;
 import com.ssafy.backend.domain.meet.repository.MeetRepository;
@@ -27,6 +27,7 @@ import com.ssafy.backend.domain.region.entity.Sido;
 import com.ssafy.backend.domain.region.repository.GugunRepository;
 import com.ssafy.backend.domain.region.repository.SidoRepository;
 import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -65,54 +66,19 @@ public class MeetQueryManager {
         });
     }
 
-    public Map<String, Object> findMeetdetailByMeetId(Long meetId) {
-        List<MeetUser> meetUsers = findMeetUsersByMeetId(meetId);
-        List<PublicUserResponseDto> users = toPublicUsers(meetUsers);
-        List<Status> statuses = meetUsers.stream().map(MeetUser::getStatus).collect(Collectors.toList());
-        return createResultMap(findByMeetId(meetId), users, statuses);
-    }
-
-    private Map<String, Object> createResultMap(MeetResponseDto meet, List<PublicUserResponseDto> users,
-                                                List<Status> statuses) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("meet", meet);
-        result.put("users", users);
-        result.put("statuses", statuses);
-        return result;
+    public MeetDetailResponse findMeetdetailByMeetId(Long meetId) {
+        MeetResponseDto meet = findByMeetId(meetId);
+        List<Participant> participants = findMeetUsersByMeetId(meetId).stream().map(
+                meetUser -> new Participant(PublicUserResponseDto.fromEntity(meetUser.getUser()),
+                                            meetUser.getStatus())).toList();
+        return new MeetDetailResponse(meet, participants);
     }
 
     public MeetResponseDto findByMeetId(Long meetId) {
         Meet findMeet = meetRepository.findById(meetId).orElseThrow(
-                () -> new IllegalArgumentException("미팅 정보가 올바르지 않습니다."));
+                () -> new NotFoundException("모임을 찾을 수 없습니다. id=" + meetId));
         return findMeet.toMeetResponseDto(findSidoById(findMeet.getSidoCode()),
                                           findGugunByCodes(findMeet.getSidoCode(), findMeet.getGugunCode()));
-    }
-
-    public MeetUserDto findMeetUserByMeetId(Long meetId) {
-        List<MeetUser> meetUsers = findMeetUsersByMeetId(meetId);
-        MeetUserDto meetUserDto = MeetUserDto.builder().build();
-
-        if (!meetUsers.isEmpty()) {
-            setMeetRequestDtoFromFirstMeetUser(meetUserDto, meetUsers.get(0));
-            addUsersAndStatusesToDto(meetUserDto, meetUsers);
-        }
-
-        return meetUserDto;
-    }
-
-    private void setMeetRequestDtoFromFirstMeetUser(MeetUserDto meetUserDto, MeetUser firstMeetUser) {
-        meetUserDto.setMeetRequestDto(firstMeetUser.getMeet().toDto());
-    }
-
-    private void addUsersAndStatusesToDto(MeetUserDto meetUserDto, List<MeetUser> meetUsers) {
-        List<Status> statuses = meetUsers.stream().map(MeetUser::getStatus).collect(Collectors.toList());
-        meetUserDto.setUsers(toPublicUsers(meetUsers));
-        meetUserDto.setStatuses(statuses);
-    }
-
-    private List<PublicUserResponseDto> toPublicUsers(List<MeetUser> meetUsers) {
-        return meetUsers.stream().map(MeetUser::getUser).map(PublicUserResponseDto::fromEntity)
-                        .collect(Collectors.toList());
     }
 
     public Map<String, List<MeetResponseDto>> findUserMeetByUserId(Long userId) {
