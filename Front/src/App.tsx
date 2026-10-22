@@ -8,7 +8,7 @@ import ChatList from "./UI/chat/ChatList";
 import ChatRoom from "./UI/chat/ChatRoom";
 import DrinkpostTotal from "./UI/drinkpost/DrinkpostTotal";
 import MeetingMain from "./UI/meet/MeetingMain";
-import MeetingDetail from "./UI/meet/MeetingDetail";
+import MeetingDetail from "./UI/meet/meetingDetail/MeetingDetail";
 import MeetingCreate from "./UI/meet/MeetingCreate";
 import MeetingManageMain from "./UI/meet/MeetingManageMain";
 import MeetingMemberManage from "./UI/meet/MeetingMemberManage";
