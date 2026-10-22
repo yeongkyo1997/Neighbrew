@@ -40,6 +40,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
   const [userid, setUserid] = useState<string | null>(null);
   const es = useRef<EventSource | undefined>();
+  // 마지막으로 받은 알림의 이벤트 ID(pushId). EventSource를 직접 다시 만들면 브라우저가 Last-Event-ID를 보내지 않으므로
+  // 재연결할 때 쿼리 파라미터로 넘겨 끊긴 동안 놓친 알림을 다시 받는다.
+  const lastEventId = useRef("");
   const location = useLocation();
   // 로그인/로그아웃 시 localStorage의 myId와 SSE 연결 대상을 동기화
   const connectHandler = () => {
@@ -73,12 +76,14 @@ function App() {
     }
     if (!isActive()) return;
 
-    es.current = new EventSource(`/api/auth/connect/${id}?ticket=${encodeURIComponent(ticket)}`, {
+    const resume = lastEventId.current ? `&lastEventId=${encodeURIComponent(lastEventId.current)}` : "";
+    es.current = new EventSource(`/api/auth/connect/${id}?ticket=${encodeURIComponent(ticket)}${resume}`, {
       withCredentials: true,
     });
 
     es.current.onopen = e => {};
     es.current.onmessage = event => {
+      if (event.lastEventId) lastEventId.current = event.lastEventId;
       try {
         const data = JSON.parse(event.data);
         noti(data.content, data.url);
@@ -102,6 +107,7 @@ function App() {
       active = false;
       es.current?.close();
       es.current = undefined;
+      lastEventId.current = "";
     };
   }, [userid]);
   useEffect(() => {
