@@ -22,7 +22,7 @@ const SearchUser = () => {
   }, [parent]);
 
   const search = (name: string) => {
-    void callApi("get", `api/user/search/${name}`).then(res => {
+    void callApi<userType[]>("get", `api/user/search/${name}`).then(res => {
       setUsers(res.data);
     });
   };

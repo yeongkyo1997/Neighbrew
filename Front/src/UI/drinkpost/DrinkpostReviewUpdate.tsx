@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { callApi } from "../../utils/api";
-import { User, Drink } from "../../Type/types";
+import { User, Drink, Review } from "../../Type/types";
 import ImageInput from "../components/ImageInput";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import { useParams, useNavigate } from "react-router-dom";
@@ -53,16 +53,16 @@ const DrinkpostReviewCreate = () => {
   const [file, setFile] = useState(null);
 
   useEffect(() => {
-    void callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi<Drink>("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
-    void callApi("get", `api/drinkreview/review/${reviewId}`).then(res => {
+    void callApi<Review>("get", `api/drinkreview/review/${reviewId}`).then(res => {
       setReview(res.data.content);
       setNewImgSrc(res.data.img);
     });
   }, []);
   useEffect(() => {
-    void callApi("get", `api/user/myinfo`).then(res => {
+    void callApi<User>("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);

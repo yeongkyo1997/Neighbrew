@@ -6,7 +6,7 @@ import reviewIcon from "../../assets/reviewIcon.svg";
 import { arrowLeftIcon } from "../../assets/AllIcon";
 import { callApi } from "../../utils/api";
 import { useState, useEffect } from "react";
-import { Drink, Review } from "../../Type/types";
+import { Drink, Review, Page } from "../../Type/types";
 import backgroundImg from "../../assets/mdsimg.png";
 
 const WholeDiv = styled.div`
@@ -126,13 +126,13 @@ const DrinkpostDetail = () => {
       top: 0,
       behavior: "smooth",
     });
-    void callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi<Drink>("get", `api/drink/${drinkId}`).then(res => {
       setDetail(res.data);
     });
   }, []);
 
   useEffect(() => {
-    void callApi("get", `api/drinkreview/${drinkId}`).then(res => {
+    void callApi<Page<Review>>("get", `api/drinkreview/${drinkId}`).then(res => {
       setReviewList(prev => [...prev, ...res.data.content]);
     });
   }, []);

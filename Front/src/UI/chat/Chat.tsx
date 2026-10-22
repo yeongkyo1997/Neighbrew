@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { callApi } from "../../utils/api";
 import defaultImg from "../../assets/defaultImg.png";
+import { User } from "../../Type/types";
 const ChatDiv = styled.div`
   padding: 0.3rem;
   min-height: 5rem;
@@ -45,9 +46,9 @@ const Chat = (props: {
   chatRoomName: string;
   chatRoomDetail(roomId: number): void;
 }) => {
-  const [user, setUsers] = useState([]);
+  const [user, setUsers] = useState<User[]>([]);
   useEffect(() => {
-    callApi("GET", `/api/chatroom/${props.chatRoomId}/${localStorage.getItem("myId")}/users`)
+    callApi<User[]>("GET", `/api/chatroom/${props.chatRoomId}/${localStorage.getItem("myId")}/users`)
       .then(res => {
         setUsers(res.data);
       })

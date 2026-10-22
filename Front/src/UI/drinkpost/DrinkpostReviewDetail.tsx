@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 import styled from "styled-components";
-import { Drink, Review, SubReview } from "../../Type/types";
+import { Drink, Review, SubReview, FollowRelation } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 import fancyDrinkImage from "../../assets/fancydrinkImage.jpg";
 import { callApi } from "../../utils/api";
@@ -231,11 +231,11 @@ const DrinkpostReviewDetail = () => {
     setShowMore(!showMore);
   };
   useEffect(() => {
-    void callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi<Drink>("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
 
-    void callApi("get", `api/subreview/list/${reviewId}`).then(res => {
+    void callApi<SubReview[]>("get", `api/subreview/list/${reviewId}`).then(res => {
       setSubReviewList(res.data);
     });
   }, []);
@@ -243,13 +243,13 @@ const DrinkpostReviewDetail = () => {
   useEffect(() => {
     async function summonReview() {
       // 술 상세 후기 조회 요청
-      const response1 = await callApi("get", `api/drinkreview/review/${reviewId}`);
+      const response1 = await callApi<Review>("get", `api/drinkreview/review/${reviewId}`);
       setReview(response1.data);
       setLikeCount(response1.data.likeCount);
       const userId = response1.data.user.userId;
       // 후기 쓴 사람에 대한 follow 요청
       // 술 상세 후기 조회 이후에 이루어져야 함.
-      const response2 = await callApi("get", `api/follow/follower/${userId}`);
+      const response2 = await callApi<FollowRelation[]>("get", `api/follow/follower/${userId}`);
       if (response2.data.length == 0) {
         setFollowing(0);
         return;
@@ -268,7 +268,7 @@ const DrinkpostReviewDetail = () => {
   }, []);
 
   useEffect(() => {
-    void callApi("GET", `api/like/${reviewId}`, {
+    void callApi<boolean>("GET", `api/like/${reviewId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
@@ -306,7 +306,7 @@ const DrinkpostReviewDetail = () => {
   };
 
   const followers = () => {
-    void callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
+    void callApi<FollowRelation[]>("get", `api/follow/follower/${review?.user.userId}`).then(res => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -330,7 +330,7 @@ const DrinkpostReviewDetail = () => {
 
   // 술 후기에 대한 댓글 제출하는 함수.
   const submitHandler = async () => {
-    const fun = await callApi("post", "api/subreview/write", {
+    const fun = await callApi<SubReview>("post", "api/subreview/write", {
       content: comment.trim(),
       drinkReviewId: reviewId,
     });

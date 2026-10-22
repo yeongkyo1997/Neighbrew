@@ -7,7 +7,7 @@ import Footer from "../footer/Footer";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 import { useNavigate } from "react-router-dom";
 import { callApi } from "../../utils/api";
-import { Drink } from "../../Type/types";
+import { Drink, Page } from "../../Type/types";
 import plusButton from "../../assets/plusButton.svg";
 import NavbarSimple from "../navbar/NavbarSimple";
 
@@ -50,7 +50,7 @@ const DrinkpostTotal = () => {
     if (isIntersecting) {
       if (page < 10) {
         setTimeout(() => {
-          void callApi("get", `api/drink?page=${page}&size=12`).then(res => {
+          void callApi<Page<Drink>>("get", `api/drink?page=${page}&size=12`).then(res => {
             setDrinkList(prev => [...prev, ...res.data.content]);
             setPage(prev => prev + 1);
           });

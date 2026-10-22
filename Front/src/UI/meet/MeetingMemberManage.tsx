@@ -72,7 +72,7 @@ const MeetingMemberManage = () => {
   const [errorModalMsg, setErrorModalMsg] = useState("");
 
   const fetchMeetData = () => {
-    const promise = callApi("get", `api/meet/${meetId}`);
+    const promise = callApi<MeetDetail>("get", `api/meet/${meetId}`);
     void promise.then((res) => {
       setMeetData(res.data);
     });

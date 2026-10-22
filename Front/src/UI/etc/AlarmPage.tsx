@@ -41,7 +41,7 @@ const AlarmPage = () => {
 
   // 비동기 통신으로 알림을 불러옵니다.
   useEffect(() => {
-    void callApi("get", `api/push/${myId}`).then(res => {
+    void callApi<AlarmLog[]>("get", `api/push/${myId}`).then(res => {
       setAlarmList(res.data);
     });
   }, []);

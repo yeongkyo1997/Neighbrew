@@ -34,6 +34,7 @@ import logo from "./assets/logoNavbar.svg";
 import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
 import AlarmPage from "./UI/etc/AlarmPage";
 import { callApi } from "./utils/api";
+import { SseTicket } from "./Type/types";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
@@ -67,7 +68,7 @@ function App() {
   const esconnect = async (id: string, isActive: () => boolean) => {
     let ticket: string;
     try {
-      const res = await callApi("post", "api/push/sse-ticket");
+      const res = await callApi<SseTicket>("post", "api/push/sse-ticket");
       ticket = res.data.ticket;
     } catch {
       if (isActive()) setTimeout(() => esconnect(id, isActive), 5000);

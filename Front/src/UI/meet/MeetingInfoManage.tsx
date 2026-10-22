@@ -10,7 +10,7 @@ import styled from "styled-components";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
-import { MeetDetail } from "../../Type/types";
+import { MeetDetail, Sido, Gugun } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import { Drink } from "../../Type/types";
 import { initialMeetDetail, initialDrink, initialSido, initialGugun } from "../common";
@@ -168,14 +168,14 @@ const MeetingInfoManage = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    void callApi("get", "api/sido").then(res => {
+    void callApi<Sido[]>("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
 
   //api 호출, 기존 모임의 정보 저장
   useEffect(() => {
-    const promise = callApi("get", `api/meet/${meetId}`);
+    const promise = callApi<MeetDetail>("get", `api/meet/${meetId}`);
     void promise.then(res => {
       setMeetData(res.data);
     });
@@ -211,7 +211,7 @@ const MeetingInfoManage = () => {
     if (gugun.sidoCode !== sido.sidoCode) {
       setGugun(initialGugun); //초기화
     }
-    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi<Gugun[]>("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);

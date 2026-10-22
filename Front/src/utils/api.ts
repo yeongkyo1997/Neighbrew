@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { TokenResponse } from "../Type/types";
 
 const api = axios.create({
   baseURL: "/",
@@ -25,11 +26,11 @@ let refreshPromise: Promise<string> | null = null;
 const refreshAccessToken = (refreshToken: string) => {
   if (refreshPromise === null) {
     refreshPromise = axios
-      .post("/api/user/refresh-token", { refreshToken })
+      .post<TokenResponse>("/api/user/refresh-token", { refreshToken })
       .then(({ data }) => {
         localStorage.setItem("token", data.accessToken);
         if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
-        return data.accessToken as string;
+        return data.accessToken;
       })
       .finally(() => {
         refreshPromise = null;
@@ -43,8 +44,9 @@ api.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (err) => {
-    const originalRequest = err.config;
+  async (err: AxiosError) => {
+    // 재시도 여부를 표시하기 위해 요청 설정에 _retry를 붙인다
+    const originalRequest = err.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
     // 네트워크/CORS/타임아웃 오류는 response가 없으므로 그대로 전달
     if (err.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -74,8 +76,9 @@ api.interceptors.response.use(
   }
 );
 
-export const callApi = async (method: string, url: string, body: any = {}) => {
-  return api({
+// T: 응답 본문 타입. 지정하지 않으면 unknown이라 res.data를 쓰려면 타입을 넘겨야 한다.
+export const callApi = async <T = unknown>(method: string, url: string, body: unknown = {}): Promise<AxiosResponse<T>> => {
+  return api<T>({
     method: method,
     url: url,
     headers: {

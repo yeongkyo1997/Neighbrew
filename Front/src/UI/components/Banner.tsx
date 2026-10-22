@@ -20,7 +20,7 @@ function SlideComponent() {
   };
   const [bannerList, setBannerList] = useState<DrinkFestival[]>([]);
   useEffect(() => {
-    void callApi("get", "api/drinkFestival/all").then(res => {
+    void callApi<DrinkFestival[]>("get", "api/drinkFestival/all").then(res => {
       setBannerList(res.data);
     });
   }, []);

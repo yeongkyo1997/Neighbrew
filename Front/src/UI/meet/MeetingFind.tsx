@@ -11,7 +11,7 @@ import DrinkCategory from "../drinkCategory/DrinkCategory";
 import MeetingListItem from "./MeetingListItem";
 import autoAnimate from "@formkit/auto-animate";
 import { callApi } from "../../utils/api";
-import { Meeting } from "../../Type/types";
+import { Meeting, Sido, Gugun, Page } from "../../Type/types";
 import { initialSido, initialGugun } from "../common";
 import { localDate } from "./DateTimeCommon";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
@@ -60,14 +60,14 @@ const MeetingFind = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    void callApi("get", "api/sido").then(res => {
+    void callApi<Sido[]>("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
 
   //페이지가 변하면 기존 데이터에 이어서 로드
   useEffect(() => {
-    const promise = callApi("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
+    const promise = callApi<Page<Meeting>>("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
     if (page === 0) {
       void promise.then(res => {
         setTotalPage(res.data.totalPages);
@@ -84,7 +84,7 @@ const MeetingFind = () => {
   //카테고리 변경 시 새로 데이터 로드
   useEffect(() => {
     if (page === 0) {
-      const promise = callApi("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
+      const promise = callApi<Page<Meeting>>("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
       void promise.then(res => {
         setTotalPage(res.data.totalPages);
         setMeetAllData(res.data.content); //받아온 데이터로 meetAllData 초기화
@@ -97,7 +97,7 @@ const MeetingFind = () => {
 
   useEffect(() => {
     //선택한 시도에 따라 구군 fetch
-    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi<Gugun[]>("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);

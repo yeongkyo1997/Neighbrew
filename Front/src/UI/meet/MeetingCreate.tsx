@@ -11,7 +11,7 @@ import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
 import { callApi } from "../../utils/api";
-import { Drink } from "../../Type/types";
+import { Drink, Sido, Gugun, Meeting } from "../../Type/types";
 import { initialMeetDetail, initialDrink, initialSido, initialGugun } from "../common";
 import { WhiteModal, DateInput, TimeInput, InputText } from "../../style/common";
 import { localDate, localTime, formateDate, formateTime } from "./DateTimeCommon";
@@ -176,7 +176,7 @@ const MeetingCreate = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    void callApi("get", "api/sido").then(res => {
+    void callApi<Sido[]>("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -184,7 +184,7 @@ const MeetingCreate = () => {
   //선택한 시도에 따라 구군 fetch
   useEffect(() => {
     setGugun(initialGugun); //초기화
-    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi<Gugun[]>("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
@@ -316,7 +316,7 @@ const MeetingCreate = () => {
   };
 
   const createApi = (f: FormData) => {
-    const promise = callApi("post", `/api/meet/create`, f);
+    const promise = callApi<Pick<Meeting, "meetId">>("post", `/api/meet/create`, f);
     promise
       .then(res => {
         GoMeetDetailHandler(res.data.meetId); //모임 상세 페이지로 이동

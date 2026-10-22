@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { User } from "../../Type/types";
+import { User, FollowRelation, TokenResponse, Drink } from "../../Type/types";
 import { brewery, meetingicon } from "../../assets/AllIcon";
 import bottle from "../../assets/bottle.png";
 import defaultImg from "../../assets/defaultImg.png";
@@ -265,7 +265,7 @@ const MyPage = () => {
   };
   // 팔로워, 팔로잉 인원 수 세기 (팔로우 버튼 색깔 변경)
   const followers = () => {
-    void callApi("get", `api/follow/follower/${userid}`).then(res => {
+    void callApi<FollowRelation[]>("get", `api/follow/follower/${userid}`).then(res => {
       if (res.data.length == 0) {
         setUserData(userData => ({ ...userData, follower: res.data.length }));
         setFollowing(0);
@@ -281,12 +281,12 @@ const MyPage = () => {
         }
       });
     });
-    void callApi("get", `api/follow/following/${userid}`).then(res => {
+    void callApi<FollowRelation[]>("get", `api/follow/following/${userid}`).then(res => {
       setUserData(userData => ({ ...userData, following: res.data.length }));
     });
   };
   const myDrinks = () => {
-    void callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
+    void callApi<Drink[]>("get", `api/drink/user/${userid}/review-drink`).then(res => {
       setUserData(userData => ({ ...userData, drinkcount: res.data.length }));
     });
   };
@@ -299,7 +299,7 @@ const MyPage = () => {
   const userInfo = () => {
     //생년월일 등 개인정보는 본인 정보(myinfo)에만 포함된다
     const url = userid === localStorage.getItem("myId") ? "api/user/myinfo" : `api/user/${userid}`;
-    void callApi("get", url)
+    void callApi<User>("get", url)
       .then(res => {
         setUserData(res.data);
       })
@@ -314,7 +314,7 @@ const MyPage = () => {
   };
   const refresh = () => {
     if (localStorage.getItem("token") != null) {
-      void callApi("post", "api/user/refresh-token", {
+      void callApi<TokenResponse>("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
       }).then(res => {
         localStorage.setItem("token", res.data.accessToken);

@@ -18,7 +18,7 @@ const DrinkPostUseInUser = () => {
   const { userid } = useParams();
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
   const myDrinkHandler = () => {
-    void callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
+    void callApi<Drink[]>("get", `api/drink/user/${userid}/review-drink`).then(res => {
       setDrinkList(res.data);
     });
   };

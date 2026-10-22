@@ -8,7 +8,7 @@ import styled from "styled-components";
 import MeetingListItem from "./../meet/MeetingListItem";
 import EmptyMsg from "./../components/EmptyMsg";
 import { callApi } from "../../utils/api";
-import { Meeting } from "../../Type/types";
+import { Meeting, MyMeets } from "../../Type/types";
 
 const MeetingDiv = styled.div`
   margin-bottom: 2rem;
@@ -25,7 +25,7 @@ const MeetingMyUseInUser = (props: { userId: number }) => {
   const [userId, setUserId] = useState(0);
 
   //불러온 모임 데이터
-  const [meetData, setMeetData] = useState({
+  const [meetData, setMeetData] = useState<MyMeets>({
     HOST: [],
     APPLY: [],
     GUEST: [],
@@ -47,7 +47,7 @@ const MeetingMyUseInUser = (props: { userId: number }) => {
   //api 호출
   useEffect(() => {
     if (userId !== 0) {
-      const promise = callApi("get", `api/meet/mymeet/${userId}`);
+      const promise = callApi<MyMeets>("get", `api/meet/mymeet/${userId}`);
       void promise.then(res => {
         setMeetData(res.data); //받아온 데이터로 meetData 세팅
       });

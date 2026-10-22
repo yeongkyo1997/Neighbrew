@@ -260,7 +260,7 @@ const MeetingDetail = () => {
 
   //api호출
   const fetchMeetData = () => {
-    const promise = callApi("get", `api/meet/${meetId}`);
+    const promise = callApi<MeetDetail>("get", `api/meet/${meetId}`);
     promise
       .then(res => {
         setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
@@ -283,7 +283,7 @@ const MeetingDetail = () => {
   useEffect(() => {
     if (userId === 0) return;
     //생년월일은 본인 정보(myinfo)에만 포함된다
-    const promise = callApi("get", "api/user/myinfo");
+    const promise = callApi<User>("get", "api/user/myinfo");
     void promise.then(res => {
       setUserData(res.data);
     });

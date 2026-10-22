@@ -10,6 +10,7 @@ import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import EmptyMsg from "../components/EmptyMsg.tsx";
+import { ChatListItem, ChatRoom, ChatDmRoom } from "../../Type/types";
 
 const ChatListDiv = styled.div`
   display: flex;
@@ -27,7 +28,7 @@ const Button = styled.button`
   font-size: 20px;
 `;
 const ChatList = () => {
-  const [chatList, setChatList] = useState([]);
+  const [chatList, setChatList] = useState<ChatListItem[]>([]);
   const [chooseChat, setChooseChat] = useState(0); // 선택한 채팅방의 index
   const navigate = useNavigate();
   const chatRoomDetail = (roomId: number) => {
@@ -39,12 +40,12 @@ const ChatList = () => {
 
   const userId = localStorage.getItem("myId");
   const classListHandler = () => {
-    void callApi("GET", `api/chatroom/${userId}/getChatRoom`).then(res => {
+    void callApi<ChatRoom[]>("GET", `api/chatroom/${userId}/getChatRoom`).then(res => {
       setChatList(res.data);
     });
   };
   const dmListHandler = () => {
-    void callApi("GET", `api/dm/list/${userId}`).then(res => {
+    void callApi<ChatDmRoom[]>("GET", `api/dm/list/${userId}`).then(res => {
       setChatList(res.data);
     });
   };

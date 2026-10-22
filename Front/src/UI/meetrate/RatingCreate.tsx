@@ -114,7 +114,7 @@ const RatingCreate = () => {
   };
 
   useEffect(() => {
-    void callApi("GET", `/api/meet/${meetId}`)
+    void callApi<MeetDetail>("GET", `/api/meet/${meetId}`)
       .then(res => {
         setMeetTitle(res.data.meet.meetName);
         const { participants } = res.data as MeetDetail;

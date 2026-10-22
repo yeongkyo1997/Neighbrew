@@ -11,6 +11,7 @@ import googleLogin from "../../assets/Login/googleLogin.png"; // 이미지를 �
 import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import { callApi } from "../../utils/api";
+import { TokenResponse } from "../../Type/types";
 
 const ImgDivIcon = styled.div`
   overflow: hidden;
@@ -88,7 +89,7 @@ const Login = () => {
 
   useEffect(() => {
     if (localStorage.getItem("token") != null) {
-      void callApi("post", "api/user/refresh-token", {
+      void callApi<TokenResponse>("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
       }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);

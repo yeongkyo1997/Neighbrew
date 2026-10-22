@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { Drink } from "../../Type/types";
+import { Drink, Page } from "../../Type/types";
 import backIcon from "../../assets/backIcon.svg";
 import { callApi } from "../../utils/api";
 import SearchBox from "./../components/SearchBox";
@@ -54,7 +54,7 @@ const DrinkpostSearch = () => {
 
   //inputText로 술장 검색 api
   useEffect(() => {
-    const promise = callApi("get", `api/drink/search?tagId=${selectedCategory}&name=${inputText}`);
+    const promise = callApi<Page<Drink>>("get", `api/drink/search?tagId=${selectedCategory}&name=${inputText}`);
     void promise.then(res => {
       setSearchResult(res.data.content);
     });
