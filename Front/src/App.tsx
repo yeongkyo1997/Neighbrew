@@ -35,6 +35,7 @@ import DrinkpostReviewUpdate from "./UI/drinkpost/DrinkpostReviewUpdate";
 import AlarmPage from "./UI/etc/AlarmPage";
 import { callApi } from "./utils/api";
 import { SseTicket, AlarmLog } from "./Type/types";
+import useEffectEvent from "./hooks/useEffectEvent";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); // 개발시 isLoading true로 두고 하기
@@ -65,7 +66,7 @@ function App() {
   }, []);
   // EventSource는 헤더를 보낼 수 없으므로, 인증된 요청으로 30초짜리 일회용 티켓을 받아 URL에 사용
   // (access 토큰을 URL에 싣지 않음). 티켓은 1회용이라 끊기면 새 티켓으로 직접 재연결한다.
-  const esconnect = async (id: string, isActive: () => boolean) => {
+  const esconnect = useEffectEvent(async (id: string, isActive: () => boolean) => {
     let ticket: string;
     try {
       const res = await callApi<SseTicket>("post", "api/push/sse-ticket");
@@ -98,7 +99,7 @@ function App() {
       es.current?.close();
       if (isActive()) setTimeout(() => esconnect(id, isActive), 5000);
     };
-  };
+  });
   useEffect(() => {
     if (userid == null) return;
     let active = true;
@@ -110,7 +111,7 @@ function App() {
       es.current = undefined;
       lastEventId.current = "";
     };
-  }, [userid]);
+  }, [userid, esconnect]);
   useEffect(() => {
     subscribe();
   }, []);

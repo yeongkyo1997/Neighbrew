@@ -15,6 +15,7 @@ import { Wine } from "../../assets/AllDrinkCategories/Wine";
 import { Sake } from "../../assets/AllDrinkCategories/Sake";
 import { CraftBeer } from "../../assets/AllDrinkCategories/CraftBeer";
 import { SojuBeer } from "../../assets/AllDrinkCategories/SojuBeer";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const CategoryDiv = styled.div<{ $canClick: boolean }>`
   display: inline-block;
@@ -40,9 +41,10 @@ const DrinkCategory = (props: DrinkCategoryProps) => {
     props.selectedId ?? 0
   );
   //선택한 태그의 아이디를 부모로 넘김
+  const getFunc = useEffectEvent((tagId: number) => props.getFunc(tagId));
   useEffect(() => {
-    props.getFunc(chooseCategoryDiv);
-  }, [chooseCategoryDiv]);
+    getFunc(chooseCategoryDiv);
+  }, [chooseCategoryDiv, getFunc]);
 
   //선택할 수 없으면 회색으로
   const bgColorSelector = () => {
