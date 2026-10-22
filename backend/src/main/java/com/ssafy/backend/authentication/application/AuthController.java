@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -76,7 +77,9 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public SseEmitter connect(@PathVariable Long userId,
                               @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "")
-                              String lastEventId) throws IOException {
-        return pushService.connect(userId, lastEventId);
+                              String lastEventId,
+                              @RequestParam(value = "lastEventId", required = false, defaultValue = "")
+                              String lastEventIdParam) throws IOException {
+        return pushService.connect(userId, lastEventId, lastEventIdParam);
     }
 }

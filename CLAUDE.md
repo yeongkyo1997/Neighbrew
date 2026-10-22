@@ -107,6 +107,7 @@ domain/<name>/   user, meet, drink, chat, follow, evaluation, push, region, stor
 - `ChatController`는 메시지의 발신자 ID를 STOMP `Principal`로 덮어쓴 뒤 `SimpMessagingTemplate`으로 브로드캐스트합니다.
 - 모임 채팅 메시지는 MongoDB(`ChatMessageMongo`)에 저장되고, 나머지 엔티티는 모두 MySQL/JPA에 있습니다.
 - 푸시 알림의 종류, 문구, 이동 경로는 `domain/push/service/push/PushMessage`의 팩토리 메서드로 만들고 `PushService.send(sender, receiver, PushMessage)`로 보냅니다. 경로는 `/`로 시작하는 앱 내부 경로만 넣고, 도메인(`neighbrew.full.url`)은 `PushService`만 붙입니다. 새 `PushType` 값은 DB에 문자열로 저장되므로 함부로 추가하지 마세요.
+- SSE 이벤트 ID는 DB에 저장된 `Push.pushId`입니다. 재연결할 때 `Last-Event-ID` 헤더(없으면 `?lastEventId=`) 이후의 알림을 DB에서 최대 50개 다시 보냅니다(`SseEventManager.sendLostData`). 프론트는 일회용 티켓 때문에 `EventSource`를 직접 다시 만들므로 마지막 ID를 쿼리 파라미터로 넘깁니다.
 - 푸시 알림은 SSE를 씁니다. emitter는 `domain/push`의 `EmitterRepository` / `SseConnectionManager`에 메모리로 보관하므로 서버 인스턴스가 하나라고 가정합니다. 설계 메모는 `backend/src/main/resources/SSE_SPEC.md`에 있습니다.
 - 이미지 업로드는 `domain/storage`의 S3 매니저를 거칩니다. 최대 20MB입니다(`UploadSizeGuard`).
 
