@@ -24,8 +24,7 @@ import com.ssafy.backend.domain.region.dto.GugunResponseDto;
 import com.ssafy.backend.domain.region.dto.SidoResponseDto;
 import com.ssafy.backend.domain.region.entity.Gugun;
 import com.ssafy.backend.domain.region.entity.Sido;
-import com.ssafy.backend.domain.region.repository.GugunRepository;
-import com.ssafy.backend.domain.region.repository.SidoRepository;
+import com.ssafy.backend.domain.region.service.RegionCache;
 import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.exception.NotFoundException;
 
@@ -36,8 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class MeetQueryManager {
     private final MeetRepository meetRepository;
     private final MeetUserRepository meetUserRepository;
-    private final SidoRepository sidoRepository;
-    private final GugunRepository gugunRepository;
+    private final RegionCache regionCache;
     private final ModelMapper modelMapper;
 
     public Page<MeetResponseDto> findMeetsByTagId(Long tagId, Pageable pageable) {
@@ -106,12 +104,10 @@ public class MeetQueryManager {
     }
 
     private Sido findSidoById(Integer sidoCode) {
-        return sidoRepository.findById(sidoCode).orElseThrow(
-                () -> new IllegalArgumentException("시도 정보를 찾을 수 없습니다."));
+        return regionCache.getSido(sidoCode);
     }
 
     private Gugun findGugunByCodes(Integer sidoCode, Integer gugunCode) {
-        return gugunRepository.findBySidoCodeAndGugunCode(sidoCode, gugunCode).orElseThrow(
-                () -> new IllegalArgumentException("구군 정보를 찾을 수 없습니다."));
+        return regionCache.getGugun(sidoCode, gugunCode);
     }
 }
