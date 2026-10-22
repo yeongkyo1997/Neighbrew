@@ -15,11 +15,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -36,8 +36,13 @@ class UserServiceTest {
     @Mock
     private S3Service s3Service;
 
-    @InjectMocks
     private UserService userService;
+
+    // 사용자 조회는 실제 UserReader가 mock 저장소를 거치게 해 기존 findById 스텁을 그대로 쓴다
+    @BeforeEach
+    void setUp() {
+        userService = new UserService(userRepository, new UserReader(userRepository), s3Service);
+    }
 
     private UserUpdateDto updateDto(String nickname, String intro) {
         UserUpdateDto dto = new UserUpdateDto();

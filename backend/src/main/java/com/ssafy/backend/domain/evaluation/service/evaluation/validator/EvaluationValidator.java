@@ -12,7 +12,7 @@ import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.repository.MeetRepository;
 import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
 import com.ssafy.backend.domain.user.entity.User;
-import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.domain.user.service.UserReader;
 import com.ssafy.backend.exception.ForbiddenException;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class EvaluationValidator {
     private static final String ERR_NOT_PARTICIPANT = "모임에 참여한 사용자끼리만 평가할 수 있습니다.";
     private static final String ERR_MEET_NOT_ENDED = "종료된 모임만 평가할 수 있습니다.";
 
-    private final UserRepository userRepository;
+    private final UserReader userReader;
     private final MeetRepository meetRepository;
     private final MeetUserRepository meetUserRepository;
     private final EvaluationRepository evaluationRepository;
@@ -48,13 +48,11 @@ public class EvaluationValidator {
     }
 
     public User validateAndGetEvaluator(Long evaluatorId) {
-        return userRepository.findById(evaluatorId).orElseThrow(
-                () -> new IllegalStateException(String.format(ERR_NOT_FOUND, "evaluator")));
+        return userReader.getById(evaluatorId);
     }
 
     public User validateAndGetTarget(Long targetId) {
-        return userRepository.findById(targetId).orElseThrow(
-                () -> new IllegalStateException(String.format(ERR_NOT_FOUND, "target")));
+        return userReader.getById(targetId);
     }
 
     public Meet validateAndGetMeet(Long meetId) {

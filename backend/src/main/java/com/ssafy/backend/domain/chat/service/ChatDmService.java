@@ -26,7 +26,7 @@ import com.ssafy.backend.domain.push.service.push.PushMessage;
 import com.ssafy.backend.domain.push.service.push.PushService;
 import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.entity.User;
-import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.domain.user.service.UserReader;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatDmService {
     private final ChatDmMessageRepository chatDmMessageRepository;
     private final ChatDmRoomRepository chatDmRoomRepository;
-    private final UserRepository userRepository;
+    private final UserReader userReader;
     private final PushService pushService;
     private final ChatDmValidator validator;
     private final ChatDmRoomManager roomManager;
@@ -86,8 +86,7 @@ public class ChatDmService {
     }
 
     private User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        return userReader.getById(userId);
     }
 
     private PublicUserResponseDto getPublicUser(Long userId) {

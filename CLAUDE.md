@@ -75,6 +75,7 @@ domain/<name>/   user, meet, drink, chat, follow, evaluation, push, region, stor
   - 나머지는 `Authorization: Bearer <access JWT>`를 검증하고 `request.setAttribute("userId", subject)`를 설정합니다. JWT에는 `type` 클레임(access/refresh)이 있어 서로 바꿔 쓸 수 없습니다.
   - SSE 연결 경로(`/api/auth/connect/{userId}`, `/api/push/connect/{userId}`)는 헤더 대신 `?ticket=`을 받습니다. 티켓은 `POST /api/push/sse-ticket`으로 발급하고, 30초 동안 한 번만 쓸 수 있으며, 경로의 `userId`와 일치해야 합니다.
 - 컨트롤러는 `@LoginUser Long loginUserId`로 로그인 사용자를 받습니다. 경로에 `userId`가 있으면 `LoginUserGuard.requireSame(userId, loginUserId)`로 본인인지 확인하세요. 권한 위반은 `ForbiddenException`(403)으로 던집니다.
+- 다른 도메인에서 사용자를 조회할 때는 `domain/user/service/UserReader.getById`를 쓰세요. 대상이 없으면 `NotFoundException`(404)을 던집니다. `userRepository.findById(...).orElseThrow(...)`를 새로 만들지 마세요.
 - 다른 사람의 리소스(채팅방, 알림, 모임, 리뷰 등)를 다룰 때는 소유자나 참여자인지 서비스나 매니저에서 확인하세요. 예: `ChatRoomUserManager.requireRoomMember`, `PushDataManager.deletePushById`.
 - 다른 사용자에게 내려주는 사용자 정보는 `PublicUserResponseDto`(`userId`, `nickname`, `profile`, `intro`, `liverPoint`)만 씁니다. `email`/`name`/`birth`는 본인 정보(`/api/user/myinfo`)에서만 내려줍니다. JPA 엔티티를 응답에 그대로 넣지 마세요.
 - 클라이언트가 보낸 이미지 URL은 저장하지 않습니다. 서버가 방금 업로드한 URL이나 `"no image"`만 저장합니다. 저장된 URL은 나중에 S3 삭제 대상이 되기 때문입니다.

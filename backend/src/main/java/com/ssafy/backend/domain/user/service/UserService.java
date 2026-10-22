@@ -28,6 +28,7 @@ public class UserService {
     private static final Pattern INVISIBLE_CHARS = Pattern.compile("[\\s\\p{Z}\\p{Cc}\\p{Cf}]");
 
     private final UserRepository userRepository;
+    private final UserReader userReader;
     private final S3Service s3Service;
 
     public PublicUserResponseDto findByUserId(Long userId) {
@@ -40,8 +41,7 @@ public class UserService {
     }
 
     private User findUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId));
+        return userReader.getById(userId);
     }
 
     @Transactional
@@ -83,8 +83,7 @@ public class UserService {
 
     @Transactional
     public void updateUserImg(Long userId, String url) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저가 없습니다. id=" + userId));
+        User user = userReader.getById(userId);
 
         //프로필이 존재하면 기존 이미지 제거한다.
         if (!user.getProfile().equals("no image")) {s3Service.deleteImg(user.getProfile());}

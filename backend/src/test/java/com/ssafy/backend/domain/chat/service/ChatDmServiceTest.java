@@ -28,6 +28,7 @@ import com.ssafy.backend.domain.chat.service.validator.ChatDmValidator;
 import com.ssafy.backend.domain.push.service.push.PushService;
 import com.ssafy.backend.domain.user.entity.User;
 import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.domain.user.service.UserReader;
 
 @ExtendWith(MockitoExtension.class)
 class ChatDmServiceTest {
@@ -53,7 +54,7 @@ class ChatDmServiceTest {
 
     @BeforeEach
     void setUp() {
-        chatDmService = new ChatDmService(chatDmMessageRepository, chatDmRoomRepository, userRepository, pushService,
+        chatDmService = new ChatDmService(chatDmMessageRepository, chatDmRoomRepository, new UserReader(userRepository), pushService,
                                           validator, roomManager, messageManager, OBJECT_MAPPER);
     }
 

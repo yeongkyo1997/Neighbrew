@@ -16,8 +16,9 @@ import com.ssafy.backend.domain.evaluation.repository.EvaluationRepository;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.repository.MeetRepository;
 import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
-import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.domain.user.service.UserReader;
 import com.ssafy.backend.exception.ForbiddenException;
+import com.ssafy.backend.exception.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class EvaluationValidatorTest {
@@ -26,7 +27,7 @@ class EvaluationValidatorTest {
     private static final Long TARGET_ID = 2L;
 
     @Mock
-    private UserRepository userRepository;
+    private UserReader userReader;
     @Mock
     private MeetRepository meetRepository;
     @Mock
@@ -101,5 +102,13 @@ class EvaluationValidatorTest {
         Meet meet = Meet.builder().meetStatus(MeetStatus.END).build();
 
         assertThatCode(() -> evaluationValidator.validateMeetEnded(meet)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void 평가_대상_사용자가_없으면_500이_아니라_404로_응답할_예외를_던진다() {
+        given(userReader.getById(TARGET_ID)).willThrow(new NotFoundException("사용자를 찾을 수 없습니다. id=" + TARGET_ID));
+
+        assertThatThrownBy(() -> evaluationValidator.validateAndGetTarget(TARGET_ID))
+                .isInstanceOf(NotFoundException.class);
     }
 }
