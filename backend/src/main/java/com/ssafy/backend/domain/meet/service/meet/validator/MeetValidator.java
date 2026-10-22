@@ -49,10 +49,11 @@ public class MeetValidator {
         if (meetRequestDto.getTagId() == null) {
             throw new IllegalArgumentException("모임에 등록할 태그 정보가 포함되지 않았습니다.");
         }
-        if (meetRequestDto.getMinAge() < 20) {
+        // 최소 나이는 선택 항목이다 (프론트는 비워 두면 값을 보내지 않는다)
+        if (meetRequestDto.getMinAge() != null && meetRequestDto.getMinAge() < 20) {
             throw new IllegalArgumentException("모임 최소나이를 다시 입력해 주세요.");
         }
-        if (meetRequestDto.getMinAge() >= 200) {
+        if (meetRequestDto.getMinAge() != null && meetRequestDto.getMinAge() >= 200) {
             throw new IllegalArgumentException("모임 최대 나이를 다시 입력해 주세요.");
         }
         if (meetRequestDto.getMeetDate().isBefore(LocalDateTime.now())) {

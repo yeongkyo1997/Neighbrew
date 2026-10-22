@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.meet.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -117,6 +118,28 @@ public class Meet {
             throw new IllegalArgumentException("해당 모임에 참여 인원이 가득 찼습니다.");
         }
         nowParticipants++;
+    }
+
+    // 신청과 승인 때 사용자가 모임의 간수치·나이 제한에 맞는지 확인한다. (프론트 검사만으로는 API 직접 호출을 막을 수 없다)
+    // 나이는 프론트와 같은 방식(올해 - 출생 연도 + 1)으로 계산한다. 제한 값이 null이거나 0 이하면 제한이 없는 것이다.
+    public void validateEligibility(User user, LocalDate today) {
+        if (isSet(minLiverPoint) && user.getLiverPoint() < minLiverPoint) {
+            throw new IllegalArgumentException("간수치 제한에 부합하지 않습니다.");
+        }
+        if (!isSet(minAge) && !isSet(maxAge)) {
+            return;
+        }
+        if (user.getBirth() == null) {
+            throw new IllegalArgumentException("생년월일을 입력해야 나이 제한이 있는 모임에 참여할 수 있습니다.");
+        }
+        int age = today.getYear() - user.getBirth().getYear() + 1;
+        if ((isSet(minAge) && age < minAge) || (isSet(maxAge) && age > maxAge)) {
+            throw new IllegalArgumentException("나이 제한에 부합하지 않습니다.");
+        }
+    }
+
+    private static boolean isSet(Number limit) {
+        return limit != null && limit.doubleValue() > 0;
     }
 
     // 방장은 나갈 수 없으므로 1명 아래로는 줄지 않는다.

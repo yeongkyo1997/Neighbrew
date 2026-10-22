@@ -61,4 +61,13 @@ class MeetParticipantManagerTest {
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("가득");
         then(meetUserService).should(never()).saveMeetUser(any(), any(), any());
     }
+
+    @Test
+    void 간수치_제한에_맞지_않으면_신청을_저장하지_않는다() {
+        Meet meet = Meet.builder().meetId(10L).nowParticipants(1).maxParticipants(8).minLiverPoint(90f).build();
+
+        assertThatThrownBy(() -> participantManager.applyMeet(meet, applicant))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("간수치");
+        then(meetUserService).should(never()).saveMeetUser(any(), any(), any());
+    }
 }

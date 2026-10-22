@@ -126,4 +126,12 @@ class UserServiceTest {
 
         assertThat(result.getIntro()).isEqualTo("새 소개");
     }
+
+    @Test
+    void 생년월일을_입력하지_않았으면_내_정보의_생년월일은_문자열_null이_아니라_null이다() {
+        User user = User.builder().userId(7L).nickname("술꾼").name("홍길동").liverPoint(40f).build();
+        given(userRepository.findById(7L)).willReturn(Optional.of(user));
+
+        assertThat(userService.findMyInfo(7L).getBirth()).isNull();
+    }
 }
