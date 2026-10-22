@@ -60,9 +60,9 @@ const AlarmPage = () => {
         {alarmList.length === 0 ? (
           <EmptyMsg title="알림이 없습니다." contents="" />
         ) : (
-          alarmList.map((alarm, i) => {
+          alarmList.map(alarm => {
             return (
-              <SwipeableList>
+              <SwipeableList key={alarm.pushId}>
                 <SwipeableListItem
                   trailingActions={trailingActions(alarm.pushId)}
                   onClick={() => {
@@ -70,7 +70,7 @@ const AlarmPage = () => {
                   }}
                   maxSwipe={1}
                 >
-                  <AlarmItem key={i} alarm={alarm}></AlarmItem>
+                  <AlarmItem alarm={alarm}></AlarmItem>
                 </SwipeableListItem>
               </SwipeableList>
             );

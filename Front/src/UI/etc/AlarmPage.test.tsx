@@ -53,6 +53,15 @@ afterEach(() => {
 });
 
 describe("AlarmPage", () => {
+  // React는 같은 key 경고를 한 번만 출력하므로, 목록을 그리는 다른 테스트보다 먼저 둔다
+  it("목록을 그릴 때 React key 경고가 나지 않는다", async () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    renderAlarmPage([alarm(3, "첫 번째", "/myPage/2"), alarm(4, "두 번째", "/meet/10")]);
+    await screen.findByText("두 번째");
+    const keyWarnings = consoleError.mock.calls.filter(args => String(args[0]).includes('unique "key"'));
+    expect(keyWarnings).toHaveLength(0);
+  });
+
   it("내 알림 목록을 불러와 보여준다", async () => {
     renderAlarmPage([alarm(3, "사용자2님이 팔로우했습니다", "/myPage/2"), alarm(4, "모임에 승인되었습니다", "/meet/10")]);
     expect(await screen.findByText("사용자2님이 팔로우했습니다")).toBeInTheDocument();
