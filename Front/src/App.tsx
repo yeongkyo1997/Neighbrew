@@ -5,7 +5,7 @@ import Loading from "./UI/etc/Loading";
 import Login from "./UI/user/Login";
 import Main from "./UI/home/Main";
 import ChatList from "./UI/chat/ChatList";
-import ChatRoom from "./UI/chat/ChatRoom";
+import ChatRoom from "./UI/chat/chatRoom/ChatRoom";
 import DrinkpostTotal from "./UI/drinkpost/DrinkpostTotal";
 import MeetingMain from "./UI/meet/MeetingMain";
 import MeetingDetail from "./UI/meet/meetingDetail/MeetingDetail";
