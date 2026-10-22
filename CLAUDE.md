@@ -34,9 +34,15 @@ npm i
 npm run dev       # vite --host 0.0.0.0, 포트 5173
 npm run build     # tsc && vite build
 npm run lint      # eslint, --max-warnings 0
+npm test          # vitest run (jsdom)
+npx vitest run src/utils/api.test.ts   # 파일 하나만
+npm run test:watch
 ```
 
-- 테스트 스크립트는 없습니다.
+- 테스트는 Vitest + React Testing Library입니다(`vitest.config.ts`, 공통 설정 `src/test/setup.ts`). 시간대는 `Asia/Seoul`로 고정합니다.
+  - 테스트 파일은 대상 옆에 `*.test.ts(x)`로 두고, `vitest`에서 `describe`/`it`/`expect`를 import합니다(globals 미사용). 테스트 파일도 `tsc`와 `npm run lint` 대상입니다.
+  - 서버 호출은 `vi.mock("<상대경로>/utils/api", () => ({ callApi: vi.fn() }))`로 막고 URL별로 응답을 정합니다. 라우터가 필요하면 `MemoryRouter` + `Route`로 감쌉니다(`useMeetingDetail.test.tsx`, `AlarmPage.test.tsx` 참고).
+  - `utils/api.ts` 자체는 `axios.defaults.adapter`를 가짜로 바꿔 테스트합니다(`api.test.ts`).
 - `npm run lint`는 경고까지 0건이어야 통과하고, CI에서 실패하면 막습니다.
 - effect 안에서 최신 props·state를 읽기만 하고 그 값이 바뀔 때 다시 실행하지 않으려면, `eslint-disable`을 쓰지 말고 `hooks/useEffectEvent`(React 19.2 `useEffectEvent` 폴리필)로 감싸 의존성에 넣으세요. 라우트 파라미터는 의존성에 그대로 넣습니다.
 - `react-modal`에 넘기는 모달 스타일 객체(`WhiteModal` 등)는 `style/modalStyles.ts`에 둡니다. 컴포넌트를 내보내는 파일에서 일반 객체를 함께 내보내면 `react-refresh/only-export-components`에 걸립니다.
@@ -44,7 +50,7 @@ npm run lint      # eslint, --max-warnings 0
 
 ### CI
 
-`.github/workflows/ci.yml`이 PR과 `main` push마다 백엔드 `./gradlew test -PunitOnly`와 jar 빌드, 프론트 `npm run build`(tsc + vite)와 `npm run lint`를 실행합니다. 하나라도 실패하면 막습니다.
+`.github/workflows/ci.yml`이 PR과 `main` push마다 백엔드 `./gradlew test -PunitOnly`와 jar 빌드, 프론트 `npm test`, `npm run build`(tsc + vite), `npm run lint`를 실행합니다. 하나라도 실패하면 막습니다.
 
 ### 전체 스택
 

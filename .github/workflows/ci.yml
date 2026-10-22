@@ -53,6 +53,9 @@ jobs:
           cache: npm
           cache-dependency-path: Front/package-lock.json
       - run: npm ci
+      # vitest (jsdom)
+      - name: Unit tests
+        run: npm test
       # tsc && vite build
       - name: Build
         run: npm run build
