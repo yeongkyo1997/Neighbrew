@@ -22,7 +22,7 @@ const MeetTitle = styled.div`
   padding-bottom: 0;
 `;
 
-const meetingMy = () => {
+const MeetingMy = () => {
   //현재 유저의 userId
   const [userId, setUserId] = useState(0);
 
@@ -119,4 +119,4 @@ const meetingMy = () => {
     </div>
   );
 };
-export default meetingMy;
+export default MeetingMy;

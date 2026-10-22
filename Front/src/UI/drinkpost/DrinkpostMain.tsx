@@ -100,7 +100,7 @@ const SortButton = styled.div`
   color: white;
 `;
 
-const drinkpostMain = (props: { connectHandler: () => void }) => {
+const DrinkpostMain = (props: { connectHandler: () => void }) => {
   const toForward = forwardIcon();
   const [reviewList, setReviewList] = useState<Review[]>([]);
   const [reviewListLike, setReviewListLike] = useState<Review[]>([]);
@@ -202,4 +202,4 @@ const drinkpostMain = (props: { connectHandler: () => void }) => {
     </>
   );
 };
-export default drinkpostMain;
+export default DrinkpostMain;

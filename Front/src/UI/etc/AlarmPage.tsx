@@ -42,7 +42,7 @@ const trailingActions = (id: number) => (
     </SwipeAction>
   </TrailingActions>
 );
-const alarmPage = () => {
+const AlarmPage = () => {
   const BackIcon = backIcon();
   const navigate = useNavigate();
   const myId = localStorage.getItem("myId");
@@ -90,4 +90,4 @@ const alarmPage = () => {
     </>
   );
 };
-export default alarmPage;
+export default AlarmPage;

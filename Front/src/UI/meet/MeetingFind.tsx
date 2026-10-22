@@ -16,7 +16,7 @@ import { initialSido, initialGugun } from "../common";
 import { localDate } from "./DateTimeCommon";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
-const meetingFind = () => {
+const MeetingFind = () => {
   //받아온 모임 정보 리스트(전체)
   const [meetAllData, setMeetAllData] = useState<Meeting[]>([]);
   //필터링 한 후 모임 정보
@@ -288,7 +288,7 @@ const meetingFind = () => {
     </div>
   );
 };
-export default meetingFind;
+export default MeetingFind;
 
 const CateDiv = styled.div`
   height: 10rem;

@@ -39,7 +39,7 @@ const RoundBtn = styled.div`
 
 // 무한 스크롤
 
-const drinkpostTotal = () => {
+const DrinkpostTotal = () => {
   const [page, setPage] = useState(0);
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
   const navigate = useNavigate();
@@ -98,4 +98,4 @@ const drinkpostTotal = () => {
   );
 };
 
-export default drinkpostTotal;
+export default DrinkpostTotal;

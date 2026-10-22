@@ -7,7 +7,7 @@ const Card = styled.div`
   height: 140px;
 `;
 
-const mdsItem = ({ pick }: { pick: Drink }) => {
+const MdsItem = ({ pick }: { pick: Drink }) => {
   const [limit, setLimit] = useState(5);
   const name = pick.name;
   const img = pick.image;
@@ -35,4 +35,4 @@ const mdsItem = ({ pick }: { pick: Drink }) => {
     </>
   );
 };
-export default mdsItem;
+export default MdsItem;

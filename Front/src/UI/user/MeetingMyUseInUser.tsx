@@ -21,7 +21,7 @@ const MeetTitle = styled.div`
   text-align: left;
 `;
 
-const meetingMy = (props: { userId: number }) => {
+const MeetingMyUseInUser = (props: { userId: number }) => {
   //현재 유저의 userId
   const [userId, setUserId] = useState(0);
 
@@ -86,4 +86,4 @@ const meetingMy = (props: { userId: number }) => {
     </div>
   );
 };
-export default meetingMy;
+export default MeetingMyUseInUser;
