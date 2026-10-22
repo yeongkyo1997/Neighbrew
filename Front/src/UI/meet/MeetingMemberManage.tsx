@@ -15,7 +15,7 @@ import UserInfoItem from "../components/UserInfoItem";
 import { callApi } from "../../utils/api";
 import { MeetDetail, User } from "../../Type/types";
 import { initialMeetDetail, initialUser } from "../common";
-import { WhiteModal } from "../../style/common";
+import { WhiteModal } from "../../style/modalStyles";
 import { AxiosError } from "axios";
 
 const SubTitle = styled.div`

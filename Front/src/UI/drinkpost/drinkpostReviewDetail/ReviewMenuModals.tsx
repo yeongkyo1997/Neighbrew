@@ -1,7 +1,7 @@
 // 수정·삭제 메뉴 시트와 삭제 확인 모달
 import { deleteIcon, editIcon } from "../../../assets/AllIcon";
 import Modal from "react-modal";
-import { WhiteModal } from "../../../style/common";
+import { WhiteModal } from "../../../style/modalStyles";
 import { ThreeDotModal, ModalBtnDiv, ModalBtn, ModalIcon } from "./DrinkpostReviewDetail.styles";
 import { DrinkpostReviewDetailState } from "./useDrinkpostReviewDetail";
 
