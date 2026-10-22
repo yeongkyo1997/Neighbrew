@@ -26,7 +26,7 @@ import DrinkpostReviewCreate from "./UI/drinkpost/DrinkpostReviewCreate";
 import Test from "./Test";
 import DrinkpostMain from "./UI/drinkpost/DrinkpostMain";
 import DrinkpostReviewDetail from "./UI/drinkpost/drinkpostReviewDetail/DrinkpostReviewDetail";
-import DirectChat from "./UI/chat/DirectChat";
+import DirectChat from "./UI/chat/directChat/DirectChat";
 import SearchUser from "./UI/user/SearchUser";
 import RatingCreate from "./UI/meetrate/RatingCreate";
 import NotFound from "./UI/etc/NotFound";
