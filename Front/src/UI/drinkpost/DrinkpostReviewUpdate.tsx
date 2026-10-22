@@ -60,7 +60,7 @@ const DrinkpostReviewCreate = () => {
       setReview(res.data.content);
       setNewImgSrc(res.data.img);
     });
-  }, []);
+  }, [drinkId, reviewId]);
   useEffect(() => {
     void callApi<User>("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);

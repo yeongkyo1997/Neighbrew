@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import RatingDetail from "./RatingDetail";
 import UserInfoItem from "../components/UserInfoItem";
 import { User } from "../../Type/types";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 // 라디오 버튼 컨테이너
 const RadioContainer = styled.div`
@@ -39,9 +40,12 @@ const RatingMember = ({
   const [selectedButton, setSelectButton] = useState(0);
   const [selectedDesc, setSelectedDesc] = useState("");
 
+  const notifySelect = useEffectEvent((buttonNumber: number, desc: string) =>
+    onSelectButton(buttonNumber, desc)
+  );
   useEffect(() => {
-    onSelectButton(selectedButton, selectedDesc); //부모로 전달
-  }, [selectedButton, selectedDesc]);
+    notifySelect(selectedButton, selectedDesc); //부모로 전달
+  }, [selectedButton, selectedDesc, notifySelect]);
 
   return (
     // div width: 100%로 해서 가운데 정렬

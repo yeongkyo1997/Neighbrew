@@ -128,7 +128,7 @@ const RatingCreate = () => {
       .then(users => {
         setUsers(users);
       });
-  }, []);
+  }, [meetId, myId]);
 
   return (
     <div>

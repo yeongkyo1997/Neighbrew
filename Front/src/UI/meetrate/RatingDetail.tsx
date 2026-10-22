@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import OneLineListItem from "../components/OneLineListItem";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const DetailListDiv = styled.div`
   border-radius: 15px;
@@ -88,9 +89,10 @@ const RatingDetail = (props: { ratingNum: number; getFunc(desc: string): void })
     }
   }, [props.ratingNum]);
 
+  const getFunc = useEffectEvent((desc: string) => props.getFunc(desc));
   useEffect(() => {
-    props.getFunc(selectedDetail);
-  }, [selectedDetail]);
+    getFunc(selectedDetail);
+  }, [selectedDetail, getFunc]);
 
   const goodList = [
     { id: 1, content: "시간약속을 잘 지켜요" },

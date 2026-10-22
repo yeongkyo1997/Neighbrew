@@ -61,7 +61,7 @@ const DrinkpostReviewCreate = () => {
     void callApi<Drink>("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
-  }, []);
+  }, [drinkId]);
   useEffect(() => {
     void callApi<User>("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
