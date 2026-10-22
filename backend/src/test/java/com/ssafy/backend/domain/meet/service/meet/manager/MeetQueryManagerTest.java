@@ -5,13 +5,14 @@ import static com.ssafy.backend.support.UserFixture.emailNicknameUser;
 import static com.ssafy.backend.support.UserFixture.toJson;
 import static com.ssafy.backend.support.UserFixture.user;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +32,9 @@ import com.ssafy.backend.common.enums.MeetStatus;
 import com.ssafy.backend.common.enums.Status;
 import com.ssafy.backend.domain.chat.entity.ChatRoom;
 import com.ssafy.backend.domain.drink.entity.Drink;
+import com.ssafy.backend.domain.meet.dto.MeetDetailResponse;
+import com.ssafy.backend.domain.meet.dto.MeetDetailResponse.Participant;
 import com.ssafy.backend.domain.meet.dto.MeetResponseDto;
-import com.ssafy.backend.domain.meet.dto.MeetUserDto;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.entity.MeetUser;
 import com.ssafy.backend.domain.meet.repository.MeetRepository;
@@ -40,8 +42,8 @@ import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
 import com.ssafy.backend.domain.region.entity.Gugun;
 import com.ssafy.backend.domain.region.entity.Sido;
 import com.ssafy.backend.domain.region.service.RegionCache;
-import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.entity.User;
+import com.ssafy.backend.exception.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class MeetQueryManagerTest {
@@ -92,21 +94,33 @@ class MeetQueryManagerTest {
                 List.of(MeetUser.builder().user(host).meet(meet).status(Status.HOST).build(),
                         MeetUser.builder().user(user(8L, "참여자")).meet(meet).status(Status.GUEST).build()));
 
-        Map<String, Object> detail = meetQueryManager.findMeetdetailByMeetId(1L);
+        MeetDetailResponse detail = meetQueryManager.findMeetdetailByMeetId(1L);
 
         JsonNode json = toJson(detail);
-        assertPublicUser(json.get("users").get(0), 7L, "user_7");
-        assertPublicUser(json.get("users").get(1), 8L, "참여자");
+        assertPublicUser(json.get("participants").get(0).get("user"), 7L, "user_7");
+        assertPublicUser(json.get("participants").get(1).get("user"), 8L, "참여자");
         assertPublicUser(json.get("meet").get("host"), 7L, "user_7");
     }
 
     @Test
-    void 모임_신청_검증용_참여자_목록도_공개_프로필로_담는다() {
+    void 모임_상세는_참여자와_상태를_한_객체로_짝지어_담는다() {
+        givenRegion();
+        given(meetRepository.findById(1L)).willReturn(Optional.of(meet));
         given(meetUserRepository.findByMeetMeetIdOrderByStatusDesc(1L)).willReturn(
-                List.of(MeetUser.builder().user(host).meet(meet).status(Status.HOST).build()));
+                List.of(MeetUser.builder().user(host).meet(meet).status(Status.HOST).build(),
+                        MeetUser.builder().user(user(9L, "신청자")).meet(meet).status(Status.APPLY).build()));
 
-        MeetUserDto meetUserDto = meetQueryManager.findMeetUserByMeetId(1L);
+        MeetDetailResponse detail = meetQueryManager.findMeetdetailByMeetId(1L);
 
-        assertThat(meetUserDto.getUsers()).extracting(PublicUserResponseDto::getUserId).containsExactly(7L);
+        assertThat(detail.participants()).extracting(p -> p.user().getUserId(), Participant::status)
+                                         .containsExactly(tuple(7L, Status.HOST), tuple(9L, Status.APPLY));
+        assertThat(toJson(detail).get("participants").get(1).get("status").asText()).isEqualTo("APPLY");
+    }
+
+    @Test
+    void 없는_모임의_상세는_404로_응답할_예외를_던진다() {
+        given(meetRepository.findById(1L)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> meetQueryManager.findMeetdetailByMeetId(1L)).isInstanceOf(NotFoundException.class);
     }
 }

@@ -3,10 +3,8 @@ package com.ssafy.backend.domain.meet.service.meet.manager;
 import org.springframework.stereotype.Component;
 
 import com.ssafy.backend.common.enums.Status;
-import com.ssafy.backend.domain.meet.dto.MeetUserDto;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.service.MeetUserService;
-import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -16,21 +14,19 @@ import lombok.RequiredArgsConstructor;
 public class MeetParticipantManager {
     private final MeetUserService meetUserService;
 
-    public void applyMeet(Long userId, MeetUserDto meetUserDto, Meet attendMeet, User attendUser) {
-        validateParticipation(userId, meetUserDto);
+    public void applyMeet(Meet attendMeet, User attendUser) {
+        validateParticipation(attendMeet, attendUser);
         meetUserService.saveMeetUser(attendMeet, attendUser, Status.APPLY);
     }
 
-    private void validateParticipation(Long userId, MeetUserDto meetUserDto) {
-        if (meetUserDto.getMeetRequestDto().getNowParticipants() >= meetUserDto.getMeetRequestDto()
-                                                                               .getMaxParticipants()) {
+    // 정원은 승인할 때 Meet.addParticipant가 다시 확인하므로, 여기서는 빨리 실패시키는 용도다.
+    private void validateParticipation(Meet attendMeet, User attendUser) {
+        if (attendMeet.getNowParticipants() >= attendMeet.getMaxParticipants()) {
             throw new IllegalArgumentException("해당 모임에 참여 인원이 가득 찼습니다.");
         }
-
-        for (PublicUserResponseDto user : meetUserDto.getUsers()) {
-            if (userId.equals(user.getUserId())) {
-                throw new IllegalArgumentException("이미 참여하신 모임 입니다.");
-            }
+        // HOST, GUEST, APPLY 중 어떤 상태든 있으면 이미 참여(신청)한 사용자다
+        if (meetUserService.findUserStatus(attendUser.getUserId(), attendMeet.getMeetId()) != null) {
+            throw new IllegalArgumentException("이미 참여하신 모임 입니다.");
         }
     }
 

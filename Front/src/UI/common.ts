@@ -48,8 +48,7 @@ export const initialMeetDetail: MeetDetail = {
     imgSrc: "",
     meetStatus: null,
   },
-  users: [],
-  statuses: [],
+  participants: [],
 };
 
 export const initialDrink: Drink = {

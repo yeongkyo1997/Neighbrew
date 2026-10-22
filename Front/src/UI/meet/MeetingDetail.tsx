@@ -307,20 +307,20 @@ const MeetingDetail = () => {
     if (meetDetailData === undefined) return;
     if (meetDetailData !== undefined) {
       //users에서 apply인 유저 제외하고 memberList에 넣기
-      let members = meetDetailData.users.filter(
-        (user, index) => meetDetailData.statuses[index] !== "APPLY"
-      );
+      let members = meetDetailData.participants
+        .filter(participant => participant.status !== "APPLY")
+        .map(participant => participant.user);
       setMemberList(members);
       //apply 세팅
-      let applicants = meetDetailData.users.filter(
-        (user, index) => meetDetailData.statuses[index] === "APPLY"
-      );
+      let applicants = meetDetailData.participants
+        .filter(participant => participant.status === "APPLY")
+        .map(participant => participant.user);
       setApplicantList(applicants);
       //현재 유저의 상태를 관리(HOST/GUEST/APPLY/NONE)
-      let index: number | undefined = meetDetailData.users.findIndex(
-        user => user.userId === userId
+      const myParticipation = meetDetailData.participants.find(
+        participant => participant.user.userId === userId
       );
-      setUserStatus(index === -1 ? "NONE" : meetDetailData.statuses[index]);
+      setUserStatus(myParticipation?.status ?? "NONE");
     }
   }, [meetDetailData]);
 
