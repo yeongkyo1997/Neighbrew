@@ -15,19 +15,20 @@ public class NaverInfoResponse implements OAuthInfoResponse {
     @JsonProperty("response")
     private Response response;
 
+    // 실패 응답에는 response가 없다
     @Override
     public String getOAuthId() {
-        return response.id;
+        return response == null ? null : response.id;
     }
 
     @Override
     public String getEmail() {
-        return response.email;
+        return response == null ? null : response.email;
     }
 
     @Override
     public String getName() {
-        return response.nickname;
+        return response == null ? null : response.nickname;
     }
 
     @Override

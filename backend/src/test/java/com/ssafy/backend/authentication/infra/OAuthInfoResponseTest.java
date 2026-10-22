@@ -35,4 +35,26 @@ class OAuthInfoResponseTest {
         assertThat(response.getEmail()).isNull();
         assertThat(response.getName()).isEqualTo("홍길동");
     }
+
+    @Test
+    void 카카오_응답에_프로필이나_계정_정보가_없어도_NPE_없이_null을_돌려준다() throws Exception {
+        KakaoInfoResponse noProfile = objectMapper.readValue("{\"id\":1,\"kakao_account\":{}}", KakaoInfoResponse.class);
+        KakaoInfoResponse noAccount = objectMapper.readValue("{\"id\":1}", KakaoInfoResponse.class);
+
+        assertThat(noProfile.getName()).isNull();
+        assertThat(noProfile.getEmail()).isNull();
+        assertThat(noAccount.getName()).isNull();
+        assertThat(noAccount.getEmail()).isNull();
+        assertThat(noAccount.getOAuthId()).isEqualTo("1");
+    }
+
+    @Test
+    void 네이버_실패_응답에는_response가_없어도_NPE_없이_null을_돌려준다() throws Exception {
+        NaverInfoResponse response = objectMapper.readValue("{\"resultcode\":\"024\",\"message\":\"Authentication failed\"}",
+                                                            NaverInfoResponse.class);
+
+        assertThat(response.getOAuthId()).isNull();
+        assertThat(response.getEmail()).isNull();
+        assertThat(response.getName()).isNull();
+    }
 }

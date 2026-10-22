@@ -29,6 +29,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
+    // provider 응답 본문은 내부 정보가 섞일 수 있으므로 고정 메시지만 내려준다.
+    @ExceptionHandler(InvalidOAuthCodeException.class)
+    public ResponseEntity<String> handleInvalidOAuthCodeException(InvalidOAuthCodeException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("소셜 로그인 인증이 만료되었습니다. 다시 로그인해 주세요.");
+    }
+
+    @ExceptionHandler(OAuthProviderException.class)
+    public ResponseEntity<String> handleOAuthProviderException(OAuthProviderException e) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("소셜 로그인 서비스에 일시적인 문제가 있습니다. 잠시 후 다시 시도해 주세요.");
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

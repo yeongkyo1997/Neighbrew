@@ -18,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
@@ -25,6 +26,7 @@ import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
 import com.ssafy.backend.authentication.domain.oauth.RequestOAuthInfoService;
 import com.ssafy.backend.domain.user.entity.User;
 import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.exception.OAuthProviderException;
 
 @ExtendWith(MockitoExtension.class)
 class OAuthLoginServiceTest {
@@ -48,12 +50,17 @@ class OAuthLoginServiceTest {
         given(oAuthInfo.getOAuthId()).willReturn(oAuthId);
     }
 
-    private void givenNewUser(String email) throws Exception {
+    // 저장 직전까지의 신규 가입 흐름
+    private void givenSignup(String email) throws Exception {
         givenOAuthInfo(OAuthProvider.KAKAO, "3012345678");
         given(oAuthInfo.getEmail()).willReturn(email);
         given(oAuthInfo.getName()).willReturn("홍길동");
         given(userRepository.findByOAuth(OAuthProvider.KAKAO, "3012345678")).willReturn(Optional.empty());
         given(userRepository.existsByNickname(anyString())).willReturn(false);
+    }
+
+    private void givenNewUser(String email) throws Exception {
+        givenSignup(email);
         given(userRepository.save(any(User.class))).willAnswer(invocation -> invocation.getArgument(0));
     }
 
@@ -170,7 +177,49 @@ class OAuthLoginServiceTest {
         given(requestOAuthInfoService.request(params)).willReturn(oAuthInfo);
         given(oAuthInfo.getOAuthId()).willReturn(null);
 
-        assertThatThrownBy(() -> oAuthLoginService.login(params)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> oAuthLoginService.login(params)).isInstanceOf(OAuthProviderException.class);
         then(userRepository).should(never()).save(any());
+    }
+
+    @Test
+    void 이름_제공에_동의하지_않으면_닉네임을_이름으로_저장한다() throws Exception {
+        givenNewUser("new@example.com");
+        given(oAuthInfo.getName()).willReturn(null);
+
+        oAuthLoginService.login(params);
+
+        User saved = savedUser();
+        assertThat(saved.getName()).isEqualTo(saved.getNickname());
+    }
+
+    @Test
+    void 이름이_20자를_넘으면_코드포인트_기준으로_자른다() throws Exception {
+        givenNewUser("new@example.com");
+        // 이모지(서로게이트 쌍)가 20번째 글자에 걸리도록 만든다
+        given(oAuthInfo.getName()).willReturn("가".repeat(19) + "🍺" + "나".repeat(5));
+
+        oAuthLoginService.login(params);
+
+        assertThat(savedUser().getName()).isEqualTo("가".repeat(19) + "🍺");
+    }
+
+    @Test
+    void 동시에_첫_로그인해_먼저_가입된_계정이_있으면_그_계정으로_로그인한다() throws Exception {
+        givenSignup("new@example.com");
+        given(userRepository.save(any(User.class))).willThrow(new DataIntegrityViolationException("uk_user_oauth"));
+        given(userRepository.findByOAuth(OAuthProvider.KAKAO, "3012345678")).willReturn(Optional.empty(),
+                                                                                       Optional.of(User.builder().userId(5L).build()));
+
+        LoginResponse response = oAuthLoginService.login(params);
+
+        assertThat(response.getUserId()).isEqualTo(5L);
+    }
+
+    @Test
+    void 제약_위반인데_가입된_계정도_없으면_예외를_그대로_던진다() throws Exception {
+        givenSignup("new@example.com");
+        given(userRepository.save(any(User.class))).willThrow(new DataIntegrityViolationException("uk_nickname"));
+
+        assertThatThrownBy(() -> oAuthLoginService.login(params)).isInstanceOf(DataIntegrityViolationException.class);
     }
 }

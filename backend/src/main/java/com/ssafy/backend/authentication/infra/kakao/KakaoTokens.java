@@ -1,13 +1,14 @@
 package com.ssafy.backend.authentication.infra.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ssafy.backend.authentication.domain.oauth.OAuthTokens;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class KakaoTokens {
+public class KakaoTokens implements OAuthTokens {
     //인증 API 응답 accessToken 만 활용
     @JsonProperty("access_token")
     private String accessToken;

@@ -19,17 +19,17 @@ public class GoogleInfoResponse implements OAuthInfoResponse {
 
     @Override
     public String getOAuthId() {
-        return response.id;
+        return response == null ? null : response.id;
     }
 
     @Override
     public String getEmail() {
-        return response.email;
+        return response == null ? null : response.email;
     }
 
     @Override
     public String getName() {
-        return response.name;
+        return response == null ? null : response.name;
     }
 
     @Override
@@ -42,6 +42,7 @@ public class GoogleInfoResponse implements OAuthInfoResponse {
     static class Response {
         public String id;
         public String email;
+        @JsonProperty("verified_email")
         public Boolean verifiedEmail;
         public String name;
         public String givenName;

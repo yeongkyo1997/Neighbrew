@@ -1,13 +1,14 @@
 package com.ssafy.backend.authentication.infra.naver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ssafy.backend.authentication.domain.oauth.OAuthTokens;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class NaverTokens {
+public class NaverTokens implements OAuthTokens {
     //인증 API 응답
     @JsonProperty("access_token")
     private String accessToken;
