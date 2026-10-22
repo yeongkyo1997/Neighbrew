@@ -15,6 +15,7 @@ import com.ssafy.backend.domain.meet.entity.MeetUser;
 import com.ssafy.backend.domain.meet.repository.MeetRepository;
 import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
 import com.ssafy.backend.domain.user.entity.User;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,7 +37,7 @@ public class MeetManager {
 
     public Meet updateMeet(Long meetId, MeetRequestDto meetRequestDto, Drink drink, Tag tag) {
         Meet updateMeet = meetRepository.findById(meetId).orElseThrow(
-                () -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+                () -> new NotFoundException("모임을 찾을 수 없습니다. id=" + meetId));
 
         updateMeet.update(meetRequestDto.toEntity());
         updateMeet.setMeetId(meetId);

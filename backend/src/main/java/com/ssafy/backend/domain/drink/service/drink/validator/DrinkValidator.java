@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.ssafy.backend.domain.drink.entity.Drink;
 import com.ssafy.backend.domain.drink.repository.DrinkRepository;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,13 +20,13 @@ public class DrinkValidator {
     }
 
     public Drink validateAndGetDrink(Long drinkId) {
-        return drinkRepository.findById(drinkId)
-                              .orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
+        return drinkRepository.findById(drinkId).orElseThrow(
+                () -> new NotFoundException("술을 찾을 수 없습니다. id=" + drinkId));
     }
 
     public void validateDrinkExists(Long drinkId) {
         if (!drinkRepository.existsById(drinkId)) {
-            throw new IllegalArgumentException("해당 술이 없습니다.");
+            throw new NotFoundException("술을 찾을 수 없습니다. id=" + drinkId);
         }
     }
 }

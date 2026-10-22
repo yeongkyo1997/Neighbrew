@@ -14,6 +14,7 @@ import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
 import com.ssafy.backend.domain.user.entity.User;
 import com.ssafy.backend.domain.user.service.UserReader;
 import com.ssafy.backend.exception.ForbiddenException;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EvaluationValidator {
     private static final String EVALUATION_ERR_SELF = "자기 자신을 평가 할 수 없습니다.";
-    private static final String ERR_NOT_FOUND = "%s를 찾을 수 없습니다.";
     private static final String ERR_ALREADY_EVALUATED = "이미 평가한 유저 입니다.";
     private static final String ERR_INVALID_MEET_ID = "모임 ID 값이 올바르지 않습니다.";
     private static final String ERR_NO_USERS = "평가 가능한 유저가 없습니다.";
@@ -57,7 +57,7 @@ public class EvaluationValidator {
 
     public Meet validateAndGetMeet(Long meetId) {
         return meetRepository.findById(meetId).orElseThrow(
-                () -> new IllegalStateException(String.format(ERR_NOT_FOUND, "meet")));
+                () -> new NotFoundException("모임을 찾을 수 없습니다. id=" + meetId));
     }
 
     // 프론트도 meetStatus가 END일 때만 평가 화면으로 보낸다

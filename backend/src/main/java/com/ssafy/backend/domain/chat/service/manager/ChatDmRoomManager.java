@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.ssafy.backend.domain.chat.entity.ChatDmRoom;
 import com.ssafy.backend.domain.chat.repository.ChatDmRoomRepository;
 import com.ssafy.backend.domain.user.entity.User;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +24,7 @@ public class ChatDmRoomManager {
 
     public ChatDmRoom findChatRoom(Long user1Id, Long user2Id) {
         return chatDmRoomRepository.findByUser1UserIdAndUser2UserId(user1Id, user2Id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+                () -> new NotFoundException("채팅방을 찾을 수 없습니다. users=" + user1Id + "," + user2Id));
     }
 
     public void updateChatRoomAttendTimes(ChatDmRoom chatRoom, User sender, LocalDateTime currentTime) {

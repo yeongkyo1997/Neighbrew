@@ -12,6 +12,7 @@ import com.ssafy.backend.domain.drink.entity.Drink;
 import com.ssafy.backend.domain.drink.entity.DrinkReview;
 import com.ssafy.backend.domain.drink.repository.DrinkReviewRepository;
 import com.ssafy.backend.domain.user.entity.User;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +43,7 @@ public class DrinkReviewQueryManager {
 
     public DrinkReviewResponseDto findReviewById(Long drinkReviewId) {
         DrinkReview drinkReview = drinkReviewRepository.findByDrinkReviewId(drinkReviewId).orElseThrow(
-                () -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+                () -> new NotFoundException("후기를 찾을 수 없습니다. id=" + drinkReviewId));
         return DrinkReviewResponseDto.fromEntity(drinkReview);
     }
 }

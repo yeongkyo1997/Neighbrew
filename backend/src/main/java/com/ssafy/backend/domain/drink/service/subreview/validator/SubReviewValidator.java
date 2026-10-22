@@ -8,6 +8,7 @@ import com.ssafy.backend.domain.drink.repository.DrinkReviewRepository;
 import com.ssafy.backend.domain.drink.repository.SubReviewRepository;
 import com.ssafy.backend.domain.user.entity.User;
 import com.ssafy.backend.domain.user.service.UserReader;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,12 +25,12 @@ public class SubReviewValidator {
 
     public DrinkReview validateAndGetDrinkReview(Long drinkReviewId) {
         return drinkReviewRepository.findById(drinkReviewId).orElseThrow(
-                () -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+                () -> new NotFoundException("후기를 찾을 수 없습니다. id=" + drinkReviewId));
     }
 
     public SubReview validateAndGetSubReview(Long subReviewId) {
         return subReviewRepository.findById(subReviewId).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
+                () -> new NotFoundException("댓글을 찾을 수 없습니다. id=" + subReviewId));
     }
 
     public void validateContent(String content) {

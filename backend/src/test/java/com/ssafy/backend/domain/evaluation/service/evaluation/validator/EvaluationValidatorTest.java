@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -109,6 +111,15 @@ class EvaluationValidatorTest {
         given(userReader.getById(TARGET_ID)).willThrow(new NotFoundException("사용자를 찾을 수 없습니다. id=" + TARGET_ID));
 
         assertThatThrownBy(() -> evaluationValidator.validateAndGetTarget(TARGET_ID))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    // 예전에는 IllegalStateException이라 500으로 응답했다
+    @Test
+    void 평가할_모임이_없으면_404로_응답할_예외를_던진다() {
+        given(meetRepository.findById(MEET_ID)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> evaluationValidator.validateAndGetMeet(MEET_ID))
                 .isInstanceOf(NotFoundException.class);
     }
 }
