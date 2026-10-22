@@ -27,17 +27,16 @@ public class PushService {
     @Value("${neighbrew.full.url}")
     private String neighbrewUrl;
 
-    public SseEmitter connect(Long userId, String lastEventId) {
+    // EventSource를 직접 다시 만들면 브라우저가 Last-Event-ID 헤더를 붙이지 않으므로, 쿼리 파라미터로도 받는다 (헤더 우선)
+    public SseEmitter connect(Long userId, String lastEventIdHeader, String lastEventIdParam) {
+        String lastEventId = lastEventIdHeader == null || lastEventIdHeader.isEmpty() ? lastEventIdParam : lastEventIdHeader;
         SseConnectionManager.ConnectionResult connection = connectionManager.createConnection(userId);
         SseEmitter sseEmitter = connection.getEmitter();
         String emitterId = connection.getEmitterId();
 
         eventManager.sendInitialEvent(sseEmitter, userId, emitterId);
 
-        if (!lastEventId.isEmpty()) {
-            eventManager.sendLostData(lastEventId, userId, emitterId, sseEmitter);
-            eventManager.clearLostData(userId);
-        }
+        eventManager.sendLostData(lastEventId, userId, emitterId, sseEmitter);
 
         return sseEmitter;
     }
