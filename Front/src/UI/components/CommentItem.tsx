@@ -4,7 +4,7 @@ import { SubReview } from "../../Type/types";
 import defaultImg from "../../assets/defaultImg.png";
 import { useNavigate } from "react-router-dom";
 import { moreIcon, deleteIcon } from "../../assets/AllIcon";
-import { ShortThreeDotModal, WhiteModal } from "../../style/common";
+import { ShortThreeDotModal, WhiteModal } from "../../style/modalStyles";
 import Modal from "react-modal";
 import Siren from "../../assets/siren.png";
 import { callApi } from "../../utils/api";

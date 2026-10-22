@@ -15,6 +15,7 @@ import { Meeting, Sido, Gugun, Page } from "../../Type/types";
 import { initialSido, initialGugun } from "../common";
 import { localDate } from "./DateTimeCommon";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const MeetingFind = () => {
   //받아온 모임 정보 리스트(전체)
@@ -66,7 +67,7 @@ const MeetingFind = () => {
   }, []);
 
   //페이지가 변하면 기존 데이터에 이어서 로드
-  useEffect(() => {
+  const loadPage = useEffectEvent(() => {
     const promise = callApi<Page<Meeting>>("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
     if (page === 0) {
       void promise.then(res => {
@@ -79,10 +80,13 @@ const MeetingFind = () => {
         setMeetAllData(prev => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
       });
     }
-  }, [page]);
+  });
+  useEffect(() => {
+    loadPage();
+  }, [page, loadPage]);
 
   //카테고리 변경 시 새로 데이터 로드
-  useEffect(() => {
+  const onCategoryChange = useEffectEvent(() => {
     if (page === 0) {
       const promise = callApi<Page<Meeting>>("get", `api/meet?&tagId=${selectedCategory}&page=${page}&size=10`);
       void promise.then(res => {
@@ -93,7 +97,10 @@ const MeetingFind = () => {
       setPage(0);
       setTotalPage(1);
     }
-  }, [selectedCategory]);
+  });
+  useEffect(() => {
+    onCategoryChange();
+  }, [selectedCategory, onCategoryChange]);
 
   useEffect(() => {
     //선택한 시도에 따라 구군 fetch
@@ -153,7 +160,7 @@ const MeetingFind = () => {
     return data.drink.name.includes(inputText);
   };
 
-  const Filtering = () => {
+  const Filtering = useEffectEvent(() => {
     //전체 목록 중에 필터링 적용
     const filterData = meetAllData.reduce<Meeting[]>((acc, cur) => {
       //교집합만 push
@@ -170,17 +177,17 @@ const MeetingFind = () => {
     }, []);
     //필터링 후 모임들을 meetData에
     setMeetData(filterData);
-  };
+  });
 
   useEffect(() => {
     setMeetData(meetAllData.map(item => item)); //필터 적용을 위해 복사한 리스트 만들어두기
     Filtering();
-  }, [meetAllData]);
+  }, [meetAllData, Filtering]);
 
   //전체 필터
   useEffect(() => {
     Filtering();
-  }, [selectedCategory, sido, gugun, startDate, endDate, inputText]);
+  }, [selectedCategory, sido, gugun, startDate, endDate, inputText, Filtering]);
 
   return (
     <div>

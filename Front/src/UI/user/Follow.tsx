@@ -21,16 +21,12 @@ const Follow = () => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
-  const getFollower = () => {
-    void callApi<FollowRelation[]>("get", `api/follow/following/${userid}`).then(res => {
-      res.data.map(tem => {
-        setUsers(users => [...users, tem.following]);
-      });
-    });
-  };
   useEffect(() => {
-    getFollower();
-  }, []);
+    void callApi<FollowRelation[]>("get", `api/follow/following/${userid}`).then(res => {
+      // 다른 사용자로 이동했을 때 이전 목록에 이어 붙이지 않도록 목록을 교체한다
+      setUsers(res.data.map(tem => tem.following));
+    });
+  }, [userid]);
   return (
     <>
       <header>

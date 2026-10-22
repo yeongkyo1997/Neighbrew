@@ -9,6 +9,7 @@ import ReviewItem from "../components/ReviewItem";
 import Footer from "../footer/Footer";
 import Navbar from "../navbar/NavbarForDrinkpost";
 import SlideComponent from "../components/Banner";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 
 
@@ -91,6 +92,7 @@ const DrinkpostMain = (props: { connectHandler: () => void }) => {
     setReviewButton(!reviewButton);
   };
 
+  const connectHandler = useEffectEvent(() => props.connectHandler());
   useEffect(() => {
     // 놀랍지만 생성순
     void callApi<Page<Review>>("get", "api/drinkreview/likes").then(res => {
@@ -100,8 +102,8 @@ const DrinkpostMain = (props: { connectHandler: () => void }) => {
     void callApi<Drink[]>("get", "api/drink/mdPick").then(res => {
       setThreePick([...res.data]);
     });
-    props.connectHandler();
-  }, []);
+    connectHandler();
+  }, [connectHandler]);
 
   return (
     <>

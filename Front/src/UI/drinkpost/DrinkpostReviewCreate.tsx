@@ -10,7 +10,7 @@ import NavbarSimple from "../navbar/NavbarSimple";
 import imageCompression from "browser-image-compression";
 import LoadingDot from "../etc/LoadingDot";
 import Modal from "react-modal";
-import { WhiteModal } from "../../style/common";
+import { WhiteModal } from "../../style/modalStyles";
 
 const CreateBody = styled.div`
   width: 100%;
@@ -61,7 +61,7 @@ const DrinkpostReviewCreate = () => {
     void callApi<Drink>("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
-  }, []);
+  }, [drinkId]);
   useEffect(() => {
     void callApi<User>("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);

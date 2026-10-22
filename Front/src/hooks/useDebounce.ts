@@ -13,7 +13,7 @@ const useDebounce = <T,>(value: T, delay: number): T => {
     return () => {
       clearTimeout(timer); //이전의 타이머를 clear
     };
-  }, [value]);
+  }, [value, delay]);
 
   return debouncedValue;
 };

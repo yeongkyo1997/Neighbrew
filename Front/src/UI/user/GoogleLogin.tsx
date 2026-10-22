@@ -3,11 +3,12 @@ import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Loading from "../etc/Loading";
 import { LoginResponse } from "../../Type/types";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const GoogleLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const GoogleloginHandler = () => {
+  const GoogleloginHandler = useEffectEvent(() => {
     const temcode = location.search.split("=")[1];
     const code = temcode.split("&")[0];
     void axios
@@ -22,10 +23,10 @@ const GoogleLogin = () => {
       .then(() => {
         navigate("/drinkpost");
       });
-  };
+  });
   useEffect(() => {
     GoogleloginHandler();
-  }, []);
+  }, [GoogleloginHandler]);
   return <Loading />;
 };
 export default GoogleLogin;

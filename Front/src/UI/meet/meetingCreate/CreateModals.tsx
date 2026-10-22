@@ -1,5 +1,5 @@
 // 오류 모달과 이미지 압축 중 모달
-import { WhiteModal } from "../../../style/common";
+import { WhiteModal } from "../../../style/modalStyles";
 import Modal from "react-modal";
 import LoadingDot from "../../etc/LoadingDot";
 import { MeetingCreateState } from "./useMeetingCreate";

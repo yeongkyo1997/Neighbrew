@@ -30,7 +30,7 @@ const useDrinkpostReviewDetail = () => {
     void callApi<SubReview[]>("get", `api/subreview/list/${reviewId}`).then(res => {
       setSubReviewList(res.data);
     });
-  }, []);
+  }, [drinkId, reviewId]);
 
   useEffect(() => {
     async function summonReview() {
@@ -57,17 +57,18 @@ const useDrinkpostReviewDetail = () => {
     }
 
     void summonReview();
-  }, []);
+  }, [reviewId]);
 
+  const token = localStorage.getItem("token");
   useEffect(() => {
     void callApi<boolean>("GET", `api/like/${reviewId}`, {
       headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
+        Authorization: "Bearer " + token,
       },
     }).then(res => {
       setLike(res.data);
     });
-  }, [localStorage.getItem("token")]);
+  }, [token, reviewId]);
 
   const likeHandler = () => {
     void callApi("POST", `api/like/${reviewId}`, {

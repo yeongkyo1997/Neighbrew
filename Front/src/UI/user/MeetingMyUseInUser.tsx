@@ -34,7 +34,7 @@ const MeetingMyUseInUser = (props: { userId: number }) => {
   const [guestMeet, setGuestMeet] = useState([]); //userId가 참여한 모임
   useEffect(() => {
     setUserId(props.userId);
-  });
+  }, [props.userId]);
 
   //모임 배열과 waiting, end 중 하나를 넣으면 해당하는 모임만 반환
   const filterByStatus = (array: Meeting[], status: string) => {

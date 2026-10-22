@@ -39,6 +39,7 @@ jobs:
           path: backend/build/reports/tests/test
 
   frontend:
+    # job 이름은 required check 이름과 맞춰야 하므로 lint가 추가돼도 바꾸지 않는다
     name: Frontend (typecheck, build)
     runs-on: ubuntu-latest
     defaults:
@@ -55,7 +56,6 @@ jobs:
       # tsc && vite build
       - name: Build
         run: npm run build
-      # main에 기존 린트 오류가 남아 있어 정리 전까지는 결과만 보여주고 실패로 막지 않는다
-      - name: Lint (non-blocking)
+      # eslint, 경고까지 0건이어야 통과 (--max-warnings 0)
+      - name: Lint
         run: npm run lint
-        continue-on-error: true

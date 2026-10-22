@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { User, FollowRelation, TokenResponse, Drink } from "../../../Type/types";
 import { callApi } from "../../../utils/api";
+import useEffectEvent from "../../../hooks/useEffectEvent";
 
 const useMyPage = () => {
   const [userData, setUserData] = useState<User>({
@@ -67,7 +68,7 @@ const useMyPage = () => {
   const goFollowPage = () => {
     navigate("/myPage/follow/" + userid);
   };
-  const userInfo = () => {
+  const userInfo = useEffectEvent(() => {
     //생년월일 등 개인정보는 본인 정보(myinfo)에만 포함된다
     const url = userid === localStorage.getItem("myId") ? "api/user/myinfo" : `api/user/${userid}`;
     void callApi<User>("get", url)
@@ -82,7 +83,7 @@ const useMyPage = () => {
         myDrinks();
         followers();
       });
-  };
+  });
   const refresh = () => {
     if (localStorage.getItem("token") != null) {
       void callApi<TokenResponse>("post", "api/user/refresh-token", {
@@ -130,7 +131,7 @@ const useMyPage = () => {
     refresh();
     userInfo();
     localStorage.setItem("chooseMenu", "3");
-  }, [userid]);
+  }, [userid, userInfo]);
 
   const [imgFile, setImgFile] = useState<string | null>(null);
   const imgRef = useRef<HTMLInputElement>(null);

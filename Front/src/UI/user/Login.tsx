@@ -12,6 +12,7 @@ import kakaoLogin from "../../assets/Login/kakaoLogin.png"; // 이미지를 가�
 import naverLogin from "../../assets/Login/naverLogin.png"; // 이미지를 가져오는 경로를 정확하게 지정합니다.
 import { callApi } from "../../utils/api";
 import { TokenResponse, LoginRedirect } from "../../Type/types";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const ImgDivIcon = styled.div`
   overflow: hidden;
@@ -87,7 +88,8 @@ const LoginBtnDiv = styled.div`
 const Login = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
+  //이미 로그인한 사용자는 토큰을 갱신하고 바로 이동한다 (처음 진입할 때 한 번만)
+  const refreshOnEnter = useEffectEvent(() => {
     if (localStorage.getItem("token") != null) {
       void callApi<TokenResponse>("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
@@ -97,7 +99,10 @@ const Login = () => {
         navigate("/drinkpost");
       });
     }
-  }, []);
+  });
+  useEffect(() => {
+    refreshOnEnter();
+  }, [refreshOnEnter]);
   const KakaologinHandler = () => {
     void axios<LoginRedirect>({
       method: "get",

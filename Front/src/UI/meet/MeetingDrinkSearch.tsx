@@ -10,6 +10,7 @@ import { getTagName, encodeUrl, initialDrink } from "../common";
 import { callApi } from "../../utils/api";
 import EmptyMsg from "../components/EmptyMsg";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -123,7 +124,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
-  useEffect(() => {
+  const syncInitialProps = useEffectEvent(() => {
     //초기 데이터 넘어옴(meetTag 설정 전)
     if (meetTag === 0) {
       setMeetTag(props.tagId);
@@ -131,9 +132,12 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
       setTag(props.tagId);
       setDrink(props.drink);
     }
-  }, [props]);
-
+  });
   useEffect(() => {
+    syncInitialProps();
+  }, [props, syncInitialProps]);
+
+  const checkFetchDone = useEffectEvent(() => {
     if (
       !(props.isModify ?? true) ||
       (meetTag !== 0 &&
@@ -143,7 +147,10 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
     ) {
       setFetchDone(true);
     }
-  }, [meetTag, meetDrink]);
+  });
+  useEffect(() => {
+    checkFetchDone();
+  }, [meetTag, meetDrink, checkFetchDone]);
 
   //무한 스크롤 로직
   const onIntersect: IntersectionObserverCallback = ([{ isIntersecting }]) => {
@@ -160,7 +167,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
   const { setTarget } = useIntersectionObserver({ onIntersect });
 
   //inputText로 술장 검색 api
-  useEffect(() => {
+  const onSearchChange = useEffectEvent(() => {
     if (page === 0) {
       const promise = callApi<Page<Drink>>(
         "get",
@@ -174,10 +181,13 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
       setPage(0);
       setTotalPage(1);
     }
-  }, [inputText, tag]);
+  });
+  useEffect(() => {
+    onSearchChange();
+  }, [inputText, tag, onSearchChange]);
 
   //페이지가 변하면 기존 데이터에 이어서 로드
-  useEffect(() => {
+  const loadPage = useEffectEvent(() => {
     const promise = callApi<Page<Drink>>(
       "get",
       `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
@@ -193,23 +203,32 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
         setSearchResultList(prev => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
       });
     }
-  }, [page]);
-
+  });
   useEffect(() => {
+    loadPage();
+  }, [page, loadPage]);
+
+  const onTagChange = useEffectEvent(() => {
     //주류 검색 결과 및 조건 초기화
     if (fetchDone) {
       setDrink(CustomInitialDrink);
       setInputText("");
       props.setTagIdFunc(tag); //부모에게 전달
     }
-  }, [tag]);
+  });
+  useEffect(() => {
+    onTagChange();
+  }, [tag, onTagChange]);
 
   //부모에게 전달
-  useEffect(() => {
+  const onDrinkChange = useEffectEvent(() => {
     if (fetchDone) {
       props.setDrinkFunc(drink);
     }
-  }, [drink]);
+  });
+  useEffect(() => {
+    onDrinkChange();
+  }, [drink, onDrinkChange]);
 
   return (
     <div>

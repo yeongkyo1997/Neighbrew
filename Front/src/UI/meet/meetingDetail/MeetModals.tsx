@@ -1,6 +1,7 @@
 // 나가기·삭제·승인거절 확인 모달, 모임 관리 모달, 오류 모달
 import Modal from "react-modal";
-import { WhiteModal, ModalInner } from "../../../style/common";
+import { ModalInner } from "../../../style/common";
+import { WhiteModal } from "../../../style/modalStyles";
 import { deleteIcon, editIcon } from "../../../assets/AllIcon";
 import YesOrNoModal from "../../components/YesOrNoModal";
 import { ManageModal, ModalIcon } from "./MeetingDetail.styles";

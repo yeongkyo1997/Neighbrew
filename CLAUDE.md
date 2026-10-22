@@ -37,12 +37,14 @@ npm run lint      # eslint, --max-warnings 0
 ```
 
 - 테스트 스크립트는 없습니다.
-- `npm run lint`는 아직 51건이 남아 실패합니다(`react-hooks/exhaustive-deps` 47건, `react-refresh/only-export-components` 경고 4건). CI에서는 결과만 보여주고 막지 않습니다. `exhaustive-deps`를 화면별로 정리한 뒤 CI lint를 막는 단계로 바꿀 예정이니, 새 코드는 이 규칙과 `any` 관련 규칙을 늘리지 않게 작성하세요.
+- `npm run lint`는 경고까지 0건이어야 통과하고, CI에서 실패하면 막습니다.
+- effect 안에서 최신 props·state를 읽기만 하고 그 값이 바뀔 때 다시 실행하지 않으려면, `eslint-disable`을 쓰지 말고 `hooks/useEffectEvent`(React 19.2 `useEffectEvent` 폴리필)로 감싸 의존성에 넣으세요. 라우트 파라미터는 의존성에 그대로 넣습니다.
+- `react-modal`에 넘기는 모달 스타일 객체(`WhiteModal` 등)는 `style/modalStyles.ts`에 둡니다. 컴포넌트를 내보내는 파일에서 일반 객체를 함께 내보내면 `react-refresh/only-export-components`에 걸립니다.
 - Vite dev 서버는 `/api`, `/ws` 요청을 `VITE_API_BASE_URL`(`.env.*`, git에 없음)로 프록시합니다.
 
 ### CI
 
-`.github/workflows/ci.yml`이 PR과 `main` push마다 백엔드 `./gradlew test -PunitOnly`와 jar 빌드, 프론트 `npm run build`(tsc + vite)를 실행합니다. 프론트 lint는 실패해도 막지 않습니다.
+`.github/workflows/ci.yml`이 PR과 `main` push마다 백엔드 `./gradlew test -PunitOnly`와 jar 빌드, 프론트 `npm run build`(tsc + vite)와 `npm run lint`를 실행합니다. 하나라도 실패하면 막습니다.
 
 ### 전체 스택
 

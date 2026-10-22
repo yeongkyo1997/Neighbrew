@@ -11,7 +11,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import NavbarSimple from "../navbar/NavbarSimple";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import Modal from "react-modal";
-import { WhiteModal } from "../../style/common";
+import { WhiteModal } from "../../style/modalStyles";
 import { Drink } from "../../Type/types";
 
 // 여기부터 지정한 부분까지 style 부분입니다.

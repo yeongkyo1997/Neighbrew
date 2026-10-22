@@ -129,13 +129,14 @@ const DrinkpostDetail = () => {
     void callApi<Drink>("get", `api/drink/${drinkId}`).then(res => {
       setDetail(res.data);
     });
-  }, []);
+  }, [drinkId]);
 
   useEffect(() => {
     void callApi<Page<Review>>("get", `api/drinkreview/${drinkId}`).then(res => {
-      setReviewList(prev => [...prev, ...res.data.content]);
+      // 다른 술로 이동했을 때 이전 술의 후기를 이어 붙이지 않도록 목록을 교체한다
+      setReviewList(res.data.content);
     });
-  }, []);
+  }, [drinkId]);
 
   const transImage = (img: string) => {
     if (img === "no image") {

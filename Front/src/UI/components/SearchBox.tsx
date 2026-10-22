@@ -8,6 +8,7 @@ import styled from "styled-components";
 import React, { useState, useEffect } from "react";
 import useDebounce from "../../hooks/useDebounce";
 import { searchNavIcon } from "../../assets/AllIcon";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const SearchDiv = styled.div<{ width: number }>`
   display: flex;
@@ -52,9 +53,10 @@ const SearchBox = (props: InputProps) => {
   const searchButton = searchNavIcon();
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue, 200);
+  const changeFunc = useEffectEvent((input: string) => props.changeFunc(input));
   useEffect(() => {
-    props.changeFunc(debouncedSearchValue);
-  }, [debouncedSearchValue]);
+    changeFunc(debouncedSearchValue);
+  }, [debouncedSearchValue, changeFunc]);
 
   return (
     <SearchDiv width={props.width ?? 100}>

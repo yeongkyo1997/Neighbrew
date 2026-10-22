@@ -6,6 +6,7 @@ import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat, ChatRoom as ChatRoomInfo, MeetChatMessage, User } from "../../../Type/types";
 import { callApi } from "../../../utils/api";
+import useEffectEvent from "../../../hooks/useEffectEvent";
 
 const useChatRoom = () => {
   const { id } = useParams();
@@ -21,7 +22,7 @@ const useChatRoom = () => {
     setMessage(e.target.value);
   };
   // 웹소켓 연결 및 이벤트 핸들러 설정
-  const connectToWebSocket = () => {
+  const connectToWebSocket = useEffectEvent(() => {
     client.current = Stomp.over(() => {
       const ws = new SockJS("/ws");
       return ws;
@@ -46,14 +47,14 @@ const useChatRoom = () => {
         ]);
       });
     });
-  };
+  });
 
   useEffect(() => {
     connectToWebSocket();
     return () => {
       client.current?.disconnect();
     };
-  }, [id]);
+  }, [id, connectToWebSocket]);
   // 엔터 누르면 메세지 전송
   const sendMessageHandler = () => {
     if (message.trim() === "") return;
@@ -92,7 +93,7 @@ const useChatRoom = () => {
         setUsers(res.data);
       })
       .catch(() => undefined);
-  }, []);
+  }, [id]);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
   useEffect(() => {

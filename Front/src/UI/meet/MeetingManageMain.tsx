@@ -13,7 +13,7 @@ import PeopleNumInfo from "./PeopleNumInfo";
 import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
 import { initialMeet } from "../common";
-import { WhiteModal } from "../../style/common";
+import { WhiteModal } from "../../style/modalStyles";
 import { Meeting, MeetDetail } from "../../Type/types";
 import { AxiosError } from "axios";
 

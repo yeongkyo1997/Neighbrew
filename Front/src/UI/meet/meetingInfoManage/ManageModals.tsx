@@ -1,5 +1,6 @@
 // 오류, 모임 메인 이동, 이미지 압축 중 모달
-import { WhiteModal, ModalInner } from "../../../style/common";
+import { ModalInner } from "../../../style/common";
+import { WhiteModal } from "../../../style/modalStyles";
 import Modal from "react-modal";
 import LoadingDot from "../../etc/LoadingDot";
 import { MeetingInfoManageState } from "./useMeetingInfoManage";
