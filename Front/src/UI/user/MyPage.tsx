@@ -142,7 +142,7 @@ const LiverDiv = styled.div<{ liverpoint: number }>`
   overflow: hidden;
   /* background-image: linear-gradient(to top, #e591a1 50%, #ececec 50%); */
   background-image: linear-gradient(to top, var(--c-pink) 50%, #ececec 50%);
-  background-size: ${props => "50% " + (props.liverpoint + 80) + "%"};
+  background-size: ${props => `50% ${props.liverpoint + 80}%`};
   /* background-size: 50% 150%; */
   animation: fillAnimation 5s forwards;
   @keyframes fillAnimation {
@@ -164,7 +164,7 @@ const BottleDiv = styled.div<{ drinkcount: number }>`
   /* height: 100%; */
   overflow: hidden;
   background-image: linear-gradient(to top, #d5a002 50%, #ececec 50%);
-  background-size: ${props => "50% " + (props.drinkcount * 8 + 80) + "%"};
+  background-size: ${props => `50% ${props.drinkcount * 8 + 80}%`};
   animation: fillAnimation 0.2s forwards;
   @keyframes fillAnimation {
     0% {
@@ -477,7 +477,6 @@ const MyPage = () => {
   const reportHandler = () => {
     if (window.confirm("정말 신고 하시겠습니까?")) {
       alert("신고되었습니다..");
-    } else {
     }
   };
 

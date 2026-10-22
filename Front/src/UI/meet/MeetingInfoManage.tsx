@@ -612,7 +612,7 @@ const MeetingInfoManage = () => {
       </Modal>
       <Modal
         isOpen={loadingModalOn}
-        onRequestClose={() => {}} //닫히지 않아야함
+        onRequestClose={() => undefined} //닫히지 않아야함
         style={WhiteModal}
       >
         <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>

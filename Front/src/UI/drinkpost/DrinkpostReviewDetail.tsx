@@ -302,7 +302,7 @@ const DrinkpostReviewDetail = () => {
       .then(() => {
         followers();
       })
-      .catch(() => {});
+      .catch(() => undefined);
   };
 
   const followers = () => {
@@ -327,7 +327,6 @@ const DrinkpostReviewDetail = () => {
     navigate(`/myPage/${review?.user.userId}`);
   };
 
-  useEffect(() => {}, [comment]);
 
   // 술 후기에 대한 댓글 제출하는 함수.
   const submitHandler = async () => {

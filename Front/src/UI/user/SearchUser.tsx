@@ -61,7 +61,7 @@ const SearchUser = () => {
           return (
             <User
               onClick={() => {
-                navigate("/myPage/" + user.userId);
+                navigate(`/myPage/${user.userId}`);
               }}
               style={{ cursor: "pointer" }}
               key={idx}

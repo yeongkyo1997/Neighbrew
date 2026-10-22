@@ -291,7 +291,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
               isWaiting={false}
               outLine={true}
               isDrink={true}
-              routingFunc={() => {}} //이동하지않도록
+              routingFunc={() => undefined} //이동하지않도록
             />
             <ReselectBtn
               onClick={() => {

@@ -51,7 +51,7 @@ const Chat = (props: {
       .then(res => {
         setUsers(res.data);
       })
-      .catch(() => {});
+      .catch(() => undefined);
   }, []);
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(props.chatRoomId)}>

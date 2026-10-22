@@ -181,7 +181,7 @@ const DrinkpostReviewCreate = () => {
       <FooterBigBtn content="등록하기" color="var(--c-yellow)" reqFunc={reviewSubmit} />
       <Modal
         isOpen={loadingModalOn}
-        onRequestClose={() => {}} //닫히지 않아야함
+        onRequestClose={() => undefined} //닫히지 않아야함
         style={WhiteModal}
       >
         <div style={{ whiteSpace: "pre-line", overflow: "auto", padding: "1rem" }}>

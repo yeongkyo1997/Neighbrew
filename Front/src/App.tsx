@@ -80,13 +80,14 @@ function App() {
       withCredentials: true,
     });
 
-    es.current.onopen = () => {};
     es.current.onmessage = event => {
       if (event.lastEventId) lastEventId.current = event.lastEventId;
       try {
         const data = JSON.parse(event.data);
         noti(data.content, data.url);
-      } catch {}
+      } catch {
+        // JSON이 아닌 메시지(연결 확인 등)는 알림으로 띄우지 않는다
+      }
       if (event.data === "finished") {
         es.current?.close();
         return;

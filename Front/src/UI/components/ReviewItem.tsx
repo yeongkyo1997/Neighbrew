@@ -114,7 +114,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
       .then(res => {
         setLikeCount(res.data.likeCount);
       })
-      .catch(() => {});
+      .catch(() => undefined);
   }, [review.drinkReviewId, likeCount]);
 
   // 좋아요 버튼 누르면 좋아요 수 증가

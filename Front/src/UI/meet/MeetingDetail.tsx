@@ -255,7 +255,7 @@ const MeetingDetail = () => {
       const ws = new SockJS("/ws");
       return ws;
     });
-    client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {});
+    client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => undefined);
   };
 
   //api호출

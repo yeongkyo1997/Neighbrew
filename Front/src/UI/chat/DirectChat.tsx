@@ -257,12 +257,7 @@ const DirectChat = () => {
               userId: receivedMessage.user.userId,
               nickname: receivedMessage.user.nickname,
             },
-            createdAt:
-              new Date().getHours() +
-              ":" +
-              (new Date().getMinutes() < 10
-                ? "0" + new Date().getMinutes()
-                : new Date().getMinutes()),
+            createdAt: `${new Date().getHours()}:${String(new Date().getMinutes()).padStart(2, "0")}`,
           },
         ]);
       });
@@ -306,7 +301,7 @@ const DirectChat = () => {
         );
         setMessages(res.data.messages ?? []);
       })
-      .catch(() => {});
+      .catch(() => undefined);
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직

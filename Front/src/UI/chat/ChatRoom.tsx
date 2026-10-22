@@ -226,12 +226,7 @@ const ChatRoom = () => {
               userId: receivedMessage.userId,
               nickname: receivedMessage.userNickname,
             },
-            createdAt:
-              new Date().getHours() +
-              ":" +
-              (new Date().getMinutes() < 10
-                ? "0" + new Date().getMinutes()
-                : new Date().getMinutes()),
+            createdAt: `${new Date().getHours()}:${String(new Date().getMinutes()).padStart(2, "0")}`,
           },
         ]);
       });
@@ -275,13 +270,13 @@ const ChatRoom = () => {
           setChatRoomName(res.data.chatRoomName);
         });
       })
-      .catch(() => {});
+      .catch(() => undefined);
 
     callApi("GET", `/api/chatroom/${id}/${localStorage.getItem("myId")}/users`)
       .then((res) => {
         setUsers(res.data);
       })
-      .catch(() => {});
+      .catch(() => undefined);
   }, []);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
