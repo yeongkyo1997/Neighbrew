@@ -11,6 +11,7 @@ import com.ssafy.backend.domain.drink.dto.DrinkResponseDto;
 import com.ssafy.backend.domain.drink.entity.Drink;
 import com.ssafy.backend.domain.drink.repository.DrinkRepository;
 import com.ssafy.backend.domain.drink.repository.DrinkReviewRepository;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,8 +27,8 @@ public class DrinkQueryManager {
     }
 
     public DrinkResponseDto findDrinkById(Long drinkId) {
-        Drink drink = drinkRepository.findById(drinkId)
-                                     .orElseThrow(() -> new IllegalArgumentException("해당 술이 없습니다."));
+        Drink drink = drinkRepository.findById(drinkId).orElseThrow(
+                () -> new NotFoundException("술을 찾을 수 없습니다. id=" + drinkId));
         return DrinkResponseDto.fromEntity(drink);
     }
 

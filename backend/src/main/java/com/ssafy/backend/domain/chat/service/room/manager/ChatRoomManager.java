@@ -10,6 +10,7 @@ import com.ssafy.backend.domain.chat.entity.ChatRoomUser;
 import com.ssafy.backend.domain.chat.repository.ChatRoomRepository;
 import com.ssafy.backend.domain.chat.repository.ChatRoomUserRepository;
 import com.ssafy.backend.domain.chat.service.room.dto.ChatRoomCreateRequest;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,11 +31,11 @@ public class ChatRoomManager {
 
     public ChatRoom findChatRoomById(Long roomId) {
         return chatRoomRepository.findById(roomId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+                () -> new NotFoundException("채팅방을 찾을 수 없습니다. id=" + roomId));
     }
 
     public ChatRoom getChatRoomDetail(Long chatRoomId) {
         return chatRoomRepository.findByChatRoomId(chatRoomId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+                () -> new NotFoundException("채팅방을 찾을 수 없습니다. id=" + chatRoomId));
     }
 }

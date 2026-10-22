@@ -13,6 +13,7 @@ import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.repository.MeetRepository;
 import com.ssafy.backend.domain.user.entity.User;
 import com.ssafy.backend.domain.user.service.UserReader;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -77,13 +78,13 @@ public class MeetValidator {
 
     public Meet validateAndGetMeet(Long meetId) {
         return meetRepository.findById(meetId).orElseThrow(
-                () -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+                () -> new NotFoundException("모임을 찾을 수 없습니다. id=" + meetId));
     }
 
     // 참여 인원을 바꿀 때 쓴다. 트랜잭션이 끝날 때까지 모임 행을 잠근다.
     public Meet validateAndGetMeetForUpdate(Long meetId) {
         return meetRepository.findByIdForUpdate(meetId).orElseThrow(
-                () -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+                () -> new NotFoundException("모임을 찾을 수 없습니다. id=" + meetId));
     }
 
     public void validateHostPermission(Meet meet, Long hostId) {

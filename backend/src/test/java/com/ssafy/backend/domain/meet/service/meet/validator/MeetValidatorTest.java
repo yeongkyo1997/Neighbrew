@@ -2,8 +2,10 @@ package com.ssafy.backend.domain.meet.service.meet.validator;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +18,7 @@ import com.ssafy.backend.domain.drink.repository.DrinkRepository;
 import com.ssafy.backend.domain.meet.dto.MeetRequestDto;
 import com.ssafy.backend.domain.meet.repository.MeetRepository;
 import com.ssafy.backend.domain.user.service.UserReader;
+import com.ssafy.backend.exception.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class MeetValidatorTest {
@@ -47,5 +50,15 @@ class MeetValidatorTest {
         assertThatThrownBy(() -> meetValidator.validateMeet(request(19), 3L))
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatCode(() -> meetValidator.validateMeet(request(20), 3L)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void 없는_모임은_404로_응답할_예외를_던진다() {
+        given(meetRepository.findById(10L)).willReturn(Optional.empty());
+        given(meetRepository.findByIdForUpdate(10L)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> meetValidator.validateAndGetMeet(10L)).isInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> meetValidator.validateAndGetMeetForUpdate(10L))
+                .isInstanceOf(NotFoundException.class);
     }
 }

@@ -6,6 +6,7 @@ import com.ssafy.backend.domain.drink.entity.DrinkReview;
 import com.ssafy.backend.domain.drink.repository.DrinkReviewRepository;
 import com.ssafy.backend.domain.user.entity.User;
 import com.ssafy.backend.domain.user.service.UserReader;
+import com.ssafy.backend.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,6 @@ public class UserCommentLikeValidator {
 
     public DrinkReview validateAndGetDrinkReview(Long reviewId) {
         return drinkReviewRepository.findById(reviewId).orElseThrow(
-                () -> new IllegalArgumentException("해당 리뷰가 없습니다. id=" + reviewId));
+                () -> new NotFoundException("후기를 찾을 수 없습니다. id=" + reviewId));
     }
 }
