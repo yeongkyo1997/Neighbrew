@@ -64,6 +64,10 @@ domain/<name>/   user, meet, drink, chat, follow, evaluation, push, region, stor
 
 `MeetService.saveMeet`이 대표 예시입니다. 모임을 만들 때 채팅방 생성, 호스트 `MeetUser` 저장, 팔로워 푸시 알림까지 여러 도메인을 한 번에 엮습니다. 새 기능도 이 패턴을 따르세요.
 
+- 퍼사드의 쓰기 메서드에는 Spring `@Transactional`을 붙이고, 엔티티 조회와 검증을 모두 끝낸 뒤에 부작용을 시작하세요.
+- 되돌릴 수 없는 부작용(SSE 푸시, S3 삭제)은 트랜잭션 안에서 바로 실행하지 말고 이벤트로 발행하세요. 모임 도메인은 `service/meet/event/MeetEvents`를 발행하고, `MeetEventListener`가 `@TransactionalEventListener(AFTER_COMMIT)`에서 처리합니다. 롤백되면 방금 올린 이미지는 `AFTER_ROLLBACK`에서 지웁니다. 리스너에서 DB에 쓰려면 `REQUIRES_NEW`가 필요합니다.
+- 모임 참여 인원은 `Meet.addParticipant()`/`removeParticipant()`로만 바꾸고, `MeetValidator.validateAndGetMeetForUpdate`(비관적 락)로 조회한 엔티티에 호출하세요.
+
 ### 인증과 권한
 
 - `common/filter/TokenFilter`는 `FilterConfig`에서 `/api/*` 전체에 등록됩니다. 정규화된 경로(`servletPath` + `pathInfo`)로 판단합니다.

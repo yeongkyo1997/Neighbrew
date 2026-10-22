@@ -80,6 +80,12 @@ public class MeetValidator {
                 () -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
     }
 
+    // 참여 인원을 바꿀 때 쓴다. 트랜잭션이 끝날 때까지 모임 행을 잠근다.
+    public Meet validateAndGetMeetForUpdate(Long meetId) {
+        return meetRepository.findByIdForUpdate(meetId).orElseThrow(
+                () -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
+    }
+
     public void validateHostPermission(Meet meet, Long hostId) {
         if (!meet.getHost().getUserId().equals(hostId)) {
             throw new IllegalArgumentException("방장만 요청할 수 있습니다.");
