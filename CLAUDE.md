@@ -80,7 +80,7 @@ domain/<name>/   user, meet, drink, chat, follow, evaluation, push, region, stor
 
 - `authentication/domain/oauth/OAuthApiClient` 구현체를 provider마다 하나씩 둡니다(`infra/{kakao,google,naver}`). `RequestOAuthInfoService`가 `oAuthProvider()`를 키로 `Collectors.toMap`을 만들기 때문에, **같은 provider를 반환하는 `@Component` 빈이 둘 있으면 컨텍스트가 시작되지 않습니다**.
 - 로그인 흐름은 `AuthController` → `OAuthLoginService` → `RequestOAuthInfoService` 순서입니다.
-- 사용자는 `User.email`로 찾습니다. 이메일 제공에 동의하지 않은 사용자는 `OAuthLoginService.loginEmail`이 `<provider>_<고유 ID>`(예: `kakao_3012345678`)를 email 컬럼 값으로 만듭니다. 고유 ID는 `OAuthInfoResponse.getOAuthId()`로 꺼냅니다. 사용자가 바꿀 수 있는 표시 이름은 계정 키로 쓰지 마세요.
+- 사용자는 `(oAuthProvider, oAuthId)`로 찾습니다(`UserRepository.findByOAuth`, 유니크 제약 `uk_user_oauth`). 고유 ID는 `OAuthInfoResponse.getOAuthId()`로 꺼냅니다. `User.email`은 provider가 준 값을 그대로 저장하는 데이터일 뿐이고(미동의 시 null, 유니크 아님), 계정 조회에 쓰지 마세요. 이메일은 동의 여부에 따라 바뀌고, provider가 인증하지 않은 값일 수 있습니다. 사용자가 바꿀 수 있는 표시 이름도 계정 키로 쓰지 마세요.
 - 신규 가입자의 닉네임은 `user_` + 무작위 hex입니다. 사용자는 `user_숫자` 형식이나 이메일을 닉네임으로 쓸 수 없습니다(`UserService`).
 
 ### 실시간 기능

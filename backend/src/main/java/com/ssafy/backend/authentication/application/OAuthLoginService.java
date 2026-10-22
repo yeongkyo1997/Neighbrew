@@ -21,7 +21,7 @@ public class OAuthLoginService {
 
     /*
     카카오/네이버와 같은 OAuth 플랫폼에 인증 후 프로필 정보 가져오기
-    email 정보로 사용자 확인 (없으면 새로 가입처리)
+    provider와 고유 ID로 사용자 확인 (없으면 새로 가입처리)
     Access Token 생성 후 내려주기
      */
     private final UserRepository userRepository;
@@ -43,30 +43,22 @@ public class OAuthLoginService {
         return loginResponse;
     }
 
-    // 해당 이메일로 user의 id를 반환
+    // provider와 provider 안의 고유 ID로 user의 id를 반환
+    // 이메일은 동의 여부에 따라 바뀌거나 없을 수 있고, 다른 provider에서 인증 없이 같은 값을 쓸 수 있으므로 조회에 쓰지 않는다.
     private Long findOrCreateUser(OAuthInfoResponse oAuthInfoResponse) {
-        String email = loginEmail(oAuthInfoResponse);
-        return userRepository.findByEmail(email).map(User::getUserId).orElseGet(
-                () -> newUser(oAuthInfoResponse, email));
-    }
-
-    // 이메일 제공에 동의하지 않은 사용자는 provider와 고유 ID로 email 컬럼 값을 만든다.
-    // (사용자가 정할 수 있는 표시 이름을 쓰면 다음 로그인 때 계정을 못 찾고, 남의 이메일로 계정을 선점할 수 있다)
-    // 조회와 저장에 같은 값을 써야 다음 로그인 때 같은 계정을 찾는다.
-    private String loginEmail(OAuthInfoResponse oAuthInfoResponse) {
-        if (oAuthInfoResponse.getEmail() != null) {
-            return oAuthInfoResponse.getEmail();
-        }
-        // 고유 ID까지 없으면 서로 다른 사용자가 같은 키로 합쳐지므로 가입을 막는다
-        if (oAuthInfoResponse.getOAuthId() == null) {
+        String oAuthId = oAuthInfoResponse.getOAuthId();
+        // 고유 ID가 없으면 서로 다른 사용자를 구분할 수 없으므로 가입을 막는다
+        if (oAuthId == null) {
             throw new IllegalArgumentException("OAuth 사용자 ID를 받지 못했습니다");
         }
-        return oAuthInfoResponse.getOAuthProvider().name().toLowerCase() + "_" + oAuthInfoResponse.getOAuthId();
+        return userRepository.findByOAuth(oAuthInfoResponse.getOAuthProvider(), oAuthId).map(User::getUserId)
+                             .orElseGet(() -> newUser(oAuthInfoResponse, oAuthId));
     }
 
-    private Long newUser(OAuthInfoResponse oAuthInfoResponse, String email) {
-        User user = User.builder().email(email).name(oAuthInfoResponse.getName()).nickname(generateNickname())
-                        .oAuthProvider(oAuthInfoResponse.getOAuthProvider()).build();
+    private Long newUser(OAuthInfoResponse oAuthInfoResponse, String oAuthId) {
+        User user = User.builder().email(oAuthInfoResponse.getEmail()).name(oAuthInfoResponse.getName())
+                        .nickname(generateNickname()).oAuthProvider(oAuthInfoResponse.getOAuthProvider())
+                        .oAuthId(oAuthId).build();
         return userRepository.save(user).getUserId();
     }
 

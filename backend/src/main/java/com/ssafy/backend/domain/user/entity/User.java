@@ -12,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -34,20 +36,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+// 계정은 provider와 provider 안의 고유 ID로 식별한다. (이메일은 동의에 따라 바뀌거나 없을 수 있다)
+@Table(uniqueConstraints = @UniqueConstraint(name = "uk_user_oauth", columnNames = { "o_auth_provider", "o_auth_id" }))
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, unique = true, length = 50)
+    // provider가 준 이메일 (계정 조회에는 쓰지 않는다. 이메일 제공에 동의하지 않으면 null)
+    @Column(length = 100)
     private String email;
 
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(name = "o_auth_provider", nullable = false)
     @Enumerated(EnumType.STRING)
     private OAuthProvider oAuthProvider;
+
+    @Column(name = "o_auth_id", nullable = false, length = 100)
+    private String oAuthId;
 
     @Column(nullable = false, length = 20)
     private String name;
