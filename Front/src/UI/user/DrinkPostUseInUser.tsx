@@ -17,14 +17,11 @@ const ShowcaseBody = styled.div`
 const DrinkPostUseInUser = () => {
   const { userid } = useParams();
   const [drinkList, setDrinkList] = useState<Drink[]>([]);
-  const myDrinkHandler = () => {
+  useEffect(() => {
     void callApi<Drink[]>("get", `api/drink/user/${userid}/review-drink`).then(res => {
       setDrinkList(res.data);
     });
-  };
-  useEffect(() => {
-    myDrinkHandler();
-  }, []);
+  }, [userid]);
   return (
     <>
       <ShowcaseBody>
