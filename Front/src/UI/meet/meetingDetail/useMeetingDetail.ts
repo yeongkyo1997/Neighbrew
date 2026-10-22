@@ -7,6 +7,7 @@ import { AxiosError } from "axios";
 import { callApi } from "../../../utils/api";
 import { initialMeetDetail, initialUser } from "../../common";
 import { MeetDetail, User } from "../../../Type/types";
+import useEffectEvent from "../../../hooks/useEffectEvent";
 
 const useMeetingDetail = () => {
   const { meetId } = useParams(); //meetId는 라우터 링크에서 따오기
@@ -67,7 +68,7 @@ const useMeetingDetail = () => {
   };
 
   //api호출
-  const fetchMeetData = () => {
+  const fetchMeetData = useEffectEvent(() => {
     const promise = callApi<MeetDetail>("get", `api/meet/${meetId}`);
     promise
       .then(res => {
@@ -76,7 +77,7 @@ const useMeetingDetail = () => {
       .catch(() => {
         GotoMainHandler();
       });
-  };
+  });
 
   useEffect(() => {
     window.scrollTo({
@@ -100,7 +101,7 @@ const useMeetingDetail = () => {
   //meetId가 생기면 api로 데이터 로드
   useEffect(() => {
     fetchMeetData();
-  }, [meetId]);
+  }, [meetId, fetchMeetData]);
 
   useEffect(() => {
     if (meetDetailData === undefined) return;
@@ -121,7 +122,7 @@ const useMeetingDetail = () => {
       );
       setUserStatus(myParticipation?.status ?? "NONE");
     }
-  }, [meetDetailData]);
+  }, [meetDetailData, userId]);
 
   //생일을 넣으면 나이를 계산해줌
   const calcAge = (birth: string) => {

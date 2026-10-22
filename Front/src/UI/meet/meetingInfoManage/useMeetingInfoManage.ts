@@ -18,6 +18,7 @@ import {
 } from "../CheckValid";
 import imageCompression from "browser-image-compression";
 import { AxiosError } from "axios";
+import useEffectEvent from "../../../hooks/useEffectEvent";
 
 const useMeetingInfoManage = () => {
   const titleRef = useRef<HTMLInputElement>(null);
@@ -119,7 +120,8 @@ const useMeetingInfoManage = () => {
   }, [meetData]);
 
   //선택한 시도에 따라 구군 fetch
-  useEffect(() => {
+  //gugun은 읽기만 하고, 시도가 바뀔 때만 실행한다
+  const onSidoChange = useEffectEvent(() => {
     //초기 모임 데이터 로딩은 제외하고, 구군 정보 초기화
     if (gugun.sidoCode !== sido.sidoCode) {
       setGugun(initialGugun); //초기화
@@ -127,7 +129,10 @@ const useMeetingInfoManage = () => {
     void callApi<Gugun[]>("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
-  }, [sido]);
+  });
+  useEffect(() => {
+    onSidoChange();
+  }, [sido, onSidoChange]);
 
   //api 호출 전 각종 데이터 검증
   //유저 아이디와 호스트 아이디 확인

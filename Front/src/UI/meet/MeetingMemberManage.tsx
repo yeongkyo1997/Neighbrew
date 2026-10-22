@@ -17,6 +17,7 @@ import { MeetDetail, User } from "../../Type/types";
 import { initialMeetDetail, initialUser } from "../common";
 import { WhiteModal } from "../../style/modalStyles";
 import { AxiosError } from "axios";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const SubTitle = styled.div`
   font-size: 20px;
@@ -72,12 +73,12 @@ const MeetingMemberManage = () => {
   const [errorModalOn, setErrorModalOn] = useState(false);
   const [errorModalMsg, setErrorModalMsg] = useState("");
 
-  const fetchMeetData = () => {
+  const fetchMeetData = useEffectEvent(() => {
     const promise = callApi<MeetDetail>("get", `api/meet/${meetId}`);
     void promise.then((res) => {
       setMeetData(res.data);
     });
-  };
+  });
 
   useEffect(() => {
     window.scrollTo({
@@ -85,7 +86,7 @@ const MeetingMemberManage = () => {
       behavior: "smooth",
     });
     fetchMeetData();
-  }, []);
+  }, [meetId, fetchMeetData]);
 
   useEffect(() => {
     if (meetData === undefined) return;
