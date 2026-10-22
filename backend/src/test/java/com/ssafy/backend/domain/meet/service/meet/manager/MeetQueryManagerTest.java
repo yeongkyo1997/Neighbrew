@@ -39,8 +39,7 @@ import com.ssafy.backend.domain.meet.repository.MeetRepository;
 import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
 import com.ssafy.backend.domain.region.entity.Gugun;
 import com.ssafy.backend.domain.region.entity.Sido;
-import com.ssafy.backend.domain.region.repository.GugunRepository;
-import com.ssafy.backend.domain.region.repository.SidoRepository;
+import com.ssafy.backend.domain.region.service.RegionCache;
 import com.ssafy.backend.domain.user.dto.PublicUserResponseDto;
 import com.ssafy.backend.domain.user.entity.User;
 
@@ -51,9 +50,7 @@ class MeetQueryManagerTest {
     @Mock
     private MeetUserRepository meetUserRepository;
     @Mock
-    private SidoRepository sidoRepository;
-    @Mock
-    private GugunRepository gugunRepository;
+    private RegionCache regionCache;
 
     private MeetQueryManager meetQueryManager;
 
@@ -63,7 +60,7 @@ class MeetQueryManagerTest {
     @BeforeEach
     void setUp() {
         // 운영과 같은 기본 설정의 ModelMapper로 Meet -> MeetResponseDto 변환까지 확인한다.
-        meetQueryManager = new MeetQueryManager(meetRepository, meetUserRepository, sidoRepository, gugunRepository,
+        meetQueryManager = new MeetQueryManager(meetRepository, meetUserRepository, regionCache,
                                                 new ModelMapper());
         meet = Meet.builder().meetId(1L).meetName("모임").host(host).nowParticipants(1).maxParticipants(4)
                    .tag(new Tag()).sidoCode(11).gugunCode(110).drink(Drink.builder().drinkId(2L).name("막걸리").build())
@@ -71,9 +68,9 @@ class MeetQueryManagerTest {
     }
 
     private void givenRegion() {
-        given(sidoRepository.findById(11)).willReturn(Optional.of(mock(Sido.class)));
-        given(gugunRepository.findBySidoCodeAndGugunCode(11, 110)).willReturn(
-                Optional.of(Gugun.builder().sidoCode(11).gugunCode(110).gugunName("종로구").build()));
+        given(regionCache.getSido(11)).willReturn(mock(Sido.class));
+        given(regionCache.getGugun(11, 110)).willReturn(
+                Gugun.builder().sidoCode(11).gugunCode(110).gugunName("종로구").build());
     }
 
     @Test

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.backend.domain.region.entity.Sido;
-import com.ssafy.backend.domain.region.repository.SidoRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,13 +12,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SidoService {
 
-    private final SidoRepository sidoRepository;
+    private final RegionCache regionCache;
 
     public List<Sido> findAll() {
-        return sidoRepository.findAll();
+        return regionCache.getAllSidos();
     }
 
     public Sido findById(Integer id) {
-        return sidoRepository.findById(id).orElse(null);
+        return regionCache.findSido(id).orElse(null);
     }
 }
