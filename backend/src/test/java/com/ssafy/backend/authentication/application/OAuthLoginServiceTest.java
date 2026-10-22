@@ -41,11 +41,18 @@ class OAuthLoginServiceTest {
     @InjectMocks
     private OAuthLoginService oAuthLoginService;
 
-    private void givenNewUser(String email) throws Exception {
+    private void givenOAuthInfo(OAuthProvider provider, String oAuthId, String email) throws Exception {
         given(requestOAuthInfoService.request(params)).willReturn(oAuthInfo);
+        given(oAuthInfo.getOAuthProvider()).willReturn(provider);
+        given(oAuthInfo.getOAuthId()).willReturn(oAuthId);
         given(oAuthInfo.getEmail()).willReturn(email);
+    }
+
+    private void givenNewUser(String email) throws Exception {
+        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678", email);
         given(oAuthInfo.getName()).willReturn("홍길동");
-        given(oAuthInfo.getOAuthProvider()).willReturn(OAuthProvider.KAKAO);
+        given(userRepository.findByOAuth(OAuthProvider.KAKAO, "3012345678")).willReturn(Optional.empty());
+        given(userRepository.existsByNickname(anyString())).willReturn(false);
         given(userRepository.save(any(User.class))).willAnswer(invocation -> invocation.getArgument(0));
     }
 
@@ -56,22 +63,30 @@ class OAuthLoginServiceTest {
     }
 
     @Test
-    void 신규_가입자_닉네임은_이메일이_아닌_무작위_값이다() throws Exception {
+    void 신규_가입자는_provider와_고유_ID로_저장한다() throws Exception {
         givenNewUser("new@example.com");
-        given(userRepository.existsByNickname(anyString())).willReturn(false);
 
         oAuthLoginService.login(params);
 
         User saved = savedUser();
-        assertThat(saved.getNickname()).matches(RANDOM_NICKNAME);
+        assertThat(saved.getOAuthProvider()).isEqualTo(OAuthProvider.KAKAO);
+        assertThat(saved.getOAuthId()).isEqualTo("3012345678");
         assertThat(saved.getEmail()).isEqualTo("new@example.com");
+        assertThat(saved.getName()).isEqualTo("홍길동");
+    }
+
+    @Test
+    void 신규_가입자_닉네임은_이메일이_아닌_무작위_값이다() throws Exception {
+        givenNewUser("new@example.com");
+
+        oAuthLoginService.login(params);
+
+        assertThat(savedUser().getNickname()).matches(RANDOM_NICKNAME);
     }
 
     @Test
     void 이메일이_없는_신규_가입자도_이름_대신_무작위_닉네임을_받는다() throws Exception {
         givenNewUser(null);
-        given(oAuthInfo.getOAuthId()).willReturn("3012345678");
-        given(userRepository.existsByNickname(anyString())).willReturn(false);
 
         oAuthLoginService.login(params);
 
@@ -90,10 +105,20 @@ class OAuthLoginServiceTest {
     }
 
     @Test
+    void 이메일이_없으면_이메일을_비워서_저장한다() throws Exception {
+        givenNewUser(null);
+
+        oAuthLoginService.login(params);
+
+        User saved = savedUser();
+        assertThat(saved.getEmail()).isNull();
+        assertThat(saved.getOAuthId()).isEqualTo("3012345678");
+    }
+
+    @Test
     void 기존_사용자는_새로_저장하지_않는다() throws Exception {
-        given(requestOAuthInfoService.request(params)).willReturn(oAuthInfo);
-        given(oAuthInfo.getEmail()).willReturn("old@example.com");
-        given(userRepository.findByEmail("old@example.com")).willReturn(
+        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678", "old@example.com");
+        given(userRepository.findByOAuth(OAuthProvider.KAKAO, "3012345678")).willReturn(
                 Optional.of(User.builder().userId(3L).build()));
 
         LoginResponse response = oAuthLoginService.login(params);
@@ -103,54 +128,42 @@ class OAuthLoginServiceTest {
     }
 
     @Test
-    void 이메일이_없으면_provider와_고유_ID로_가입한다() throws Exception {
-        givenNewUser(null);
-        given(oAuthInfo.getOAuthId()).willReturn("3012345678");
-        given(userRepository.existsByNickname(anyString())).willReturn(false);
-
-        oAuthLoginService.login(params);
-
-        then(userRepository).should().findByEmail("kakao_3012345678");
-        User saved = savedUser();
-        assertThat(saved.getEmail()).isEqualTo("kakao_3012345678");
-        assertThat(saved.getName()).isEqualTo("홍길동");
-    }
-
-    @Test
-    void 이메일이_없는_사용자가_다시_로그인하면_기존_계정을_찾는다() throws Exception {
-        given(requestOAuthInfoService.request(params)).willReturn(oAuthInfo);
-        given(oAuthInfo.getEmail()).willReturn(null);
-        given(oAuthInfo.getOAuthId()).willReturn("3012345678");
-        given(oAuthInfo.getOAuthProvider()).willReturn(OAuthProvider.KAKAO);
-        given(userRepository.findByEmail("kakao_3012345678")).willReturn(
+    void 이메일_동의가_바뀌어도_고유_ID가_같으면_같은_계정을_찾는다() throws Exception {
+        given(userRepository.findByOAuth(OAuthProvider.KAKAO, "3012345678")).willReturn(
                 Optional.of(User.builder().userId(1L).build()));
 
-        LoginResponse response = oAuthLoginService.login(params);
+        // 이메일 없이 로그인
+        givenOAuthInfo(OAuthProvider.KAKAO, "3012345678", null);
+        LoginResponse withoutEmail = oAuthLoginService.login(params);
+        // 나중에 이메일 제공에 동의한 뒤 로그인
+        given(oAuthInfo.getEmail()).willReturn("new@example.com");
+        LoginResponse withEmail = oAuthLoginService.login(params);
 
-        assertThat(response.getUserId()).isEqualTo(1L);
+        assertThat(withoutEmail.getUserId()).isEqualTo(1L);
+        assertThat(withEmail.getUserId()).isEqualTo(1L);
         then(userRepository).should(never()).save(any());
     }
 
     @Test
-    void 이메일이_없으면_이메일처럼_생긴_표시_이름이라도_계정_조회에_쓰지_않는다() throws Exception {
-        given(requestOAuthInfoService.request(params)).willReturn(oAuthInfo);
-        given(oAuthInfo.getEmail()).willReturn(null);
-        given(oAuthInfo.getOAuthId()).willReturn("3012345678");
-        given(oAuthInfo.getName()).willReturn("victim@gmail.com");
-        given(oAuthInfo.getOAuthProvider()).willReturn(OAuthProvider.KAKAO);
+    void 다른_provider에서_같은_이메일로_로그인해도_기존_계정을_찾지_않는다() throws Exception {
+        // victim@gmail.com은 GOOGLE 계정의 이메일이지만, KAKAO 고유 ID로만 찾으므로 그 계정에 닿지 않는다
+        givenOAuthInfo(OAuthProvider.KAKAO, "attacker-id", "victim@gmail.com");
+        given(oAuthInfo.getName()).willReturn("공격자");
+        given(userRepository.findByOAuth(OAuthProvider.KAKAO, "attacker-id")).willReturn(Optional.empty());
         given(userRepository.existsByNickname(anyString())).willReturn(false);
         given(userRepository.save(any(User.class))).willAnswer(invocation -> invocation.getArgument(0));
 
         oAuthLoginService.login(params);
 
-        then(userRepository).should(never()).findByEmail("victim@gmail.com");
-        assertThat(savedUser().getEmail()).isEqualTo("kakao_3012345678");
+        then(userRepository).should().findByOAuth(OAuthProvider.KAKAO, "attacker-id");
+        User saved = savedUser();
+        assertThat(saved.getOAuthProvider()).isEqualTo(OAuthProvider.KAKAO);
+        assertThat(saved.getOAuthId()).isEqualTo("attacker-id");
     }
 
     @Test
-    void 이메일과_고유_ID가_모두_없으면_가입하지_않는다() throws Exception {
+    void 고유_ID가_없으면_가입하지_않는다() throws Exception {
         given(requestOAuthInfoService.request(params)).willReturn(oAuthInfo);
-        given(oAuthInfo.getEmail()).willReturn(null);
         given(oAuthInfo.getOAuthId()).willReturn(null);
 
         assertThatThrownBy(() -> oAuthLoginService.login(params)).isInstanceOf(IllegalArgumentException.class);

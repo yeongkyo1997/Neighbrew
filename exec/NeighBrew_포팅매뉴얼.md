@@ -105,6 +105,17 @@ dist-ssr
 
 ## 3. 배포 시 특이사항
 
+### user 테이블 스키마 변경 (OAuth 계정 식별)
+
+OAuth 계정을 이메일이 아니라 `(o_auth_provider, o_auth_id)`로 식별합니다. 기존 사용자 데이터는 옮기지 않으므로, 이미 만들어진 DB에는 아래를 적용합니다. 다른 테이블이 `user`를 참조하므로 기존 데이터를 비운 상태에서 실행하세요.
+
+```sql
+ALTER TABLE `user` DROP INDEX <email 유니크 인덱스 이름>;  -- SHOW INDEX FROM `user`;로 확인
+ALTER TABLE `user` MODIFY email VARCHAR(100) NULL;
+ALTER TABLE `user` ADD COLUMN o_auth_id VARCHAR(100) NOT NULL;
+ALTER TABLE `user` ADD CONSTRAINT uk_user_oauth UNIQUE (o_auth_provider, o_auth_id);
+```
+
 ## 4. DB 접속 정보 등 주요 계정 정보 및 프로퍼티
 
 ### application.properties
