@@ -35,6 +35,7 @@ import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.entity.MeetUser;
 import com.ssafy.backend.domain.meet.service.MeetUserService;
 import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetAccepted;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetApplied;
 import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetCreated;
 import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetDeleted;
 import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetImageDiscarded;
@@ -203,5 +204,18 @@ class MeetServiceTest {
 
         then(meetManager).should().decreaseParticipants(meet);
         then(validator).should(never()).validateAndGetMeet(any());
+    }
+
+    @Test
+    void 모임_신청_알림은_Meet의_방장과_이름으로_보낸다() {
+        Meet meet = meet(1);
+        given(validator.validateAndGetMeet(10L)).willReturn(meet);
+        given(validator.validateAndGetUser(2L)).willReturn(guest);
+
+        meetService.applyMeet(2L, 10L);
+
+        then(participantManager).should().applyMeet(meet, guest);
+        assertThat(publishedEvents(1)).containsExactly(new MeetApplied(guest, host, "모임", 10L));
+        then(queryManager).shouldHaveNoInteractions();
     }
 }

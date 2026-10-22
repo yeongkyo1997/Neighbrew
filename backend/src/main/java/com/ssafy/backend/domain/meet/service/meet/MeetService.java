@@ -19,7 +19,7 @@ import com.ssafy.backend.domain.chat.entity.ChatRoom;
 import com.ssafy.backend.domain.drink.entity.Drink;
 import com.ssafy.backend.domain.meet.dto.MeetRequestDto;
 import com.ssafy.backend.domain.meet.dto.MeetResponseDto;
-import com.ssafy.backend.domain.meet.dto.MeetUserDto;
+import com.ssafy.backend.domain.meet.dto.MeetDetailResponse;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.entity.MeetUser;
 import com.ssafy.backend.domain.meet.service.MeetUserService;
@@ -61,7 +61,7 @@ public class MeetService {
         return queryManager.findMeetsByTagId(tagId, pageable);
     }
 
-    public Map<String, Object> findMeetdetailByMeetId(Long meetId) {
+    public MeetDetailResponse findMeetdetailByMeetId(Long meetId) {
         return queryManager.findMeetdetailByMeetId(meetId);
     }
 
@@ -141,13 +141,12 @@ public class MeetService {
 
     @Transactional
     public void applyMeet(Long userId, Long meetId) {
-        MeetUserDto meetUserDto = queryManager.findMeetUserByMeetId(meetId);
+        // 모임 정보는 참여자 목록이 아니라 Meet 엔티티에서 읽는다 (참여자가 없어도 NPE가 나지 않게)
         Meet attendMeet = validator.validateAndGetMeet(meetId);
         User attendUser = validator.validateAndGetUser(userId);
-        User host = validator.validateAndGetUser(meetUserDto.getMeetRequestDto().getHostId());
 
-        participantManager.applyMeet(userId, meetUserDto, attendMeet, attendUser);
-        eventPublisher.publishEvent(new MeetApplied(attendUser, host, meetUserDto.getMeetRequestDto().getMeetName(),
+        participantManager.applyMeet(attendMeet, attendUser);
+        eventPublisher.publishEvent(new MeetApplied(attendUser, attendMeet.getHost(), attendMeet.getMeetName(),
                                                     attendMeet.getMeetId()));
     }
 

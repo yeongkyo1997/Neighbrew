@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { User } from "../../Type/types";
+import { MeetDetail, User } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import NavbarSimple from "../navbar/NavbarSimple";
 import RatingMember from "./RatingMember";
@@ -117,9 +117,10 @@ const RatingCreate = () => {
     callApi("GET", `/api/meet/${meetId}`)
       .then(res => {
         setMeetTitle(res.data.meet.meetName);
-        return res.data.users.filter(
-          (user: User, index) => user.userId !== myId && res.data.statuses[index] !== "APPLY"
-        );
+        const { participants } = res.data as MeetDetail;
+        return participants
+          .filter(participant => participant.user.userId !== myId && participant.status !== "APPLY")
+          .map(participant => participant.user);
       })
       .then(users => {
         setUsers(users);

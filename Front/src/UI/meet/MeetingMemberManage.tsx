@@ -89,14 +89,14 @@ const MeetingMemberManage = () => {
   useEffect(() => {
     if (meetData === undefined) return;
     //guest 세팅
-    let member = meetData.users.filter(
-      (user, index) => meetData.statuses[index] !== "APPLY"
-    );
+    let member = meetData.participants
+      .filter(participant => participant.status !== "APPLY")
+      .map(participant => participant.user);
     setMemberList(member);
     //apply 세팅
-    let applicants = meetData.users.filter(
-      (user, index) => meetData.statuses[index] === "APPLY"
-    );
+    let applicants = meetData.participants
+      .filter(participant => participant.status === "APPLY")
+      .map(participant => participant.user);
     setApplicantList(applicants);
   }, [meetData]);
 
