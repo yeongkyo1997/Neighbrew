@@ -31,7 +31,6 @@ public class MeetManager {
         meet.setTag(tag);
         meet.setDrink(drink);
         meet.setChatRoom(chatRoom);
-        meet.setNowParticipants(1);
         return meetRepository.save(meet);
     }
 
@@ -51,20 +50,15 @@ public class MeetManager {
         meetRepository.findById(meetId).ifPresent(meetRepository::delete);
     }
 
-    public void updateParticipants(Long meetId) {
-        Meet meet = meetRepository.findById(meetId).orElseThrow(
-                () -> new IllegalArgumentException("해당 미팅 정보를 찾을 수 없습니다."));
-        meet.setNowParticipants(meet.getNowParticipants() + 1);
+    // meet은 validateAndGetMeetForUpdate로 잠근 엔티티여야 한다.
+    public void increaseParticipants(Meet meet) {
+        meet.addParticipant();
         meetRepository.save(meet);
     }
 
     public void decreaseParticipants(Meet meet) {
-        meet.setNowParticipants(meet.getNowParticipants() - 1);
+        meet.removeParticipant();
         meetRepository.save(meet);
-    }
-
-    public String getPreviousImagePath(Long meetId) {
-        return meetRepository.findImgSrcByMeetId(meetId);
     }
 
     public List<Meet> findExpiredMeets() {

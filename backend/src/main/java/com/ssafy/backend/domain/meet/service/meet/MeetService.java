@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.transaction.Transactional;
-
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.backend.common.entity.Tag;
@@ -23,6 +23,15 @@ import com.ssafy.backend.domain.meet.dto.MeetUserDto;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.entity.MeetUser;
 import com.ssafy.backend.domain.meet.service.MeetUserService;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetAccepted;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetApplied;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetCreated;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetDeleted;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetEnded;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetImageDiscarded;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetImageUploaded;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetRejected;
+import com.ssafy.backend.domain.meet.service.meet.event.MeetEvents.MeetUpdated;
 import com.ssafy.backend.domain.meet.service.meet.manager.MeetChatManager;
 import com.ssafy.backend.domain.meet.service.meet.manager.MeetImageManager;
 import com.ssafy.backend.domain.meet.service.meet.manager.MeetManager;
@@ -45,6 +54,7 @@ public class MeetService {
     private final MeetPushManager pushManager;
     private final MeetChatManager chatManager;
     private final MeetUserService meetUserService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Page<MeetResponseDto> findMeetsByTagId(Long tagId, Pageable pageable) {
         validator.validateTagId(tagId);
@@ -59,40 +69,56 @@ public class MeetService {
         return queryManager.findUserMeetByUserId(userId);
     }
 
+    // 검증과 조회를 모두 끝낸 뒤에 부작용(업로드, 저장)을 시작한다.
+    // 푸시 알림은 커밋 뒤에 보내고, 롤백되면 방금 올린 이미지를 지운다(MeetEventListener).
+    @Transactional(rollbackFor = Exception.class)
     public Meet saveMeet(MeetRequestDto meetRequestDto, Long userId, Long drinkId, MultipartFile multipartFile)
             throws IOException {
         validator.validateMeet(meetRequestDto, drinkId);
-        imageManager.setHostAndImage(meetRequestDto, userId, multipartFile);
-
-        ChatRoom createdChatRoom = chatManager.createChatRoom(meetRequestDto.getMeetName());
         User hostUser = validator.validateAndGetUser(userId);
         Drink drink = validator.validateAndGetDrink(drinkId);
         Tag tag = validator.validateAndGetTag(meetRequestDto.getTagId());
 
+        String imgSrc = imageManager.uploadImageIfExists(multipartFile);
+        if (multipartFile != null) {
+            eventPublisher.publishEvent(new MeetImageUploaded(imgSrc));
+        }
+        meetRequestDto.setHostId(userId);
+        meetRequestDto.setImgSrc(imgSrc);
+
+        ChatRoom createdChatRoom = chatManager.createChatRoom(meetRequestDto.getMeetName());
         Meet createdMeet = meetManager.saveMeetEntity(meetRequestDto, drink, tag, hostUser, createdChatRoom);
-
         meetUserService.saveMeetUser(createdMeet, hostUser, Status.HOST);
+        // MongoDB 시스템 메시지는 JPA 트랜잭션으로 되돌릴 수 없으므로 JPA 쓰기 뒤에 둔다.
         chatManager.setupChatRoomUser(createdChatRoom, hostUser);
-        pushManager.notifyFollowersAboutMeetCreation(hostUser, createdMeet);
 
+        eventPublisher.publishEvent(new MeetCreated(hostUser, createdMeet));
         return createdMeet;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void updateMeet(MeetRequestDto meetRequestDto, Long userId, Long meetId, Long drinkId,
                            MultipartFile multipartFile) throws IOException {
         validator.validateMeet(meetRequestDto, drinkId);
-        validator.validateHostPermission(validator.validateAndGetMeet(meetId), userId);
-
-        String prevMeetImgSrc = meetManager.getPreviousImagePath(meetId);
+        Meet meet = validator.validateAndGetMeet(meetId);
+        validator.validateHostPermission(meet, userId);
         User host = validator.validateAndGetUser(userId);
         Drink drink = validator.validateAndGetDrink(drinkId);
         Tag tag = validator.validateAndGetTag(meetRequestDto.getTagId());
 
-        imageManager.updateImage(meetRequestDto, multipartFile, prevMeetImgSrc);
-        Meet updatedMeet = meetManager.updateMeet(meetId, meetRequestDto, drink, tag);
+        String prevMeetImgSrc = meet.getImgSrc();
+        String imgSrc = imageManager.resolveUpdatedImage(meetRequestDto.getImgSrc(), multipartFile, prevMeetImgSrc);
+        if (multipartFile != null) {
+            eventPublisher.publishEvent(new MeetImageUploaded(imgSrc));
+        }
+        if (!imgSrc.equals(prevMeetImgSrc)) {
+            eventPublisher.publishEvent(new MeetImageDiscarded(prevMeetImgSrc));
+        }
+        meetRequestDto.setImgSrc(imgSrc);
 
+        Meet updatedMeet = meetManager.updateMeet(meetId, meetRequestDto, drink, tag);
         List<MeetUser> meetUsers = meetManager.findMeetUsersByMeetId(meetId);
-        pushManager.notifyMeetUpdate(host, updatedMeet, meetUsers);
+        eventPublisher.publishEvent(new MeetUpdated(host, updatedMeet, meetUsers));
     }
 
     @Transactional
@@ -103,15 +129,17 @@ public class MeetService {
         List<MeetUser> meetUsers = meetManager.findMeetUsersByMeetId(meetId);
 
         participantManager.deleteMeetUsers(deleteMeet);
-        imageManager.deleteImageIfNotDefault(deleteMeet.getImgSrc());
         meetManager.deleteMeet(meetId);
 
         boolean isOnlyHost = meetUsers.size() == 1 && meetUsers.get(0).getStatus().equals(Status.HOST);
         chatManager.deleteChatRoomIfEmpty(deleteMeet, isOnlyHost);
 
-        pushManager.notifyMeetDeletion(deleteMeet, meetUsers);
+        // S3 이미지 삭제와 푸시는 삭제가 커밋된 뒤에 실행한다.
+        eventPublisher.publishEvent(new MeetImageDiscarded(deleteMeet.getImgSrc()));
+        eventPublisher.publishEvent(new MeetDeleted(deleteMeet, meetUsers));
     }
 
+    @Transactional
     public void applyMeet(Long userId, Long meetId) {
         MeetUserDto meetUserDto = queryManager.findMeetUserByMeetId(meetId);
         Meet attendMeet = validator.validateAndGetMeet(meetId);
@@ -119,29 +147,31 @@ public class MeetService {
         User host = validator.validateAndGetUser(meetUserDto.getMeetRequestDto().getHostId());
 
         participantManager.applyMeet(userId, meetUserDto, attendMeet, attendUser);
-        pushManager.notifyMeetApplication(attendUser, host, meetUserDto.getMeetRequestDto().getMeetName(),
-                                          attendMeet.getMeetId());
+        eventPublisher.publishEvent(new MeetApplied(attendUser, host, meetUserDto.getMeetRequestDto().getMeetName(),
+                                                    attendMeet.getMeetId()));
     }
 
     @Transactional
     public void applyCancelMeet(Long userId, Long meetId) {
         Meet meet = validator.validateAndGetMeet(meetId);
         participantManager.applyCancelMeet(userId, meetId);
+        // 푸시 기록 삭제는 DB 작업이라 함께 롤백되므로 트랜잭션 안에서 처리한다.
         pushManager.deletePushLog(PushType.MEETACCESS, userId,
                                   meet.getHost().getUserId());
     }
 
     @Transactional
     public void exitMeet(Long userId, Long meetId) {
-        Meet nowMeet = validator.validateAndGetMeet(meetId);
+        Meet nowMeet = validator.validateAndGetMeetForUpdate(meetId);
         participantManager.exitMeet(userId, meetId);
         meetManager.decreaseParticipants(nowMeet);
         chatManager.removeUserFromChatRoom(nowMeet.getChatRoom(), userId);
     }
 
+    // 모임 행을 잠근 채로 신청 상태 확인, 인원 증가, 상태 변경을 처리해 동시 승인으로 정원을 넘지 않게 한다.
     @Transactional
     public String manageMeet(Long hostId, Long userId, Long meetId, boolean applyResult) {
-        Meet managementMeet = validator.validateAndGetMeet(meetId);
+        Meet managementMeet = validator.validateAndGetMeetForUpdate(meetId);
         validator.validateHostPermission(managementMeet, hostId);
         User host = managementMeet.getHost();
         User manageUser = validator.validateAndGetUser(userId);
@@ -151,27 +181,28 @@ public class MeetService {
         }
 
         if (applyResult) {
-            if (managementMeet.getNowParticipants() >= managementMeet.getMaxParticipants()) {
-                throw new IllegalArgumentException("해당 모임에 참여 인원이 가득 찼습니다.");
-            }
-            meetManager.updateParticipants(meetId);
+            meetManager.increaseParticipants(managementMeet);
+        }
+        String result = participantManager.manageMeet(userId, meetId, applyResult);
+
+        if (applyResult) {
             chatManager.addUserToChatRoom(managementMeet.getChatRoom(), manageUser, host,
                                           manageUser.getNickname());
-            pushManager.notifyMeetAcceptance(host, manageUser, managementMeet.getMeetName(),
-                                             managementMeet.getMeetId());
+            eventPublisher.publishEvent(new MeetAccepted(host, manageUser, managementMeet.getMeetName(),
+                                                         managementMeet.getMeetId()));
         } else {
-            pushManager.notifyMeetRejection(host, manageUser, managementMeet.getMeetName());
+            eventPublisher.publishEvent(new MeetRejected(host, manageUser, managementMeet.getMeetName()));
         }
-
-        return participantManager.manageMeet(userId, meetId, applyResult);
+        return result;
     }
 
+    @Transactional
     public void checkMeetStatus() {
         List<Meet> expiredMeets = meetManager.findExpiredMeets();
         for (Meet meet : expiredMeets) {
             if (meet.getMeetStatus() != MeetStatus.END) {
                 List<MeetUser> findUsers = meetManager.findMeetUsersByMeetId(meet.getMeetId());
-                pushManager.notifyMeetEvaluation(meet, findUsers);
+                eventPublisher.publishEvent(new MeetEnded(meet, findUsers));
             }
         }
         meetManager.updateMeetsToEnded(expiredMeets);

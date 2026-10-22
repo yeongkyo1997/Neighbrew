@@ -59,9 +59,8 @@ public class Meet {
     @Setter
     private User host;
 
-    //현재 참여 인원
+    //현재 참여 인원 (addParticipant/removeParticipant로만 바꾼다)
     @Column(nullable = false, columnDefinition = "int default 1")
-    @Setter
     private Integer nowParticipants;
 
     //최대 참여 인원
@@ -112,7 +111,26 @@ public class Meet {
     @JsonIgnore
     private MeetStatus meetStatus;
 
+    // 참여 인원이 정원을 넘지 않도록 엔티티가 직접 확인한다. 동시 승인은 비관적 락(findByIdForUpdate)으로 막는다.
+    public void addParticipant() {
+        if (nowParticipants >= maxParticipants) {
+            throw new IllegalArgumentException("해당 모임에 참여 인원이 가득 찼습니다.");
+        }
+        nowParticipants++;
+    }
+
+    // 방장은 나갈 수 없으므로 1명 아래로는 줄지 않는다.
+    public void removeParticipant() {
+        if (nowParticipants <= 1) {
+            throw new IllegalStateException("모임 참여 인원이 올바르지 않습니다.");
+        }
+        nowParticipants--;
+    }
+
     public void update(Meet meet) {
+        if (meet.getMaxParticipants() < nowParticipants) {
+            throw new IllegalArgumentException("최대 인원은 현재 참여 인원보다 적을 수 없습니다.");
+        }
         this.meetName = meet.getMeetName();
         this.description = meet.getDescription();
         this.maxParticipants = meet.getMaxParticipants();
@@ -147,6 +165,8 @@ public class Meet {
 
     @PrePersist
     public void prePersist() {
+        // 생성 시점에는 방장 1명만 참여한다. (클라이언트가 보낸 값은 쓰지 않는다)
+        nowParticipants = 1;
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         meetStatus = MeetStatus.WAITING;
