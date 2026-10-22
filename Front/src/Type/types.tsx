@@ -25,12 +25,14 @@ export interface Message {
 export interface Chat {
   chatMessageId?: number;
   message?: string;
-  user?: User;
+  // 실시간 메시지는 보낸 사람의 userId·nickname만 담는다
+  user?: Pick<User, "userId" | "nickname"> & Partial<User>;
   createdAt?: string;
   chatRoom?: ChatRoom;
   userId?: number;
   userNickname?: string;
   chatRoomName?: string;
+  chatRoomId?: number;
 }
 
 export interface ChatRoom {
@@ -126,4 +128,96 @@ export interface AlarmLog {
   sender: User;
   createdAt: string;
   read: boolean;
+}
+
+// ===== API 응답 타입 (백엔드 DTO와 맞춘다) =====
+
+// Spring Data Page 응답에서 화면이 쓰는 필드
+export interface Page<T> {
+  content: T[];
+  last: boolean;
+  first: boolean;
+  empty: boolean;
+  number: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
+}
+
+export interface Sido {
+  sidoCode: number;
+  sidoName: string;
+}
+
+export interface Gugun {
+  gugunCode: number;
+  gugunName: string;
+  sidoCode: number;
+}
+
+// GET /api/follow/follower|following/{userId} (FollowResponseDto)
+export interface FollowRelation {
+  follower: User;
+  following: User;
+}
+
+// GET /api/meet/mymeet/{userId}: 참여 상태별 모임 목록
+export type MyMeets = Record<"HOST" | "GUEST" | "APPLY", Meeting[]>;
+
+// GET /api/dm/list/{userId} (ChatDmRoom)
+export interface ChatDmRoom {
+  chatDmRoomId: number;
+  chatDmRoomName?: string;
+  user1: User;
+  user2: User;
+  user1AttendTime?: string;
+  user2AttendTime?: string;
+  lastMessageTime?: string;
+}
+
+// GET /api/dm/message/{user1Id}/{user2Id}
+export interface DmMessages {
+  messages?: Chat[];
+  user1: User;
+  user2: User;
+}
+
+// 채팅 목록 화면은 모임 채팅방과 DM 방을 같은 상태에 번갈아 담는다
+export type ChatListItem = ChatRoom & Partial<ChatDmRoom>;
+
+// STOMP로 받는 모임 채팅 메시지
+export interface MeetChatMessage {
+  message: string;
+  userId: number;
+  userNickname: string;
+}
+
+// STOMP로 받는 DM 메시지
+export interface DmChatMessage {
+  message: string;
+  userId: number;
+  user: { userId: number; nickname: string };
+}
+
+// POST /api/user/refresh-token
+export interface TokenResponse {
+  accessToken: string;
+  refreshToken?: string;
+}
+
+// POST /api/auth/{provider} (LoginResponse)
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  userId: number;
+}
+
+// GET /api/auth/login/{provider}: 소셜 로그인 페이지 주소
+export interface LoginRedirect {
+  URL: string;
+}
+
+// POST /api/push/sse-ticket
+export interface SseTicket {
+  ticket: string;
 }

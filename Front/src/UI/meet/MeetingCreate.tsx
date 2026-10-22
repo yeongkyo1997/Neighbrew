@@ -11,7 +11,7 @@ import FooterBigBtn from "../footer/FooterBigBtn";
 import ImageInput from "../components/ImageInput";
 import MeetingDrinkSearch from "./MeetingDrinkSearch";
 import { callApi } from "../../utils/api";
-import { Drink } from "../../Type/types";
+import { Drink, Sido, Gugun, Meeting } from "../../Type/types";
 import { initialMeetDetail, initialDrink, initialSido, initialGugun } from "../common";
 import { WhiteModal, DateInput, TimeInput, InputText } from "../../style/common";
 import { localDate, localTime, formateDate, formateTime } from "./DateTimeCommon";
@@ -29,6 +29,7 @@ import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
 import imageCompression from "browser-image-compression";
 import LoadingDot from "../etc/LoadingDot";
+import { AxiosError } from "axios";
 
 const Title = styled.div`
   font-family: "JejuGothic";
@@ -112,12 +113,12 @@ const TooltipBtn = styled.div`
 `;
 
 const MeetingCreate = () => {
-  const titleRef = useRef(null);
-  const sidoRef = useRef(null);
-  const dateRef = useRef(null);
-  const maxPRef = useRef(null);
-  const liverRef = useRef(null);
-  const minAgeRef = useRef(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const sidoRef = useRef<HTMLSelectElement>(null);
+  const dateRef = useRef<HTMLInputElement>(null);
+  const maxPRef = useRef<HTMLInputElement>(null);
+  const liverRef = useRef<HTMLInputElement>(null);
+  const minAgeRef = useRef<HTMLInputElement>(null);
 
   const navigate = useNavigate();
   //모임 생성 후 모임 상세로 이동
@@ -148,7 +149,7 @@ const MeetingCreate = () => {
   const [maxAge, setMaxAge] = useState(0); //최대나이
   const [meetDesc, setMeetDesc] = useState(""); //모임 소개
   const [imgSrc, setImgSrc] = useState<string>(""); //이미지 경로
-  const [file, setFile] = useState(null); //파일 타입
+  const [file, setFile] = useState<File | null>(null); //파일 타입
 
   //생성 버튼 클릭했는지 - 버튼 한번이라도 클릭 시에만 빨간 가이드 글씨 오픈
   const [btnClicked, setBtnClicked] = useState(false);
@@ -176,7 +177,7 @@ const MeetingCreate = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    void callApi("get", "api/sido").then(res => {
+    void callApi<Sido[]>("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -184,7 +185,7 @@ const MeetingCreate = () => {
   //선택한 시도에 따라 구군 fetch
   useEffect(() => {
     setGugun(initialGugun); //초기화
-    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi<Gugun[]>("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);
@@ -316,12 +317,12 @@ const MeetingCreate = () => {
   };
 
   const createApi = (f: FormData) => {
-    const promise = callApi("post", `/api/meet/create`, f);
+    const promise = callApi<Pick<Meeting, "meetId">>("post", `/api/meet/create`, f);
     promise
       .then(res => {
         GoMeetDetailHandler(res.data.meetId); //모임 상세 페이지로 이동
       })
-      .catch(error => {
+      .catch((error: AxiosError) => {
         const data = error?.response?.data;
         setErrorMsg(typeof data === "string" ? data : "요청 처리 중 오류가 발생했습니다.");
         setLoadingModalOn(false);

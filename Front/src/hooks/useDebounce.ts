@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
 //값 입력 후 delay동안 변경이 없을 때만 debouncedValue를 업데이트하고, return함
-const useDebounce = (value, delay) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+const useDebounce = <T,>(value: T, delay: number): T => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
     //delay 이후에 debouncedValue를 얻음

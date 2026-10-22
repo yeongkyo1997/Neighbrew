@@ -100,7 +100,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
   };
 
   useEffect(() => {
-    void callApi("GET", `api/like/${review.drinkReviewId}`, {
+    void callApi<boolean>("GET", `api/like/${review.drinkReviewId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -110,7 +110,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
   }, [token, review.drinkReviewId]);
 
   useEffect(() => {
-    callApi("GET", `api/drinkreview/review/${review.drinkReviewId}`)
+    callApi<Review>("GET", `api/drinkreview/review/${review.drinkReviewId}`)
       .then(res => {
         setLikeCount(res.data.likeCount);
       })

@@ -34,7 +34,7 @@ const Logo = styled.div`
 `;
 
 type toDrinkpSearchProps = {
-  toDrinkSearch: any;
+  toDrinkSearch: () => void;
 };
 
 const Navbar = (props: toDrinkpSearchProps) => {

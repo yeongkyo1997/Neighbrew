@@ -5,7 +5,7 @@ import SearchBox from "../components/SearchBox";
 import DrinkCategory from "../drinkCategory/DrinkCategory";
 import OneLineListItem from "../components/OneLineListItem";
 import ListInfoItem from "../components/ListInfoItem";
-import { Drink } from "../../Type/types";
+import { Drink, Page } from "../../Type/types";
 import { getTagName, encodeUrl, initialDrink } from "../common";
 import { callApi } from "../../utils/api";
 import EmptyMsg from "../components/EmptyMsg";
@@ -118,7 +118,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
 
   //검색 결과 창 애니메이션 용
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const parent = useRef(null);
+  const parent = useRef<HTMLDivElement>(null);
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
@@ -162,7 +162,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
   //inputText로 술장 검색 api
   useEffect(() => {
     if (page === 0) {
-      const promise = callApi(
+      const promise = callApi<Page<Drink>>(
         "get",
         `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
       );
@@ -178,7 +178,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
 
   //페이지가 변하면 기존 데이터에 이어서 로드
   useEffect(() => {
-    const promise = callApi(
+    const promise = callApi<Page<Drink>>(
       "get",
       `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
     );

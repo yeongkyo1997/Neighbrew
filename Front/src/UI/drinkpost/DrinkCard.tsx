@@ -64,7 +64,7 @@ const NameCard = styled.div`
 
 const DrinkCard = ({ drink }: { drink: Drink }) => {
   const navigate = useNavigate();
-  const toggleEllipsis = (str, limit) => {
+  const toggleEllipsis = (str: string, limit: number) => {
     return {
       string: str.slice(0, limit),
     };

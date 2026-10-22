@@ -4,7 +4,7 @@ import { arrowLeftIcon } from "../../assets/AllIcon";
 import { useState, useEffect, useRef } from "react";
 import Footer from "../footer/Footer";
 import autoAnimate from "@formkit/auto-animate";
-import { User as userType } from "../../Type/types";
+import { User as userType, FollowRelation } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import defaultImage from "../../assets/defaultImg.png";
 
@@ -15,14 +15,14 @@ const Follower = () => {
   };
   const ArrowLeftIcon = arrowLeftIcon("var(--c-black)");
   const [users, setUsers] = useState<userType[]>([]);
-  const parent = useRef(null);
+  const parent = useRef<HTMLDivElement>(null);
   const { userid } = useParams();
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
   const getFollower = () => {
-    void callApi("get", `api/follow/follower/${userid}`).then(res => {
+    void callApi<FollowRelation[]>("get", `api/follow/follower/${userid}`).then(res => {
       res.data.map(tem => {
         setUsers(users => [...users, tem.follower]);
       });

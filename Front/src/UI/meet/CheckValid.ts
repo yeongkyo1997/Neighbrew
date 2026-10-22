@@ -2,7 +2,7 @@ import { Drink } from "../../Type/types";
 //모임 생성, 수정 시 값 유효성 검사 함수
 
 //날짜와 시간 입력 시 현재 날짜, 시간보다 이전인지를 반환(UTC0)
-const isDateTimeBeforeNow = (date, time) => {
+const isDateTimeBeforeNow = (date: string, time: string) => {
   try {
     const targetDateTime = new Date(`${date}T${time}:00`);
     const currentDateTime = new Date();

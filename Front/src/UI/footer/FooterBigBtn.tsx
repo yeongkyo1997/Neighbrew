@@ -20,7 +20,7 @@ type BigBtnProps = {
   content: string;
   color: string; //버튼의 색
   bgColor?: string; //배경의 색
-  reqFunc: any; //버튼 클릭으로 실행할 함수(ex.reqFunc={() => GotoMeetManageHandler(1)})
+  reqFunc: () => void; //버튼 클릭으로 실행할 함수(ex.reqFunc={() => GotoMeetManageHandler(1)})
 };
 
 /**

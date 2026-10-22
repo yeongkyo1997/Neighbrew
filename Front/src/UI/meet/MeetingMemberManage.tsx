@@ -16,6 +16,7 @@ import { callApi } from "../../utils/api";
 import { MeetDetail, User } from "../../Type/types";
 import { initialMeetDetail, initialUser } from "../common";
 import { WhiteModal } from "../../style/common";
+import { AxiosError } from "axios";
 
 const SubTitle = styled.div`
   font-size: 20px;
@@ -72,7 +73,7 @@ const MeetingMemberManage = () => {
   const [errorModalMsg, setErrorModalMsg] = useState("");
 
   const fetchMeetData = () => {
-    const promise = callApi("get", `api/meet/${meetId}`);
+    const promise = callApi<MeetDetail>("get", `api/meet/${meetId}`);
     void promise.then((res) => {
       setMeetData(res.data);
     });
@@ -111,7 +112,7 @@ const MeetingMemberManage = () => {
       .then(() => {
         fetchMeetData();
       })
-      .catch((e) => {
+      .catch((e: AxiosError<string>) => {
         setErrorModalMsg(e.response.data);
         setErrorModalOn(true);
       });

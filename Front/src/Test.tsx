@@ -9,7 +9,7 @@ const Test = () => {
       .catch(err => console.log(err));
   };
   const [, setMessages] = useState("");
-  const inputHandler = e => {
+  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setMessages(e.target.value);
   };

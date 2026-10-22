@@ -7,7 +7,7 @@ import defaultImg from "../../assets/defaultImg.png";
 import exitImg from "../../assets/exit.png";
 import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
-import { Chat, User } from "../../Type/types";
+import { Chat, ChatRoom as ChatRoomInfo, MeetChatMessage, User } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import sendImage from "../../assets/send.png";
 import TextareaAutosize from "react-textarea-autosize";
@@ -197,7 +197,7 @@ const ChatRoom = () => {
   const client = useRef<CompatClient>();
   const [messages, setMessages] = useState<Chat[]>([]);
   const [ismodal, setIsmodal] = useState(false);
-  const [chatRoomName, setChatRoomName] = useState();
+  const [chatRoomName, setChatRoomName] = useState<string>();
   const userId = parseInt(localStorage.getItem("myId"));
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
@@ -215,8 +215,8 @@ const ChatRoom = () => {
     client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {
       // 웹소켓 이벤트 핸들러 설정
       client.current.subscribe(`/pub/room/${id}`, (res) => {
-        const receivedMessage = JSON.parse(res.body);
-        setMessages((prevMessages: any) => [
+        const receivedMessage = JSON.parse(res.body) as MeetChatMessage;
+        setMessages(prevMessages => [
           ...prevMessages,
           {
             message: receivedMessage.message,
@@ -256,7 +256,7 @@ const ChatRoom = () => {
 
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
-    callApi(
+    callApi<Chat[]>(
       "GET",
       `api/chatMessage/${id}/${localStorage.getItem("myId")}/messages`
     )
@@ -266,13 +266,13 @@ const ChatRoom = () => {
         return res;
       })
       .then(() => {
-        void callApi("GET", `api/chatroom/${id}/detail`).then((res) => {
+        void callApi<ChatRoomInfo>("GET", `api/chatroom/${id}/detail`).then((res) => {
           setChatRoomName(res.data.chatRoomName);
         });
       })
       .catch(() => undefined);
 
-    callApi("GET", `/api/chatroom/${id}/${localStorage.getItem("myId")}/users`)
+    callApi<User[]>("GET", `/api/chatroom/${id}/${localStorage.getItem("myId")}/users`)
       .then((res) => {
         setUsers(res.data);
       })

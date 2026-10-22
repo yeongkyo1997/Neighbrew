@@ -24,6 +24,7 @@ import { WhiteModal, ModalInner } from "../../style/common";
 import { formateDate, formateTime } from "./DateTimeCommon";
 import { deleteIcon, editIcon } from "./../../assets/AllIcon";
 import YesOrNoModal from "../components/YesOrNoModal";
+import { AxiosError } from "axios";
 
 const MeetThumbnail = styled.div<{ $bgImgSrc: string }>`
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -260,7 +261,7 @@ const MeetingDetail = () => {
 
   //api호출
   const fetchMeetData = () => {
-    const promise = callApi("get", `api/meet/${meetId}`);
+    const promise = callApi<MeetDetail>("get", `api/meet/${meetId}`);
     promise
       .then(res => {
         setMeetDetailData(res.data); //받아온 데이터로 meetDetailData 세팅
@@ -283,7 +284,7 @@ const MeetingDetail = () => {
   useEffect(() => {
     if (userId === 0) return;
     //생년월일은 본인 정보(myinfo)에만 포함된다
-    const promise = callApi("get", "api/user/myinfo");
+    const promise = callApi<User>("get", "api/user/myinfo");
     void promise.then(res => {
       setUserData(res.data);
     });
@@ -365,7 +366,7 @@ const MeetingDetail = () => {
         setErrMsg(`모임에 참여 신청하였습니다!\n신청 취소는 '승인 대기중' 버튼을 클릭해주세요.`);
         setSimpleModalOn(true);
       })
-      .catch(err => {
+      .catch((err: AxiosError<string>) => {
         setErrMsg(err.response.data);
         setSimpleModalOn(true);
       });
@@ -404,7 +405,7 @@ const MeetingDetail = () => {
       .then(() => {
         GoBackHandler(); //모임 삭제 후 뒤로가기
       })
-      .catch(e => {
+      .catch((e: AxiosError<string>) => {
         setErrMsg(e.response.data);
         setSimpleModalOn(true);
       });
@@ -421,7 +422,7 @@ const MeetingDetail = () => {
       .then(() => {
         fetchMeetData();
       })
-      .catch(e => {
+      .catch((e: AxiosError<string>) => {
         setErrMsg(e.response.data);
         setSimpleModalOn(true);
       });
@@ -437,7 +438,7 @@ const MeetingDetail = () => {
     GotoChatHandler();
   };
 
-  const sendMessageHandler = roomId => {
+  const sendMessageHandler = (roomId: number) => {
     client.current.send(`/sub/join/${roomId}`, {}, JSON.stringify({ userId }));
   };
 

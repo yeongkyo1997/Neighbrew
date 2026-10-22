@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import { useEffect, useState } from "react";
 import RatingDetail from "./RatingDetail";
 import UserInfoItem from "../components/UserInfoItem";
+import { User } from "../../Type/types";
 
 // 라디오 버튼 컨테이너
 const RadioContainer = styled.div`
@@ -28,7 +29,13 @@ const RadioButton = styled.button<{ selected: boolean }>`
   color: ${({ selected }) => (selected ? "white" : "black")};
 `;
 
-const RatingMember = ({ _user, onSelectButton }) => {
+const RatingMember = ({
+  _user,
+  onSelectButton,
+}: {
+  _user: User;
+  onSelectButton: (buttonNumber: number, desc: string) => void;
+}) => {
   const [selectedButton, setSelectButton] = useState(0);
   const [selectedDesc, setSelectedDesc] = useState("");
 

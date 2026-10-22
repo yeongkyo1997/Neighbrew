@@ -106,12 +106,12 @@ type ListInfoItemProps = {
   title: string; //제목
   imgSrc: string; //이미지 경로
   tag?: string; //주종 태그
-  content: any; //내용, 컴포넌트를 넣어도 됨
-  numberInfo?: any; //인원정보, 컴포넌트를 넣어도 됨
+  content: React.ReactNode; //내용, 컴포넌트를 넣어도 됨
+  numberInfo?: React.ReactNode; //인원정보, 컴포넌트를 넣어도 됨
   isWaiting?: boolean; //신청대기중인 모임인지(아니라면 false)
   outLine?: boolean; //외곽선을 그릴 것인지 아닌지
   isDrink?: boolean; //술정보를 담을 건지 아닌지
-  routingFunc: any; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
+  routingFunc: () => void; //라우팅 함수(ex.routingFunc={() => GotoMeetDetailHandler(1)})
 };
 
 /**

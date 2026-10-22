@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { Drink, User } from "../../Type/types";
+import { Drink, User, Review } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import ImageInput from "../components/ImageInput";
 import FooterBigBtn from "../footer/FooterBigBtn";
@@ -53,17 +53,17 @@ const DrinkpostReviewCreate = () => {
     setReview(e.target.value);
   };
   const myId = localStorage.getItem("myId");
-  const [imgFile, setImgFile] = useState(null);
+  const [imgFile, setImgFile] = useState<File | null>(null);
   const [loadingModalOn, setLoadingModalOn] = useState(false); //로딩중일 때 모달(이미지 압축중일때)
   const [isClick, setIsClick] = useState(false);
 
   useEffect(() => {
-    void callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi<Drink>("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
   }, []);
   useEffect(() => {
-    void callApi("get", `api/user/myinfo`).then(res => {
+    void callApi<User>("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);
@@ -117,7 +117,7 @@ const DrinkpostReviewCreate = () => {
 
   const createApi = (f: FormData) => {
     axios
-      .post(`/api/drinkreview`, f, {
+      .post<Review>(`/api/drinkreview`, f, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
           UserID: myId,

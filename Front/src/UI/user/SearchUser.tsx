@@ -16,13 +16,13 @@ const SearchUser = () => {
   };
   const ArrowLeftIcon = arrowLeftIcon("var(--c-black)");
   const [users, setUsers] = useState<userType[]>([]);
-  const parent = useRef(null);
+  const parent = useRef<HTMLDivElement>(null);
   useEffect(() => {
     parent.current && autoAnimate(parent.current);
   }, [parent]);
 
   const search = (name: string) => {
-    void callApi("get", `api/user/search/${name}`).then(res => {
+    void callApi<userType[]>("get", `api/user/search/${name}`).then(res => {
       setUsers(res.data);
     });
   };

@@ -7,7 +7,7 @@ import defaultImg from "../../assets/defaultImg.png";
 import exitImg from "../../assets/exit.png";
 import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
-import { Chat, User } from "../../Type/types";
+import { Chat, User, DmMessages, DmChatMessage } from "../../Type/types";
 import { callApi } from "../../utils/api";
 import TextareaAutosize from "react-textarea-autosize";
 import sendImage from "../../assets/send.png";
@@ -223,7 +223,7 @@ const DirectChat = () => {
   const client = useRef<CompatClient>();
   const [messages, setMessages] = useState<Chat[]>([]);
   const [ismodal, setIsmodal] = useState(false);
-  const [chatRoomName, setChatRoomName] = useState();
+  const [chatRoomName, setChatRoomName] = useState<string>();
   const userId = parseInt(localStorage.getItem("myId"));
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
@@ -247,8 +247,8 @@ const DirectChat = () => {
     client.current.connect({ Authorization: `Bearer ${localStorage.getItem("token")}` }, () => {
       // 웹소켓 이벤트 핸들러 설정
       client.current.subscribe(`/pub/dm/${user1}/${user2}`, res => {
-        const receivedMessage = JSON.parse(res.body);
-        setMessages((prevMessages: any) => [
+        const receivedMessage = JSON.parse(res.body) as DmChatMessage;
+        setMessages(prevMessages => [
           ...prevMessages,
           {
             message: receivedMessage.message,
@@ -291,11 +291,11 @@ const DirectChat = () => {
       user1 = receiverId;
       user2 = senderId;
     }
-    callApi("get", `/api/dm/message/${user1}/${user2}`)
+    callApi<DmMessages>("get", `/api/dm/message/${user1}/${user2}`)
       .then(res => {
         setUsers([res.data.user1, res.data.user2]);
         setChatRoomName(
-          res.data.user1.userId == localStorage.getItem("myId")
+          String(res.data.user1.userId) === localStorage.getItem("myId")
             ? res.data.user2.nickname
             : res.data.user1.nickname
         );

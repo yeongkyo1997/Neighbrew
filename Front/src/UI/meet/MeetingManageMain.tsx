@@ -14,7 +14,8 @@ import Footer from "../footer/Footer";
 import { callApi } from "../../utils/api";
 import { initialMeet } from "../common";
 import { WhiteModal } from "../../style/common";
-import { Meeting } from "../../Type/types";
+import { Meeting, MeetDetail } from "../../Type/types";
+import { AxiosError } from "axios";
 
 const BigBtn = styled.div`
   border-radius: 30px;
@@ -72,7 +73,7 @@ const MeetingManageMain = () => {
 
   //api 호출, 모임 이름 세팅
   useEffect(() => {
-    void callApi("get", `api/meet/${meetId}`).then((res) =>
+    void callApi<MeetDetail>("get", `api/meet/${meetId}`).then((res) =>
       setMeetData(res.data.meet)
     );
   }, [meetId]);
@@ -86,7 +87,7 @@ const MeetingManageMain = () => {
       .then(() => {
         GoMeetMainHandler();
       })
-      .catch((e) => {
+      .catch((e: AxiosError<string>) => {
         setErrMsg(e.response.data);
         setErrorModalOn(true);
       });

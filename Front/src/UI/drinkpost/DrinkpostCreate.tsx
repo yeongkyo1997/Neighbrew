@@ -12,6 +12,7 @@ import NavbarSimple from "../navbar/NavbarSimple";
 import FooterBigBtn from "../footer/FooterBigBtn";
 import Modal from "react-modal";
 import { WhiteModal } from "../../style/common";
+import { Drink } from "../../Type/types";
 
 // 여기부터 지정한 부분까지 style 부분입니다.
 // GuideText는 h3 tag가 상하 margin을 너무 많이 잡아서 새로 만든 겁니다.
@@ -167,7 +168,7 @@ const DrinkpostCreate = () => {
     setDrinkDescription(e.target.value);
   };
 
-  const [imgFile, setImgFile] = useState(null);
+  const [imgFile, setImgFile] = useState<File | null>(null);
 
   //이미지 압축에 사용하는 옵션
 
@@ -207,7 +208,7 @@ const DrinkpostCreate = () => {
   };
 
   const createApi = (f: FormData) => {
-    callApi("post", "api/drink", f)
+    callApi<Drink>("post", "api/drink", f)
       .then(res => {
         navigate(`/drinkpost/${res.data.drinkId}`, { replace: true });
       })
