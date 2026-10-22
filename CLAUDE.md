@@ -17,8 +17,8 @@ NeighBrew는 술 취향이 맞는 사람끼리 모임을 만들고 주종 정보
 ```bash
 ./gradlew build -x test                                  # jar 빌드 (Dockerfile은 build/libs/backend-0.0.1-SNAPSHOT.jar를 복사)
 ./gradlew bootRun
-# 단위 테스트 (Spring 컨텍스트 없이 JUnit5 + Mockito)
-./gradlew test --tests 'com.ssafy.backend.common.*' --tests 'com.ssafy.backend.domain.*' --tests 'com.ssafy.backend.authentication.*'
+# 단위 테스트 (Spring 컨텍스트 없이 JUnit5 + Mockito). -PunitOnly는 application.properties가 필요한 contextLoads를 뺀다
+./gradlew test -PunitOnly
 ./gradlew test --tests 'com.ssafy.backend.SomeTest.method'   # 단일 테스트
 ```
 
@@ -37,7 +37,12 @@ npm run lint      # eslint, --max-warnings 0
 ```
 
 - 테스트 스크립트는 없습니다.
+- `npm run lint`는 기존 오류가 남아 있어 현재 실패합니다. CI에서는 결과만 보여주고 막지 않습니다.
 - Vite dev 서버는 `/api`, `/ws` 요청을 `VITE_API_BASE_URL`(`.env.*`, git에 없음)로 프록시합니다.
+
+### CI
+
+`.github/workflows/ci.yml`이 PR과 `main` push마다 백엔드 `./gradlew test -PunitOnly`와 jar 빌드, 프론트 `npm run build`(tsc + vite)를 실행합니다. 프론트 lint는 실패해도 막지 않습니다.
 
 ### 전체 스택
 

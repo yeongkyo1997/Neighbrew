@@ -51,4 +51,8 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    // -PunitOnly: application.properties(DB, S3 등 설정) 없이 도는 단위 테스트만 실행한다. (CI에서 사용)
+    if (project.hasProperty('unitOnly')) {
+        exclude '**/BackendApplicationTests*'
+    }
 }
