@@ -53,7 +53,7 @@ const Chat = (props: {
         setUsers(res.data);
       })
       .catch(() => undefined);
-  }, []);
+  }, [props.chatRoomId]);
   return (
     <ChatDiv onClick={() => props.chatRoomDetail(props.chatRoomId)}>
       <ImgDiv>

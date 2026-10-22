@@ -11,6 +11,7 @@ import { callApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import EmptyMsg from "../components/EmptyMsg.tsx";
 import { ChatListItem, ChatRoom, ChatDmRoom } from "../../Type/types";
+import useEffectEvent from "../../hooks/useEffectEvent";
 
 const ChatListDiv = styled.div`
   display: flex;
@@ -39,16 +40,16 @@ const ChatList = () => {
   };
 
   const userId = localStorage.getItem("myId");
-  const classListHandler = () => {
+  const classListHandler = useEffectEvent(() => {
     void callApi<ChatRoom[]>("GET", `api/chatroom/${userId}/getChatRoom`).then(res => {
       setChatList(res.data);
     });
-  };
-  const dmListHandler = () => {
+  });
+  const dmListHandler = useEffectEvent(() => {
     void callApi<ChatDmRoom[]>("GET", `api/dm/list/${userId}`).then(res => {
       setChatList(res.data);
     });
-  };
+  });
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -61,7 +62,7 @@ const ChatList = () => {
     } else {
       dmListHandler();
     }
-  }, [chooseChat]);
+  }, [chooseChat, classListHandler, dmListHandler]);
   return (
     <>
       <ChatListDiv>

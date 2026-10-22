@@ -6,6 +6,7 @@ import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
 import { Chat, User, DmMessages, DmChatMessage } from "../../../Type/types";
 import { callApi } from "../../../utils/api";
+import useEffectEvent from "../../../hooks/useEffectEvent";
 
 const useDirectChat = () => {
   const { senderId, receiverId } = useParams();
@@ -27,7 +28,7 @@ const useDirectChat = () => {
     user2 = senderId;
   }
 
-  const connectToWebSocket = () => {
+  const connectToWebSocket = useEffectEvent(() => {
     client.current = Stomp.over(() => {
       const ws = new SockJS("/ws");
       return ws;
@@ -51,14 +52,14 @@ const useDirectChat = () => {
         ]);
       });
     });
-  };
+  });
 
   useEffect(() => {
     connectToWebSocket();
     return () => {
       client.current?.disconnect();
     };
-  }, [user1, user2]);
+  }, [user1, user2, connectToWebSocket]);
   // 엔터 누르면 메세지 전송
   const sendMessageHandler = () => {
     client.current.send(
@@ -76,10 +77,6 @@ const useDirectChat = () => {
 
   // 채팅방 입장시 채팅 메시지 가져오기
   useEffect(() => {
-    if (parseInt(user1) > parseInt(user2)) {
-      user1 = receiverId;
-      user2 = senderId;
-    }
     callApi<DmMessages>("get", `/api/dm/message/${user1}/${user2}`)
       .then(res => {
         setUsers([res.data.user1, res.data.user2]);
@@ -91,7 +88,7 @@ const useDirectChat = () => {
         setMessages(res.data.messages ?? []);
       })
       .catch(() => undefined);
-  }, []);
+  }, [user1, user2]);
 
   // 방 입장 또는 메세지 보내면 스크롤 내려주는 로직
   useEffect(() => {
