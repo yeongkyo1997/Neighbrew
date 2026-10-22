@@ -10,21 +10,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.ssafy.backend.authentication.domain.oauth.OAuthTokens;
+import com.ssafy.backend.authentication.infra.AbstractOAuthApiClient;
 
 @Component
-@Slf4j
-@RequiredArgsConstructor
-public class KakaoApiClient implements OAuthApiClient {
+public class KakaoApiClient extends AbstractOAuthApiClient {
     private static final String GRANT_TYPE = "authorization_code";
-    @Qualifier("restTemplate")
-    private final RestTemplate restTemplate;
     @Value("${oauth.kakao.url.auth}")
     private String authUrl;
     @Value("${oauth.kakao.url.api}")
@@ -34,44 +28,43 @@ public class KakaoApiClient implements OAuthApiClient {
     @Value("${oauth.kakao.url.redirect}")
     private String redirectUri;
 
+    public KakaoApiClient(@Qualifier("restTemplate") RestTemplate restTemplate) {
+        super(restTemplate);
+    }
+
     @Override
     public OAuthProvider oAuthProvider() {
         return OAuthProvider.KAKAO;
     }
 
     @Override
-    public String requestAccessToken(OAuthLoginParams params) {
-        String url = authUrl + "/oauth/token";
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> body = params.makeBody();
-        body.add("grant_type", GRANT_TYPE);
-        body.add("client_id", clientId);
-
-        HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-
-        KakaoTokens response = restTemplate.postForObject(url, request, KakaoTokens.class);
-
-        assert response != null;
-
-        return response.getAccessToken();
+    protected String tokenUrl() {
+        return authUrl + "/oauth/token";
     }
 
     @Override
-    public OAuthInfoResponse requestOauthInfo(String accessToken) {
-        String url = apiUrl + "/v2/user/me";
-        HttpHeaders httpHeaders = new HttpHeaders();
+    protected MultiValueMap<String, String> tokenRequestBody(OAuthLoginParams params) {
+        MultiValueMap<String, String> body = params.makeBody();
+        body.add("grant_type", GRANT_TYPE);
+        body.add("client_id", clientId);
+        return body;
+    }
+
+    @Override
+    protected Class<? extends OAuthTokens> tokenResponseType() {
+        return KakaoTokens.class;
+    }
+
+    @Override
+    protected OAuthInfoResponse fetchUserInfo(String accessToken) {
+        HttpHeaders httpHeaders = bearerHeaders(accessToken);
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        httpHeaders.set("Authorization", "Bearer " + accessToken);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("property_keys", "[\"kakao_account.email\", \"kakao_account.profile\"]");
 
-        HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-
-        return restTemplate.postForObject(url, request, KakaoInfoResponse.class);
+        return restTemplate.postForObject(apiUrl + "/v2/user/me", new HttpEntity<>(body, httpHeaders),
+                                          KakaoInfoResponse.class);
     }
 
     @Override

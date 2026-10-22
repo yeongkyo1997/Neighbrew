@@ -22,14 +22,15 @@ public class KakaoInfoResponse implements OAuthInfoResponse {
         return id == null ? null : String.valueOf(id);
     }
 
+    // 이메일·프로필 제공에 동의하지 않으면 kakao_account나 profile이 빠져서 온다
     @Override
     public String getEmail() {
-        return kakaoAccount.email;
+        return kakaoAccount == null ? null : kakaoAccount.email;
     }
 
     @Override
     public String getName() {
-        return kakaoAccount.profile.nickname;
+        return kakaoAccount == null || kakaoAccount.profile == null ? null : kakaoAccount.profile.nickname;
     }
 
     @Override

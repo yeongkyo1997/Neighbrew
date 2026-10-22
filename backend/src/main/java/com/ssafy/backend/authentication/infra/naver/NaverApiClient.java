@@ -12,21 +12,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.ssafy.backend.authentication.domain.oauth.OAuthApiClient;
 import com.ssafy.backend.authentication.domain.oauth.OAuthInfoResponse;
 import com.ssafy.backend.authentication.domain.oauth.OAuthLoginParams;
 import com.ssafy.backend.authentication.domain.oauth.OAuthProvider;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.ssafy.backend.authentication.domain.oauth.OAuthTokens;
+import com.ssafy.backend.authentication.infra.AbstractOAuthApiClient;
 
 @Component
-@Slf4j
-@RequiredArgsConstructor
-public class NaverApiClient implements OAuthApiClient {
+public class NaverApiClient extends AbstractOAuthApiClient {
     private static final String GRANT_TYPE = "authorization_code";
-    @Qualifier("restTemplate")
-    private final RestTemplate restTemplate;
     @Value("${oauth.naver.url.auth}")
     private String authUrl;
     @Value("${oauth.naver.url.api}")
@@ -39,45 +33,42 @@ public class NaverApiClient implements OAuthApiClient {
     @Value("${oauth.naver.url.redirect:http://localhost:5173/naver/callback}")
     private String redirectUri;
 
+    public NaverApiClient(@Qualifier("restTemplate") RestTemplate restTemplate) {
+        super(restTemplate);
+    }
+
     @Override
     public OAuthProvider oAuthProvider() {
         return OAuthProvider.NAVER;
     }
 
     @Override
-    public String requestAccessToken(OAuthLoginParams params) {
-        String url = authUrl + "/oauth2.0/token";
+    protected String tokenUrl() {
+        return authUrl + "/oauth2.0/token";
+    }
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
+    @Override
+    protected MultiValueMap<String, String> tokenRequestBody(OAuthLoginParams params) {
         MultiValueMap<String, String> body = params.makeBody();
         body.add("grant_type", GRANT_TYPE);
         body.add("client_id", clientId);
         body.add("client_secret", clientSecret);
-
-        HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-
-        NaverTokens response = restTemplate.postForObject(url, request, NaverTokens.class);
-
-        assert response != null;
-
-        return response.getAccessToken();
+        return body;
     }
 
     @Override
-    public OAuthInfoResponse requestOauthInfo(String accessToken) {
-        String url = apiUrl + "/v1/nid/me";
+    protected Class<? extends OAuthTokens> tokenResponseType() {
+        return NaverTokens.class;
+    }
 
-        HttpHeaders httpHeaders = new HttpHeaders();
+    @Override
+    protected OAuthInfoResponse fetchUserInfo(String accessToken) {
+        HttpHeaders httpHeaders = bearerHeaders(accessToken);
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        httpHeaders.set("Authorization", "Bearer " + accessToken);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-
-        HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-
-        return restTemplate.postForObject(url, request, NaverInfoResponse.class);
+        return restTemplate.postForObject(apiUrl + "/v1/nid/me",
+                                          new HttpEntity<>(new LinkedMultiValueMap<String, String>(), httpHeaders),
+                                          NaverInfoResponse.class);
     }
 
     @Override
