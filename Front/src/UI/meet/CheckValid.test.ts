@@ -62,10 +62,15 @@ describe("ageCheck", () => {
     expect(ageCheck(20, 201)).toBe(false);
   });
 
-  // 현재 동작 기록: 나이 제한이 없는 값(0 또는 서버의 null → NaN)도 실패로 본다
-  it("최소 나이가 0이거나 NaN이면 실패한다", () => {
-    expect(ageCheck(0, 0)).toBe(false);
-    expect(ageCheck(NaN, NaN)).toBe(false);
+  // 나이 제한이 없는 모임(0, 빈 칸 → NaN, 서버의 null)도 수정·생성할 수 있어야 한다
+  it("나이를 입력하지 않으면 제한 없음으로 통과한다", () => {
+    expect(ageCheck(0, 0)).toBe(true);
+    expect(ageCheck(NaN, NaN)).toBe(true);
+    expect(ageCheck(null, null)).toBe(true);
+  });
+  it("최소 나이 없이 최대 나이만 입력해도 200 이하면 통과한다", () => {
+    expect(ageCheck(NaN, 40)).toBe(true);
+    expect(ageCheck(NaN, 201)).toBe(false);
   });
 });
 

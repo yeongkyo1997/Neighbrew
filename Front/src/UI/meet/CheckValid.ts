@@ -42,9 +42,10 @@ export const liverLimitCheck = (liverLimit: number) => {
   return !(liverLimit > 100);
 };
 
-//나이: 최소나이는 20세 이상/나이는 200이하
+//나이: 입력하지 않으면(0, 빈 칸, 서버의 null) 제한 없음. 최소나이를 입력하면 20세 이상, 최대나이는 200 이하
 export const ageCheck = (minAge: number, maxAge: number) => {
-  return !(Number.isNaN(minAge) || minAge < 20 || maxAge > 200);
+  const hasMinAge = minAge != null && minAge !== 0 && !Number.isNaN(minAge);
+  return !((hasMinAge && minAge < 20) || maxAge > 200);
 };
 
 //이미지: 이미지타입/이미지크기(5MB)
