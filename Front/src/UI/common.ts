@@ -88,5 +88,6 @@ export const getTagName = (tagId: number) => {
     { tagId: 6, tagName: "수제맥주" },
     { tagId: 7, tagName: "소주/맥주" },
   ];
-  return tag[tagId].tagName;
+  //목록에 없는 태그는 이름 없이 둔다 (화면이 예외로 깨지지 않게)
+  return tag[tagId]?.tagName ?? "";
 };

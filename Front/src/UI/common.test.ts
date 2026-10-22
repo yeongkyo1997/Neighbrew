@@ -15,9 +15,9 @@ describe("getTagName", () => {
     expect(getTagName(tagId)).toBe(name);
   });
 
-  // 현재 동작 기록: 목록에 없는 tagId는 이름을 돌려주지 않고 예외가 난다
-  it("목록에 없는 tagId는 예외가 난다", () => {
-    expect(() => getTagName(8)).toThrow(TypeError);
+  it("목록에 없는 tagId는 예외 없이 빈 문자열을 돌려준다", () => {
+    expect(getTagName(8)).toBe("");
+    expect(getTagName(-1)).toBe("");
   });
 });
 
