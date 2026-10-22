@@ -30,6 +30,7 @@ import com.ssafy.backend.domain.meet.repository.MeetRepository;
 import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
 import com.ssafy.backend.domain.user.entity.User;
 import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.domain.user.service.UserReader;
 import com.ssafy.backend.exception.ForbiddenException;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,7 +52,7 @@ class EvaluationServiceTest {
 
     @BeforeEach
     void setUp() {
-        EvaluationValidator validator = new EvaluationValidator(userRepository, meetRepository, meetUserRepository,
+        EvaluationValidator validator = new EvaluationValidator(new UserReader(userRepository), meetRepository, meetUserRepository,
                                                                 evaluationRepository);
         EvaluationManager evaluationManager = new EvaluationManager(userRepository, evaluationRepository);
         evaluationService = new EvaluationService(validator, new EvaluationScoreManager(), evaluationManager);

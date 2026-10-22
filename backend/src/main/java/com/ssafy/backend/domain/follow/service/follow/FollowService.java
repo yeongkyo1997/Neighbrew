@@ -28,8 +28,8 @@ public class FollowService {
 
     @Transactional
     public String toggleFollow(Long userId, Long followingId) {
-        User follower = validator.validateAndGetUser(userId, "잘못된 userId입니다: ");
-        User following = validator.validateAndGetUser(followingId, "잘못된 followingId입니다: ");
+        User follower = validator.validateAndGetUser(userId);
+        User following = validator.validateAndGetUser(followingId);
         return followManager.toggleFollow(follower, following);
     }
 

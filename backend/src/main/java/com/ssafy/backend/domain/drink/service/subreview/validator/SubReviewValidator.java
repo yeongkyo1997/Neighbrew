@@ -7,20 +7,19 @@ import com.ssafy.backend.domain.drink.entity.SubReview;
 import com.ssafy.backend.domain.drink.repository.DrinkReviewRepository;
 import com.ssafy.backend.domain.drink.repository.SubReviewRepository;
 import com.ssafy.backend.domain.user.entity.User;
-import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.domain.user.service.UserReader;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class SubReviewValidator {
-    private final UserRepository userRepository;
+    private final UserReader userReader;
     private final DrinkReviewRepository drinkReviewRepository;
     private final SubReviewRepository subReviewRepository;
 
     public User validateAndGetUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        return userReader.getById(userId);
     }
 
     public DrinkReview validateAndGetDrinkReview(Long drinkReviewId) {

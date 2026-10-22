@@ -11,7 +11,7 @@ import com.ssafy.backend.domain.chat.entity.ChatRoomUser;
 import com.ssafy.backend.domain.chat.repository.ChatRoomUserRepository;
 import com.ssafy.backend.domain.meet.repository.MeetUserRepository;
 import com.ssafy.backend.domain.user.entity.User;
-import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.domain.user.service.UserReader;
 import com.ssafy.backend.exception.ForbiddenException;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatRoomUserManager {
     private final ChatRoomUserRepository chatRoomUserRepository;
-    private final UserRepository userRepository;
+    private final UserReader userReader;
     private final MeetUserRepository meetUserRepository;
 
     public void addUsersToRoom(ChatRoom chatRoom, List<Integer> userIdList) {
@@ -68,7 +68,6 @@ public class ChatRoomUserManager {
     }
 
     public User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        return userReader.getById(userId);
     }
 }

@@ -12,14 +12,14 @@ import com.ssafy.backend.domain.meet.dto.MeetRequestDto;
 import com.ssafy.backend.domain.meet.entity.Meet;
 import com.ssafy.backend.domain.meet.repository.MeetRepository;
 import com.ssafy.backend.domain.user.entity.User;
-import com.ssafy.backend.domain.user.repository.UserRepository;
+import com.ssafy.backend.domain.user.service.UserReader;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class MeetValidator {
-    private final UserRepository userRepository;
+    private final UserReader userReader;
     private final TagRepository tagRepository;
     private final DrinkRepository drinkRepository;
     private final MeetRepository meetRepository;
@@ -61,8 +61,7 @@ public class MeetValidator {
     }
 
     public User validateAndGetUser(Long userId) {
-        return userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("올바른 유저 정보가 입력되지 않았습니다."));
+        return userReader.getById(userId);
     }
 
     public Tag validateAndGetTag(Long tagId) {

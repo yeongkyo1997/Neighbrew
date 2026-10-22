@@ -26,4 +26,13 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_GATEWAY);
         assertThat(response.getBody()).doesNotContain("GOOGLE");
     }
+
+    @Test
+    void 대상이_없으면_404로_응답한다() {
+        ResponseEntity<String> response = handler.handleNotFoundException(
+                new NotFoundException("사용자를 찾을 수 없습니다. id=7"));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isEqualTo("사용자를 찾을 수 없습니다. id=7");
+    }
 }

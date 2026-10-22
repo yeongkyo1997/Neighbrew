@@ -40,6 +40,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("소셜 로그인 서비스에 일시적인 문제가 있습니다. 잠시 후 다시 시도해 주세요.");
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
