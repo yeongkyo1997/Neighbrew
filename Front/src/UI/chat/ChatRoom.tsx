@@ -280,7 +280,7 @@ const ChatRoom = () => {
         return res;
       })
       .then(() => {
-        callApi("GET", `api/chatroom/${id}/detail`).then((res) => {
+        void callApi("GET", `api/chatroom/${id}/detail`).then((res) => {
           setChatRoomName(res.data.chatRoomName);
         });
       })
@@ -306,10 +306,7 @@ const ChatRoom = () => {
   };
 
   useEffect(() => {
-    const foo = async () => {
-      await scroll();
-    };
-    foo();
+    scroll();
   }, []);
 
   const ArrowLeftIcon = arrowLeftIcon("black");

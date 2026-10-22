@@ -103,7 +103,7 @@ const commentItem = forwardRef<HTMLDivElement, CommentItemProps>(props => {
     setDeleteModalOn(true);
   };
   const deleteHandler = () => {
-    callApi("delete", `api/subreview/delete/${subReview.subReviewId}`);
+    void callApi("delete", `api/subreview/delete/${subReview.subReviewId}`);
     setDeleteModalOn(false);
   };
 

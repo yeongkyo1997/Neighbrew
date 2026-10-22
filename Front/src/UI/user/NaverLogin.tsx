@@ -6,11 +6,11 @@ import Loading from "../etc/Loading";
 const NaverLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const NaverloginHandler = async () => {
+  const NaverloginHandler = () => {
     const temcode = location.search.split("=")[1];
     const code = temcode.split("&")[0];
     const state = location.search.split("=")[2];
-    axios
+    void axios
       .post("/api/auth/naver", {
         authorizationCode: code,
         state: state,

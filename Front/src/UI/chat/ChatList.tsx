@@ -59,12 +59,12 @@ const ChatList = () => {
 
   const userId = localStorage.getItem("myId");
   const classListHandler = () => {
-    callApi("GET", `api/chatroom/${userId}/getChatRoom`).then(res => {
+    void callApi("GET", `api/chatroom/${userId}/getChatRoom`).then(res => {
       setChatList(res.data);
     });
   };
   const dmListHandler = () => {
-    callApi("GET", `api/dm/list/${userId}`).then(res => {
+    void callApi("GET", `api/dm/list/${userId}`).then(res => {
       setChatList(res.data);
     });
   };

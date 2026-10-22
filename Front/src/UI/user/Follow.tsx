@@ -22,7 +22,7 @@ const Follow = () => {
   }, [parent]);
 
   const getFollower = () => {
-    callApi("get", `api/follow/following/${userid}`).then(res => {
+    void callApi("get", `api/follow/following/${userid}`).then(res => {
       res.data.map(tem => {
         setUsers(users => [...users, tem.following]);
       });

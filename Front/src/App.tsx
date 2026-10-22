@@ -55,7 +55,7 @@ function App() {
     if ("serviceWorker" in navigator) {
       // Register a service worker hosted at the root of the
       // site using the default scope.
-      navigator.serviceWorker.register("/sw.js");
+      void navigator.serviceWorker.register("/sw.js");
     }
   }, []);
   useEffect(() => {
@@ -101,7 +101,7 @@ function App() {
   useEffect(() => {
     if (userid == null) return;
     let active = true;
-    esconnect(userid, () => active);
+    void esconnect(userid, () => active);
 
     return () => {
       active = false;
@@ -131,7 +131,7 @@ function App() {
     // 알림 권한이 거부된 상태는 아니라면
     if (Notification.permission !== "denied") {
       // 사용자에게 알림 권한 승인을 요청한다
-      Notification.requestPermission().then(permission => {
+      void Notification.requestPermission().then(permission => {
         // 사용자가 승인하면, 알림을 표시한다
         if (permission === "granted") {
           const notification = new Notification("알림을 허용하셨습니다.");
@@ -141,8 +141,8 @@ function App() {
   };
 
   const noti = (message: string, url: string) => {
-    navigator.serviceWorker.ready.then(registration => {
-      registration.showNotification("NeighBrew", {
+    void navigator.serviceWorker.ready.then(registration => {
+      void registration.showNotification("NeighBrew", {
         body: message,
         icon: logo,
         data: url,

@@ -293,7 +293,7 @@ const MeetingDetail = () => {
     if (userId === 0) return;
     //생년월일은 본인 정보(myinfo)에만 포함된다
     const promise = callApi("get", "api/user/myinfo");
-    promise.then(res => {
+    void promise.then(res => {
       setUserData(res.data);
     });
   }, [userId]);
@@ -386,7 +386,7 @@ const MeetingDetail = () => {
       userId: userId,
       meetId: meetId,
     });
-    promise.then(res => {
+    void promise.then(res => {
       setUserStatus("NONE");
     });
   }
@@ -397,7 +397,7 @@ const MeetingDetail = () => {
       userId: userId,
       meetId: meetId,
     });
-    promise
+    void promise
       .then(res => {
         setUserStatus("NONE");
       })
@@ -405,7 +405,7 @@ const MeetingDetail = () => {
   }
 
   //모임 삭제 요청
-  const DeleteMeeting = async () => {
+  const DeleteMeeting = () => {
     const promise = callApi("delete", `api/meet/delete/${meetId}`, {
       userId: parseInt(localStorage.getItem("myId")),
     });
@@ -437,8 +437,8 @@ const MeetingDetail = () => {
   };
 
   //채팅방 참여하기
-  const gotoChat = async () => {
-    await connectToWebSocket();
+  const gotoChat = () => {
+    connectToWebSocket();
     setTimeout(() => {
       sendMessageHandler(meetDetailData.meet.chatRoomId);
     }, 500);

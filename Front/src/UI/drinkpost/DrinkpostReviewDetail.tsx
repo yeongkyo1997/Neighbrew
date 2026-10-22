@@ -255,11 +255,11 @@ const DrinkpostReviewDetail = () => {
     setShowMore(!showMore);
   };
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
 
-    callApi("get", `api/subreview/list/${reviewId}`).then(res => {
+    void callApi("get", `api/subreview/list/${reviewId}`).then(res => {
       setSubReviewList(res.data);
     });
   }, []);
@@ -288,11 +288,11 @@ const DrinkpostReviewDetail = () => {
       });
     }
 
-    summonReview();
+    void summonReview();
   }, []);
 
   useEffect(() => {
-    callApi("GET", `api/like/${reviewId}`, {
+    void callApi("GET", `api/like/${reviewId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
@@ -302,7 +302,7 @@ const DrinkpostReviewDetail = () => {
   }, [localStorage.getItem("token")]);
 
   const likeHandler = () => {
-    callApi("POST", `api/like/${reviewId}`, {
+    void callApi("POST", `api/like/${reviewId}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
@@ -329,8 +329,8 @@ const DrinkpostReviewDetail = () => {
       .catch(() => {});
   };
 
-  const followers = async () => {
-    callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
+  const followers = () => {
+    void callApi("get", `api/follow/follower/${review?.user.userId}`).then(res => {
       if (res.data.length == 0) {
         setFollowing(0);
         return;
@@ -378,7 +378,7 @@ const DrinkpostReviewDetail = () => {
   };
 
   const deleteHandler = () => {
-    callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
+    void callApi("delete", `api/drinkreview/${review?.drinkReviewId}`).then(() => {
       navigate(-1);
     });
   };
@@ -498,7 +498,7 @@ const DrinkpostReviewDetail = () => {
           />
           <CommentButton
             onClick={() => {
-              submitHandler();
+              void submitHandler();
             }}
           >
             <SendImg src={sendImage} alt="" />

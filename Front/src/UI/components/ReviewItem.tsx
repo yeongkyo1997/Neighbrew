@@ -125,7 +125,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
   };
 
   useEffect(() => {
-    callApi("GET", `api/like/${review.drinkReviewId}`, {
+    void callApi("GET", `api/like/${review.drinkReviewId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -145,7 +145,7 @@ const ReviewItem = ({ review }: { review: Review }) => {
   // 좋아요 버튼 누르면 좋아요 수 증가
   // 즉시반영
   const likeHandler = () => {
-    callApi("POST", `api/like/${review.drinkReviewId}`, {
+    void callApi("POST", `api/like/${review.drinkReviewId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

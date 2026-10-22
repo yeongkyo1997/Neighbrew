@@ -88,7 +88,7 @@ const Login = () => {
 
   useEffect(() => {
     if (localStorage.getItem("token") != null) {
-      callApi("post", "api/user/refresh-token", {
+      void callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
       }).then((res) => {
         localStorage.setItem("token", res.data.accessToken);
@@ -97,8 +97,8 @@ const Login = () => {
       });
     }
   }, []);
-  const KakaologinHandler = async () => {
-    axios({
+  const KakaologinHandler = () => {
+    void axios({
       method: "get",
       url: "/api/auth/login/kakao",
     }).then((res) => {
@@ -106,8 +106,8 @@ const Login = () => {
       window.location.href = url;
     });
   };
-  const NaverloginHandler = async () => {
-    axios({
+  const NaverloginHandler = () => {
+    void axios({
       method: "get",
       url: "api/auth/login/naver",
     }).then((res) => {
@@ -115,8 +115,8 @@ const Login = () => {
       window.location.href = url;
     });
   };
-  const GoogleloginHandler = async () => {
-    axios({
+  const GoogleloginHandler = () => {
+    void axios({
       method: "get",
       url: "api/auth/login/google",
     }).then((res) => {

@@ -50,7 +50,7 @@ const DrinkpostTotal = () => {
     if (isIntersecting) {
       if (page < 10) {
         setTimeout(() => {
-          callApi("get", `api/drink?page=${page}&size=12`).then(res => {
+          void callApi("get", `api/drink?page=${page}&size=12`).then(res => {
             setDrinkList(prev => [...prev, ...res.data.content]);
             setPage(prev => prev + 1);
           });

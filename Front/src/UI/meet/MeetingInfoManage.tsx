@@ -168,7 +168,7 @@ const MeetingInfoManage = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    callApi("get", "api/sido").then(res => {
+    void callApi("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -176,7 +176,7 @@ const MeetingInfoManage = () => {
   //api 호출, 기존 모임의 정보 저장
   useEffect(() => {
     const promise = callApi("get", `api/meet/${meetId}`);
-    promise.then(res => {
+    void promise.then(res => {
       setMeetData(res.data);
     });
     //로컬 스토리지에서 userId 가져오기
@@ -211,7 +211,7 @@ const MeetingInfoManage = () => {
     if (gugun.sidoCode !== sido.sidoCode) {
       setGugun(initialGugun); //초기화
     }
-    callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);

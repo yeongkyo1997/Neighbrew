@@ -331,10 +331,7 @@ const DirectChat = () => {
   };
 
   useEffect(() => {
-    const foo = async () => {
-      await scroll();
-    };
-    foo();
+    scroll();
   }, []);
 
   const ArrowLeftIcon = arrowLeftIcon("black");

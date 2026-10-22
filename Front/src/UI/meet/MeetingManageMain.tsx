@@ -72,13 +72,13 @@ const MeetingManageMain = () => {
 
   //api 호출, 모임 이름 세팅
   useEffect(() => {
-    callApi("get", `api/meet/${meetId}`).then((res) =>
+    void callApi("get", `api/meet/${meetId}`).then((res) =>
       setMeetData(res.data.meet)
     );
   }, [meetId]);
 
   //모임 삭제 요청
-  const DeleteMeeting = async () => {
+  const DeleteMeeting = () => {
     const promise = callApi("delete", `api/meet/delete/${meetId}`, {
       userId: parseInt(localStorage.getItem("myId")),
     });

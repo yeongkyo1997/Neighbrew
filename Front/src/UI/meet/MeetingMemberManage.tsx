@@ -73,7 +73,7 @@ const MeetingMemberManage = () => {
 
   const fetchMeetData = () => {
     const promise = callApi("get", `api/meet/${meetId}`);
-    promise.then((res) => {
+    void promise.then((res) => {
       setMeetData(res.data);
     });
   };

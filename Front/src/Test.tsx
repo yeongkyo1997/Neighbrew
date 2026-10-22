@@ -19,7 +19,7 @@ const Test = () => {
     <div>
       <h1>Test</h1>
       <input type="text" onChange={inputHandler} />
-      <button onClick={followHandler}>TESt</button>
+      <button onClick={() => void followHandler()}>TESt</button>
     </div>
   );
 };

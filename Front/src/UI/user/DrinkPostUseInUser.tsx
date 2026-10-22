@@ -22,7 +22,7 @@ const DrinkPostUseInUser = () => {
     navigate("/drinkpost/search");
   };
   const myDrinkHandler = () => {
-    callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
+    void callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
       setDrinkList(res.data);
     });
   };

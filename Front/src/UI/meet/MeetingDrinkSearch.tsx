@@ -166,7 +166,7 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
         "get",
         `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
       );
-      promise.then(res => {
+      void promise.then(res => {
         setTotalPage(res.data.totalPages);
         setSearchResultList(res.data.content); //받아온 데이터로 리스트 초기화
       });
@@ -183,12 +183,12 @@ const MeetingDrinkSearch = (props: MeetingDrinkSearchProps) => {
       `api/drink/search?tagId=${tag}&name=${inputText}&page=${page}&size=10`
     );
     if (page === 0) {
-      promise.then(res => {
+      void promise.then(res => {
         setTotalPage(res.data.totalPages);
         setSearchResultList(res.data.content); //받아온 데이터로 리스트 초기화
       });
     } else {
-      promise.then(res => {
+      void promise.then(res => {
         setTotalPage(res.data.totalPages);
         setSearchResultList(prev => [...prev, ...res.data.content]); //받아온 데이터 meetAllData에 추가
       });

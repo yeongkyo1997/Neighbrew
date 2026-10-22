@@ -53,16 +53,16 @@ const DrinkpostReviewCreate = () => {
   const [file, setFile] = useState(null);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
-    callApi("get", `api/drinkreview/review/${reviewId}`).then(res => {
+    void callApi("get", `api/drinkreview/review/${reviewId}`).then(res => {
       setReview(res.data.content);
       setNewImgSrc(res.data.img);
     });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/myinfo`).then(res => {
+    void callApi("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);

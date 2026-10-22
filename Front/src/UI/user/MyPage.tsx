@@ -264,8 +264,8 @@ const MyPage = () => {
     });
   };
   // 팔로워, 팔로잉 인원 수 세기 (팔로우 버튼 색깔 변경)
-  const followers = async () => {
-    callApi("get", `api/follow/follower/${userid}`).then(res => {
+  const followers = () => {
+    void callApi("get", `api/follow/follower/${userid}`).then(res => {
       if (res.data.length == 0) {
         setUserData(userData => ({ ...userData, follower: res.data.length }));
         setFollowing(0);
@@ -281,12 +281,12 @@ const MyPage = () => {
         }
       });
     });
-    callApi("get", `api/follow/following/${userid}`).then(res => {
+    void callApi("get", `api/follow/following/${userid}`).then(res => {
       setUserData(userData => ({ ...userData, following: res.data.length }));
     });
   };
   const myDrinks = () => {
-    callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
+    void callApi("get", `api/drink/user/${userid}/review-drink`).then(res => {
       setUserData(userData => ({ ...userData, drinkcount: res.data.length }));
     });
   };
@@ -299,7 +299,7 @@ const MyPage = () => {
   const userInfo = () => {
     //생년월일 등 개인정보는 본인 정보(myinfo)에만 포함된다
     const url = userid === localStorage.getItem("myId") ? "api/user/myinfo" : `api/user/${userid}`;
-    callApi("get", url)
+    void callApi("get", url)
       .then(res => {
         setUserData(res.data);
       })
@@ -314,7 +314,7 @@ const MyPage = () => {
   };
   const refresh = () => {
     if (localStorage.getItem("token") != null) {
-      callApi("post", "api/user/refresh-token", {
+      void callApi("post", "api/user/refresh-token", {
         refreshToken: localStorage.getItem("refreshToken"),
       }).then(res => {
         localStorage.setItem("token", res.data.accessToken);
@@ -408,7 +408,7 @@ const MyPage = () => {
       return;
     }
     if (file !== undefined && profile !== null) {
-      axios
+      void axios
         .put(`/api/user/img/${userid}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -429,7 +429,7 @@ const MyPage = () => {
     if (profile == null) {
       const formData = new FormData();
       formData.append("profile", null);
-      axios
+      void axios
         .put(`/api/user/img/${localStorage.getItem("myId")}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -629,7 +629,7 @@ const MyPage = () => {
                 cursor: "pointer",
                 flex: "0 0 40%", // flex-grow, flex-shrink, flex-basis
               }}
-              onClick={followHandler}
+              onClick={() => void followHandler()}
             >
               {following === 0 ? "팔로우" : "언팔로우"}
             </button>

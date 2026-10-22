@@ -58,12 +58,12 @@ const DrinkpostReviewCreate = () => {
   const [isClick, setIsClick] = useState(false);
 
   useEffect(() => {
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi("get", `api/drink/${drinkId}`).then(res => {
       setDrink(res.data);
     });
   }, []);
   useEffect(() => {
-    callApi("get", `api/user/myinfo`).then(res => {
+    void callApi("get", `api/user/myinfo`).then(res => {
       setMyInfo(res.data);
     });
   }, []);

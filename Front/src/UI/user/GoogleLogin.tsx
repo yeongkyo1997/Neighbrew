@@ -6,10 +6,10 @@ import Loading from "../etc/Loading";
 const GoogleLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const GoogleloginHandler = async () => {
+  const GoogleloginHandler = () => {
     const temcode = location.search.split("=")[1];
     const code = temcode.split("&")[0];
-    axios
+    void axios
       .post("/api/auth/google", {
         code: code,
       })

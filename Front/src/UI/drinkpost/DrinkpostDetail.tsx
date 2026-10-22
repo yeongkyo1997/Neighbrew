@@ -146,13 +146,13 @@ const DrinkpostDetail = () => {
       top: 0,
       behavior: "smooth",
     });
-    callApi("get", `api/drink/${drinkId}`).then(res => {
+    void callApi("get", `api/drink/${drinkId}`).then(res => {
       setDetail(res.data);
     });
   }, []);
 
   useEffect(() => {
-    callApi("get", `api/drinkreview/${drinkId}`).then(res => {
+    void callApi("get", `api/drinkreview/${drinkId}`).then(res => {
       setReviewList(prev => [...prev, ...res.data.content]);
     });
   }, []);

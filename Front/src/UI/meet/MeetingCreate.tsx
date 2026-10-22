@@ -176,7 +176,7 @@ const MeetingCreate = () => {
       behavior: "smooth",
     });
     //시도 정보 미리 받아와 세팅하기
-    callApi("get", "api/sido").then(res => {
+    void callApi("get", "api/sido").then(res => {
       setSidoList([initialSido, ...res.data]);
     });
   }, []);
@@ -184,7 +184,7 @@ const MeetingCreate = () => {
   //선택한 시도에 따라 구군 fetch
   useEffect(() => {
     setGugun(initialGugun); //초기화
-    callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
+    void callApi("get", `api/gugun/${sido.sidoCode}`).then(res => {
       setGugunList([initialGugun, ...res.data]);
     });
   }, [sido]);

@@ -58,7 +58,7 @@ const MeetingMy = () => {
   //api 호출
   useEffect(() => {
     const promise = callApi("get", `api/meet/mymeet/${userId}`);
-    promise.then(res => {
+    void promise.then(res => {
       setMeetData(res.data); //받아온 데이터로 meetData 세팅
     });
   }, [userId]);

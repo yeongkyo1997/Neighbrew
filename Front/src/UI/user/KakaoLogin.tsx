@@ -6,9 +6,9 @@ import Loading from "../etc/Loading";
 const KakaoLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const KakaologinHandler = async () => {
+  const KakaologinHandler = () => {
     const code = location.search.split("=")[1];
-    axios
+    void axios
       .post("/api/auth/kakao", {
         authorizationCode: code,
       })

@@ -120,11 +120,11 @@ const DrinkpostMain = (props: { connectHandler: () => void }) => {
 
   useEffect(() => {
     // 놀랍지만 생성순
-    callApi("get", "api/drinkreview/likes").then(res => {
+    void callApi("get", "api/drinkreview/likes").then(res => {
       setReviewList(res.data.content);
     });
-    callApi("get", "api/drinkreview/makes").then(res => setReviewListLike(res.data.content));
-    callApi("get", "api/drink/mdPick").then(res => {
+    void callApi("get", "api/drinkreview/makes").then(res => setReviewListLike(res.data.content));
+    void callApi("get", "api/drink/mdPick").then(res => {
       setThreePick([...res.data]);
     });
     props.connectHandler();

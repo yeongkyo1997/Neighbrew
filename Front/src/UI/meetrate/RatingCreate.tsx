@@ -114,7 +114,7 @@ const RatingCreate = () => {
   };
 
   useEffect(() => {
-    callApi("GET", `/api/meet/${meetId}`)
+    void callApi("GET", `/api/meet/${meetId}`)
       .then(res => {
         setMeetTitle(res.data.meet.meetName);
         const { participants } = res.data as MeetDetail;
@@ -150,7 +150,7 @@ const RatingCreate = () => {
             />
           ))}
         </MemberContainer>
-        <RatingButton onClick={submitHandler} disabled={isSubmitting}>
+        <RatingButton onClick={() => void submitHandler()} disabled={isSubmitting}>
           등록하기
         </RatingButton>
       </div>
